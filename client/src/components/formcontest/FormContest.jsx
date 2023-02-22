@@ -103,19 +103,27 @@ function FormContest(props) {
         .then(res => {
             if(res.status == 201){
                 notifyFunc(SUCCESS , ADD_CONTEST_SUCCESS , TRUE)
-                console.log(res);
                 let newAssignment = {
                     idContest : res.data.newContest.id ,
                     idCompany : contest.idCompany
                 }
                 ApiBase.post(urlAddAssignment , newAssignment)
                 .then(res =>{
-                    if(res.status == 201){
-                        notifyFunc(SUCCESS , res.data.message , TRUE )
+                    if(res.status === 201){
+                        setAvatar(undefined)
+                        setContest({
+                            name : '' ,
+                            idCompany : '' ,
+                            address : '' ,
+                            file : undefined ,
+                            slogan : '' ,
+                            email : ''
+                        })
+                        document.querySelector('.form-info').reset()
                     }
                 })
                 .catch(e =>{
-                    notifyFunc(SUCCESS , e.response.data.message , TRUE)
+                    notifyFunc(ERROR , e.response.data.message , TRUE)
                 })
             }
         })
