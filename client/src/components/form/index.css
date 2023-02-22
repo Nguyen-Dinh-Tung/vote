@@ -1,0 +1,19 @@
+.combo-input{
+    width: 100%;
+}
+.flex{
+    display: flex;
+}
+
+#select{
+    padding: 10px;
+}
+#select-status{
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 16px;
+}
+.select-status{
+    margin: auto;
+    text-align: center;
+}

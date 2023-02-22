@@ -1,0 +1,86 @@
+
+.register{
+    width: 600px;
+    background-color: #f6f3f3;
+    margin: auto;
+    border-radius: 14px;
+    padding: 20px;
+}
+.btn-back-home{
+    position: absolute;
+    top: 20px;
+    right: 10%;
+}
+.header{
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.form-register{
+    width :100% ;
+}
+.form-info{
+    display:  flex;
+    flex-direction: column;
+    width :100% ;
+    align-items: center;
+}
+.info-register{
+    width: 100%;
+    margin: 10px 0 16px 0;
+    height: 40px;
+    padding-left: 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.info-register:focus{
+    outline: 1px dotted blue;
+    box-shadow: 1px 1px 1px 1px blue;
+}
+.info-register:focus::-webkit-input-placeholder {
+    opacity:1;
+    transform: scale(0.75) translateY(-70%) translateX(-14px);
+}
+.avatar-demo{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.btn-register{
+    width:  100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-register .button{
+    padding : 6px;
+    width : 240px ;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 4px;
+    background-color: #26a69a;
+    color: white;
+    font-size: 16px;
+    border: none;
+}
+.btn-register .button:hover{
+    background-color: rgb(122, 176, 176);
+}
+
+.btn-register .button:active{
+
+    background-color: #ccc ;
+}
+.logo-register{
+    position: absolute;
+    left: 10%;
+    top: 20px;
+}
+.mt-50{
+    margin-top: 50px;
+}

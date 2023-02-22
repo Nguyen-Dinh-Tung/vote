@@ -1,0 +1,31 @@
+.table-user{
+    overflow-x: auto;
+    width: 100%;
+    display: flex;  
+    flex-direction: column;
+}
+
+.user-list-avatar{
+   width: 46px;
+    height: 46px;
+    border-radius: 100%;
+}
+.border-solid-ccc{
+}
+.list-user td , th{
+    border: 1px solid #5bd0c4;
+    padding: 0 10px;
+}
+.header-list-user{
+    text-align: center;
+    font-size: 40px;
+}
+.tr-list-user:hover{
+    background-color: #ccc;
+}
+.align-center{
+    text-align: center;
+}
+.cursor-pointer{
+    cursor: pointer;
+}

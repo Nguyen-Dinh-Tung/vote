@@ -1,0 +1,159 @@
+html {
+    box-sizing: border-box;
+}
+
+.container-home{
+    display: flex;
+    margin: 20px;
+    background-color: #f0f2f5;
+    height: 100vh;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.side-bar{
+    flex: 1 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px;
+    padding-top: 30px;
+    padding-bottom: 50px;
+    justify-content: space-between;
+
+}
+.top-side-bar{
+    display: flex;
+    flex-direction: column;
+}
+.content-home{
+    background-color: white;
+    width: 100%;
+    overflow-y: auto;
+    padding-left: 20px;
+    flex: 4;
+}
+.controler-filed{
+    background-color: white;
+    width: 74%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    list-style: none;
+    margin: 10px;
+}
+.controler-filed:hover{
+    background-color:#5bd0c4 ;
+    color: white;
+}
+.controler-filed:active{
+    background-color: #ccc;
+}
+.menu{
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.top-side-bar{
+    width: 100%;
+}
+.user{
+    padding-left: 28px;
+}
+.username{
+    font-size: 18px;
+}
+.text-username{
+    color: #33978d ;
+    font-size: 20px;
+}
+.btn-logout{
+    background-color: rgb(249, 7, 7);
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+    border-radius: 6px;
+}
+.btn-logout:hover{
+    background-color:  rgb(213, 34, 34);
+    cursor: pointer;
+}
+.btn-logout:active{
+    background-color: #ccc;
+}
+.user-controler{
+    width: 100%;
+    background-color: #ccc;
+}
+.user-desc .user-controler{
+    display: block;
+}
+.user-desc{
+    padding: 0;
+    position: absolute;
+    bottom: 0;
+}
+.user-position{
+    position: relative;
+}
+
+.dropdown {
+position: relative;
+display: inline-block;
+background-color: white;
+border-radius: 6px;
+margin-bottom: 10px;
+padding-left: 10px;
+font-size: 18px;
+cursor: pointer;
+}
+.dropdown:hover{
+    background-color: rebeccapurple;
+    color: white;
+}
+.menu-user ,.menu-contest , .menu-candidate{
+display: none;
+position: absolute;
+background-color: transparent;
+right: 0;
+margin-top: 10px;
+z-index: 1;
+}
+.menu-user::after ,.menu-contest::after , .menu-candidate::after{
+    content: '';
+    background-color: transparent;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 22px;
+    top: -18px;
+}
+.dropdown-user:hover .menu-user {
+display: block;
+}
+
+.dropdown-contest:hover .menu-contest {
+    display: block;
+}
+.dropdown-candidate:hover .menu-candidate {
+    display: block;
+}
+.field-controler{
+    margin: 0;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    width: 160px;
+    background-color: rebeccapurple;
+    cursor: pointer;
+    color: white;
+}
+.field-controler:hover{
+    color: white;
+    background-color: #353434;
+}

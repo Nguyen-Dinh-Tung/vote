@@ -1,0 +1,1 @@
+export const ADDCONTEST = 'Thêm cuộc thi'

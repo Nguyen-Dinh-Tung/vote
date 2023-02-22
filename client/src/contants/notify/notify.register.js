@@ -1,0 +1,9 @@
+export const FIELD_NOT_HOLLOW = "Vui lòng không để trống các trường dữ liệu !"
+export const USER_MIN_LENGTH = "Tên đăng nhập tối thiểu 6 kí tự!"
+export const USER_REGEX = "Tên đăng nhập tối thiểu 6 kí tự không bao gồm kí tự đặc biệt và bắt đầu bằng chữ cái!"
+export const PASSWORD_MIN = "Mật khẩu tối thiểu 6 ký tự !"
+export const PASSWORD_REGEX  = "Mật khẩu tối thiểu 6 kí tự bắt đầu bằng chữ cái viết hoa gồm cả số và chữ thường !"
+export const EMAIL_REGEX = "Email không đúng định dạng !" 
+export const IMG_VALIDATE = 'Vui lòng chọn đúng file ảnh !'
+export const PASSWORD_EDIT = "Thiếu mật khẩu cũ hoặc mới !"
+export const PASSWORD_DUBLICATE = "Mật khẩu mới và cũng không được trùng nhau"
