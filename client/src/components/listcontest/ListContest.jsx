@@ -16,7 +16,7 @@ function ListContest(props) {
     const handleReRender = props.handleReRender
     const dispatch = useDispatch()
     const [notifyFunc] = useNotifyFunc() 
-    const [listUser , setListUser] = useState()
+    const [list , setList] = useState()
     const reRender = props.reRender
     const setTing = () =>{
         dispatch(setDialogEdit(true))
@@ -28,7 +28,7 @@ function ListContest(props) {
         ApiBase.get(urlGetListContest)
         .then(res =>{
             console.log(res);
-            setListUser(res.data.listUser)
+            setList(res.data.listContest)
         })
         .catch(e =>{
             if(e.response.status == 403)
@@ -43,20 +43,19 @@ function ListContest(props) {
                 <th>Họ và tên</th>
                 <th>Email</th>
                 <th>Địa chỉ</th>
-                <th>Chức vụ</th>
+                <th>Tổ chức</th>
                 <th>Avatar</th>
                 <th>Trạng thái</th>
                 <th>Tùy chỉnh</th>
                 </thead>
                 <tbody>
-                    {listUser && listUser.length >0 ? 
-                    
-                    listUser.map((e , index) =>{
+                    {list && list.length >0 ? 
+                    list.map((e , index) =>{
                         return <tr className='tr-list-user' >
                             <td>{e && e.name}</td>
                             <td>{e && e.email}</td>
                             <td>{e && e.address}</td>
-                            <td>{e && e.role}</td>
+                            <td>{e && e.company}</td>
                             <td className='align-center'><img className='user-list-avatar' src={e &&host + e.background} alt="" /></td>
                             <td>{e && e.isActive == true ? "Hoạt động" : 'Dừng'}</td>
                             <td className='align-center cursor-pointer'><SettingsIcon color="secondary" onClick={() => {handleSelectId(e.id) ; setTing()}} sx={{fontSize : '30px'}}/></td>

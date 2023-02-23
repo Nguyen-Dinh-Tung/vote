@@ -126,11 +126,7 @@ export class ContestService {
 
   async findAll(res : Response) {
 
-    let listContest = await this.contentEntity.find({
-      relations : {
-        contestRem : true
-      }
-    })
+    let listContest = await this.contentEntity.find()
     
     let listRes = []
 
