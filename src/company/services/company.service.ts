@@ -53,14 +53,15 @@ export class CompanyService {
 
     if(newCompany){
 
-      await this.companayEntity.findOne({
+      this.companayEntity.findOne({
         where : {
           id : newCompany.id
         } ,
         relations : {
           companyrem : true
         }
-      }).then(async response =>{
+      })
+      .then(async response =>{
         if(!response.companyrem){
 
           let newCpRem = await this.cpRemEntity.save(cpRem)

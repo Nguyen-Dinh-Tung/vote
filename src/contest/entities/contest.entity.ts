@@ -9,10 +9,6 @@ import { ContestRecomendEntity } from './ContestRecomend.entity';
 })
 export class ContestEntity  extends InheriTance{
 
-    @Column({default : 'defaul slogan'})
-    slogan : string ;
-
-
     @Column({
         default : 0
     })

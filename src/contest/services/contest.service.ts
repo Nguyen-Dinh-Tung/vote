@@ -10,11 +10,16 @@ import { Validate } from 'src/common/class/validate.entity';
 import { CompanyService } from 'src/company/services/company.service';
 import * as fs from 'fs';
 import { Response } from 'express';
-import { ADD_CONTEST_SUCCES, COMPANY_ERROR, CONTEST_EXISTING } from '../contants/contants';
+import { ADD_CONTEST_SUCCES, ADM_MESSAGE, COMPANY_ERROR, CONTEST_EXISTING, GET_LIST_CONTEST_SUCCESS } from '../contants/contants';
+import { ContestRecomendEntity } from '../entities/ContestRecomend.entity';
+import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
 
 @Injectable()
 export class ContestService {
-  constructor(@InjectRepository(ContestEntity) private readonly contentEntity : Repository<ContestEntity> ,
+  constructor(
+  @InjectRepository(ContestEntity) private readonly contentEntity : Repository<ContestEntity> ,
+  @InjectRepository(ContestRecomendEntity) private readonly contestRemEntity : Repository<ContestRecomendEntity> ,
+  @InjectRepository(AssmCompanyEntity) private readonly assmCompanyEntity : Repository<AssmCompanyEntity> ,
   private readonly companyService : CompanyService ,
   ){
 
@@ -29,6 +34,7 @@ export class ContestService {
           {name : createContestDto.name}
         ]
       })
+
       let checkCompany = await this.companyService.findOne(createContestDto.idCompany)
 
       if(!checkCompany || checkCompany.isActive === false){
@@ -37,24 +43,75 @@ export class ContestService {
         })
       }
 
-      if(checkContest.length > 0) 
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        message : CONTEST_EXISTING
-      })
+        if(checkContest.length > 0) 
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          message : CONTEST_EXISTING
+        })
 
       else{
 
-
-        if(file){
-          createContestDto.background = this.saveImage(file)
+        let newInfoCo = {
+          name : createContestDto.name,
+          address : createContestDto.address,
+          email : createContestDto.email,
+          historyCreate : userCreate
         }
 
-        createContestDto.historyCreate = userCreate ;
-        let newContest = await this.contentEntity.save({... createContestDto })
-        return res.status(HttpStatus.CREATED).json({
-          message : ADD_CONTEST_SUCCES ,
-          newContest : newContest
-        })
+
+        if(file){
+          newInfoCo['background'] = this.saveImage(file)
+        }
+
+
+        newInfoCo['historyCreate'] = userCreate ;
+        let newContest = await this.contentEntity.save({... newInfoCo })
+
+
+        if(newContest){
+
+          let infoRem = {
+            desc :createContestDto.description ,
+            slogan : createContestDto.slogan
+          }
+          let newCoRem = await this.contestRemEntity.save(infoRem)
+          if(newCoRem){
+            
+            newContest.contestRem = newCoRem
+            await this.contentEntity.save(newContest)
+
+          }else{
+
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+              message : ADM_MESSAGE
+            })
+
+          }
+
+          let infoAssmCompany = {
+            company : checkCompany ,
+            contest : newContest
+          }
+
+          let newAssmCompany = await this.assmCompanyEntity.save(infoAssmCompany)
+
+          if(newAssmCompany){
+
+            return res.status(HttpStatus.CREATED).json({
+              message : ADD_CONTEST_SUCCES ,
+              newContest : newContest
+            })
+
+          }else{
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+              message : ADM_MESSAGE
+            })
+          }
+
+        }else{
+          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message : ADM_MESSAGE
+          })
+        }
 
 
       }
@@ -67,18 +124,36 @@ export class ContestService {
     
   }
 
-  async findAll() {
+  async findAll(res : Response) {
 
-    try{
+    let listContest = await this.contentEntity.find({
+      relations : {
+        contestRem : true
+      }
+    })
+    
+    let listRes = []
 
-      let listContest = await this.contentEntity.find()
-      return listContest
+    for(let e of listContest){
+      let assmCp = await this.assmCompanyEntity.findOne({
+        where : {
+          contest : e
+        } ,
+        relations : {
+          company : true
+        }
+      })
 
-    }catch(e){
-
-      if(e) console.log(e);
-      
+      e['company'] = assmCp.company.name
+      listRes.push(e)
     }
+
+    
+    return res.status(HttpStatus.OK).json({
+      message : GET_LIST_CONTEST_SUCCESS ,
+      listContest : listRes
+    })
+
 
   }
 

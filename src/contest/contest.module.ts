@@ -7,9 +7,10 @@ import { UsersModule } from 'src/users/users.module';
 import { CompanyModule } from 'src/company/company.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ContestRecomendEntity } from './entities/ContestRecomend.entity';
+import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([ContestEntity , ContestRecomendEntity]) , forwardRef(() => UsersModule) , forwardRef(() => CompanyModule)  , 
+  imports : [TypeOrmModule.forFeature([ContestEntity , ContestRecomendEntity , AssmCompanyEntity]) , forwardRef(() => UsersModule) , forwardRef(() => CompanyModule)  , 
   MulterModule.register({
     dest : './files/images'
   }) ] ,

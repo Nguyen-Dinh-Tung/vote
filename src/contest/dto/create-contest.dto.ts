@@ -34,6 +34,11 @@ export class CreateContestDto {
     @ApiProperty()
     @IsOptional()
     slogan : string ;
+
+    @Expose()
+    @ApiProperty()
+    @IsOptional()
+    description : string ;
     
     @Expose()
     @IsOptional()

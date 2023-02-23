@@ -22,6 +22,7 @@ import { ADD_CONTEST_SUCCESS } from '../../contants/notify/message';
 const infoRegister = [
 ['name' , 'text' , 'Tên cuộc thi '] ,
 ['slogan' , 'text' , 'Slogan cuộc thi'] ,
+['description' , 'text' , 'Mô tả cuộc thi'] ,
 ['address' , 'text' , 'Địa chỉ tổ chức cuộc thi'],
 ['email' , 'email' , 'Email đăng ký'] ,
 ['background' , 'file' ,'image/*']
@@ -34,6 +35,7 @@ function FormContest(props) {
         address : '' ,
         file : undefined ,
         slogan : '' ,
+        description : '' ,
         email : ''
     }) ;
     const [avatar , setAvatar] = useState() ;
@@ -83,7 +85,6 @@ function FormContest(props) {
 
         }
         
-        console.log(contest);
         if(!flag){
             notifyFunc(ERROR , FIELD_NOT_HOLLOW , TRUE)
             return
@@ -102,26 +103,19 @@ function FormContest(props) {
         ApiBase.post(urlAddContest , form )
         .then(res => {
             if(res.status == 201){
+                console.log(res);
                 notifyFunc(SUCCESS , ADD_CONTEST_SUCCESS , TRUE)
-                let newAssignment = {
-                    idContest : res.data.newContest.id ,
-                    idCompany : contest.idCompany
-                }
-                ApiBase.post(urlAddAssignment , newAssignment)
-                .then(res =>{
-                    if(res.status === 201){
-                        setAvatar(undefined)
-                        setContest({
-                            name : '' ,
-                            idCompany : '' ,
-                            address : '' ,
-                            file : undefined ,
-                            slogan : '' ,
-                            email : ''
-                        })
-                        document.querySelector('.form-info').reset()
-                    }
+                setAvatar(undefined)
+                setContest({
+                    name : '' ,
+                    idCompany : '' ,
+                    address : '' ,
+                    file : undefined ,
+                    slogan : '' ,
+                    description : '' ,
+                    email : ''
                 })
+                document.querySelector('.form-info').reset()
                 .catch(e =>{
                     notifyFunc(ERROR , e.response.data.message , TRUE)
                 })

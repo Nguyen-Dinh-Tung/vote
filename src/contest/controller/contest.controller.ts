@@ -41,8 +41,16 @@ export class ContestController {
 
   @RolesCheck([...Object.values(Roles)])
   @Get()
-  findAll() {
-    return this.contestService.findAll();
+  findAll(@Res() res : Response) {
+    try{
+
+      return this.contestService.findAll(res);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([...Object.values(Roles)])
