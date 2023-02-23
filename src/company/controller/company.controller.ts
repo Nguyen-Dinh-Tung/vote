@@ -1,8 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { Headers } from '@nestjs/common/decorators';
+import { Headers, Res } from '@nestjs/common/decorators';
+import { Response } from 'express';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Roles } from 'src/common/enum/role.enum';
 import getUserByReq from 'src/common/func/getUserByHeaderReq';
+import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
 import { UsersService } from 'src/users/services/users.service';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
@@ -16,8 +18,17 @@ export class CompanyController {
 
   @RolesCheck([Roles.admin , Roles.marketing])
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto , @Headers() headers : any) {
-    return this.companyService.create(createCompanyDto , getUserByReq(headers));
+  create(@Body() createCompanyDto: CreateCompanyDto , @UserByToken() userBytoken : string ,@Res() res : Response) {
+
+    try{
+
+      return this.companyService.create(createCompanyDto , userBytoken , res);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([...Object.values(Roles)])
@@ -29,7 +40,15 @@ export class CompanyController {
   @RolesCheck([...Object.values(Roles)])
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.companyService.findOne(id);
+    try{
+
+      return this.companyService.findOne(id);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([Roles.admin , Roles.marketing])

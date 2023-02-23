@@ -1,42 +1,109 @@
+import { CompanyRecomend } from './../entities/company-recomend.entity';
 import { plainToClass } from 'class-transformer';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Validate } from 'src/common/class/validate.entity';
 import { Repository } from 'typeorm';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { CompanyEntity } from '../entities/company.entity';
+import { Response } from 'express';
+import { ADD_COMPANY_SUCCESS, COMPANY_REM_EXIST, CONFLIT_COMPANY } from '../contants/message';
 
 @Injectable()
 export class CompanyService {
-  constructor(@InjectRepository(CompanyEntity) private readonly companayEntity : Repository<CompanyEntity>){
+  constructor(
+    @InjectRepository(CompanyEntity) private readonly companayEntity : Repository<CompanyEntity>,
+    @InjectRepository(CompanyRecomend) private readonly cpRemEntity : Repository<CompanyRecomend>
+    
+    ){
 
   }
-  async create(createCompanyDto: CreateCompanyDto , userCreate : string) {
+  async create(createCompanyDto: CreateCompanyDto , userCreate : string, res : Response) {
 
-    try{
+    let checkCompany = await this.companayEntity.findOneBy({
+      email : createCompanyDto.email ,
+      name : createCompanyDto.name
+    })
 
-      let checkCompay = await this.validateCompany({
-        email: createCompanyDto.email
+    if(checkCompany){
+
+      return res.status(HttpStatus.CONFLICT).json({
+        message : CONFLIT_COMPANY
       })
-  
-      if(!checkCompay){
-        
-        createCompanyDto.historyCreate  = userCreate
-  
-        let newCompany = await this.companayEntity.save(createCompanyDto)
-        return newCompany
-  
-      }else{
-  
-        return "Company existing"
-  
-      }
-    }catch(e){
 
-      if(e) console.log(e);
-      
     }
+
+    let infoCreateCp = {
+      name : createCompanyDto.name ,
+      email : createCompanyDto.email ,
+      address : createCompanyDto.address,
+      historyCreate : createCompanyDto.historyCreate
+    }
+
+    let cpRem = {
+      slogan : createCompanyDto.slogan ,
+      business_segment : createCompanyDto.business_segment ,
+    }
+
+    let newCompany = await this.companayEntity.save(infoCreateCp)
+
+    let REM_EXIST = '' ;
+
+
+    if(newCompany){
+
+      await this.companayEntity.findOne({
+        where : {
+          id : newCompany.id
+        } ,
+        relations : {
+          companyrem : true
+        }
+      }).then(async response =>{
+        if(!response.companyrem){
+
+          let newCpRem = await this.cpRemEntity.save(cpRem)
+          
+          if(newCpRem){
+            
+            await this.companayEntity.save({...newCompany  , companyrem : newCpRem})
+
+          }
+      
+        }else{
+
+          REM_EXIST = COMPANY_REM_EXIST
+
+        }
+
+      })
+      .catch(e =>{
+        
+        if(e) console.log(e);
+        
+      })
+
+      if(REM_EXIST){
+
+        return res.status(HttpStatus.CREATED).json({
+          message : ADD_COMPANY_SUCCESS ,
+          newCompany : newCompany , 
+          rem : REM_EXIST
+        })
+
+      }
+    
+    }
+
+
+    return res.status(HttpStatus.CREATED).json({
+      message : ADD_COMPANY_SUCCESS ,
+      newCompany : newCompany , 
+    })
+
+
+
   }
 
   async findAll() {
@@ -45,9 +112,20 @@ export class CompanyService {
   }
 
   async findOne(id: string) {
-    let checkCompany = await this.companayEntity.findOneBy({id : id})
+    let checkCompany = await this.companayEntity.findOne(
+      {
+        where : {
+          id : id
+        },
+        relations : {
+          companyrem : true ,
+        }
+      } 
+    )
     return checkCompany
+
   }
+
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto , userChange) {
     

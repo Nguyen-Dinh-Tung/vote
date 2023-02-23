@@ -1,26 +1,26 @@
-import { JoinColumn } from 'typeorm';
+import { JoinColumn, ManyToOne } from 'typeorm';
 import { CompanyEntity } from './../../company/entities/company.entity';
 import { ContestEntity } from './../../contest/entities/contest.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({
-    name : 'assmcompany',
+    name : 'ascp',
 })
 export class AssmCompanyEntity {
 
     @PrimaryGeneratedColumn('uuid')
     id : string ;
 
-    @Column()
-    @OneToOne(() => CompanyEntity , (company) => company.id)
+    @ManyToOne(() => CompanyEntity , (cp) => cp.id)
     @JoinColumn()
-    idCompany : string;
+    company : CompanyEntity;
 
-    @Column()
-    @OneToOne(() => ContestEntity , (contest) => contest.id)
+    @OneToOne(() => ContestEntity , (co) => co.id)
     @JoinColumn()
-    idContest : string;
+    contest : ContestEntity;
+
+    
     @Column({
         default : true
     })

@@ -1,8 +1,9 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 import { InheriTance } from "src/common/class/inheritance";
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
+import { candidateRecomendEntity } from './candidate-recomend.entity';
 @Entity({
-    name : 'candidate',
+    name : 'ca',
 })
 export class CandidateEntity extends InheriTance{
     
@@ -11,10 +12,7 @@ export class CandidateEntity extends InheriTance{
     }) 
     idno : string ;
 
-    @Column({
-        default : 'defaul'
-    })
-    @OneToOne(() => TicketEntity , (ticket) => ticket.idcadidate)
+    @OneToOne(() => candidateRecomendEntity , (rem) => rem.id)
     @JoinColumn()
-    idTicket : string ;
+    candidateRem : candidateRecomendEntity ;
 }

@@ -2,14 +2,11 @@ import { AssmCompanyEntity } from './../../assignment-company/entities/assignmen
 import { ContestEntity } from 'src/contest/entities/contest.entity';
 import { InheriTance } from 'src/common/class/inheritance';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { CompanyRecomend } from './company-recomend.entity';
 @Entity({
-    name : 'company',
+    name : 'cp',
 })
 export class CompanyEntity extends InheriTance {
-    @Column()
-    slogan : string ;
-    @Column()
-    business_segment : string ;
     @Column({
         default : 'Default'
     })
@@ -18,9 +15,7 @@ export class CompanyEntity extends InheriTance {
         default : 'Default'
     })
     historyCreate  : string ;
-    @Column()
-    @OneToOne(() => AssmCompanyEntity , (assignmentCompany) => assignmentCompany.id)
+    @OneToOne(() => CompanyRecomend , (rem) => rem.id )
     @JoinColumn()
-    idAssmCp : string  ;
-
+    companyrem : CompanyRecomend  ;
 }

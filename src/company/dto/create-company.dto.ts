@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsEmail, IsNotEmpty, Length } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, Length } from "class-validator";
 
 export class CreateCompanyDto {
     @IsNotEmpty()
@@ -25,9 +25,11 @@ export class CreateCompanyDto {
 
     @Expose()
     @Length(2 ,)
+    @IsNotEmpty()
     slogan : string ;
 
     @Expose()
     historyCreate?  : string ;
+
 
 }

@@ -5,9 +5,10 @@ import { CompanyService } from './services/company.service';
 import { CompanyController } from './controller/company.controller';
 import { CompanyEntity } from './entities/company.entity';
 import { UsersModule } from 'src/users/users.module';
+import { CompanyRecomend } from './entities/company-recomend.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([CompanyEntity]) , UsersModule  ,forwardRef(() => ContestEntity)] ,
+  imports : [TypeOrmModule.forFeature([CompanyEntity , CompanyRecomend]) , UsersModule  ,forwardRef(() => ContestEntity)] ,
   controllers: [CompanyController],
   providers: [CompanyService],
   exports : [CompanyService ]

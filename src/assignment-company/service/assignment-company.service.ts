@@ -24,13 +24,10 @@ export class AssignmentCompanyService {
   }
   async create(createAssignmentCompanyDto: CreateAssignmentCompanyDto , res : Response) {
 
-    let checkAssignment = await this.assigmCompany.findOneBy({
-      idContest : createAssignmentCompanyDto.idContest,
-      idCompany : createAssignmentCompanyDto.idCompany
-    })
+    
 
     let checkContest = await this.contestEntity.findOneBy({id : createAssignmentCompanyDto.idContest})
-    let checkCompany = await this.contestEntity.findOneBy({id : createAssignmentCompanyDto.idCompany})
+    let checkCompany = await this.companyEntity.findOneBy({id : createAssignmentCompanyDto.idCompany})
 
     if(!checkContest)
     return res.status(HttpStatus.NOT_FOUND).json({
@@ -52,30 +49,28 @@ export class AssignmentCompanyService {
       message : COMPANY_NOT_ACTIVE
     })
 
-    console.log( checkAssignment,'checkAssignment');
-    
-    if(!checkAssignment){
+    // let checkAssignment = await this.assigmCompany.findOneBy({
+    //   idContest : createAssignmentCompanyDto.idContest,
+    //   idCompany : createAssignmentCompanyDto.idCompany
+    // })
 
-      let newAssignment = await this.assigmCompany.save(createAssignmentCompanyDto)
+    // if(!checkAssignment){
 
-      checkContest.idAssmCp = newAssignment.id
-      await this.contestEntity.save(checkContest)
+    //   let newAssignment = await this.assigmCompany.save(createAssignmentCompanyDto)
 
-      checkCompany.idAssmCp = newAssignment.id
-      await this.companyEntity.save(checkCompany)
-      
-      res.status(HttpStatus.CREATED).json({
-        message : ADD_NEW_ASSIGNMENT_SUCCESS , 
-        newAssignment : newAssignment
-      })
 
-    }else{
+    //   res.status(HttpStatus.CREATED).json({
+    //     message : ADD_NEW_ASSIGNMENT_SUCCESS , 
+    //     newAssignment : newAssignment
+    //   })
 
-      res.status(HttpStatus.CONFLICT).json({
-        message : CONFLIT_ASSIGNMENT
-      })
+    // }else{
 
-    }
+    //   res.status(HttpStatus.CONFLICT).json({
+    //     message : CONFLIT_ASSIGNMENT
+    //   })
+
+    // }
 
   }
 

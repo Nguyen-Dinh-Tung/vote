@@ -3,7 +3,7 @@ import { InheriTance } from "src/common/class/inheritance";
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { CompanyEntity } from './company.entity';
 @Entity({
-    name : 'companyrem',
+    name : 'cprem',
 })
 export class CompanyRecomend{
     @PrimaryGeneratedColumn('uuid')
@@ -11,11 +11,23 @@ export class CompanyRecomend{
     @Column({
         default : true
     })
-
-    @Column()
+    @Column({
+        default : 'default'
+    })
     slogan : string ;
-    @Column()
-    desc : string ;
+    @Column({
+        default : 'default'
+    })
+    bss : string ;
+    @Column({
+        default : 'default'
+    })
+    descs : string ;
+
+
+    @Column({
+        default : true
+    })
     isActive : boolean ;
     @Column({
         type : 'datetime' ,
@@ -35,11 +47,4 @@ export class CompanyRecomend{
         default : 'This is active'
     })
     historyChange : string ;
-
-    @Column({
-        default : 'defaul'
-    })
-    @OneToOne(() => CompanyEntity , (company) => company.id)
-    @JoinColumn()
-    idCompany : string ;
 }

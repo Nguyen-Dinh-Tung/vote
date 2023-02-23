@@ -48,13 +48,16 @@ function Home(props) {
     const showContest = () =>{
         setShow(listView[3])
     }
- 
-    const showListCandidate = () =>{
+    
+    const showListContest = () =>{
+        console.log('check');
         setShow(listView[4])
     }
-    const showListContest = () =>{
+
+    const showListCandidate = () =>{
         setShow(listView[5])
     }
+
 
     const handleReRender = () =>{
         setReRender(Date.now())

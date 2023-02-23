@@ -3,7 +3,7 @@ import { InheriTance } from "src/common/class/inheritance";
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { CandidateEntity } from './candidate.entity';
 @Entity({
-    name : 'candidaterem',
+    name : 'carem',
 })
 export class candidateRecomendEntity{
     @PrimaryGeneratedColumn('uuid')
@@ -36,10 +36,5 @@ export class candidateRecomendEntity{
     })
     historyChange : string ;
 
-    @Column({
-        default : 'defaul'
-    })
-    @OneToOne(() => CandidateEntity , (candidate) => candidate.id)
-    @JoinColumn()
-    idCandidate : string ;
+
 }

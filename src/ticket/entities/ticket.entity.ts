@@ -9,7 +9,7 @@ import * as dayjs from 'dayjs'
 
 
 @Entity({
-    name : 'ticket',
+    name : 'tc',
 })
 export class TicketEntity {
     @PrimaryGeneratedColumn('uuid')
@@ -17,15 +17,9 @@ export class TicketEntity {
     @Column()
     namecontest : string
 
-    @Column()
-    @OneToOne(() => AssmContestEntity , (assignmentContest) => assignmentContest.id)
+    @ManyToOne(() => CandidateEntity , (ca) => ca.id)
     @JoinColumn()
-    idAssigmentContest : string ;
-
-    @Column()
-    @OneToOne(() => CandidateEntity , (candidate) => candidate.id)
-    @JoinColumn()
-    idcadidate : string ;
+    candidate : CandidateEntity ;
 
     @Column({
         default : true
