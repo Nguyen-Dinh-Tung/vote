@@ -7,7 +7,7 @@ import Register from './pages/register/Register';
 import Login from './pages/login/Login';
 
 function App() {
-
+try{
   return (
     <Routes>
       <Route path={''} element={<Home/>}/>
@@ -15,6 +15,16 @@ function App() {
       <Route path={'/auth/login'} element={<Login/>}/>
     </Routes>
   );
+}catch(e){
+
+  if(e) console.log(e);
+
+}finally{
+
+  console.log("hello newbie");
+
+}
+  
 }
 
 export default App;

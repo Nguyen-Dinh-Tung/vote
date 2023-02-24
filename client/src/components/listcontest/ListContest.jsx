@@ -7,23 +7,38 @@ import { ERROR } from '../../contants/notify/type.notify';
 import useNotifyFunc from '../../hooks/notify.func';
 import './index.css'
 import SettingsIcon from '@mui/icons-material/Settings';
-import DialogEdit from '../dialog/DialogEdit';
 import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
+import Dialog from '../dialog/DialogControler';
+import DialogControler from '../dialog/DialogControler';
 function ListContest(props) {
+
     const urlGetListContest = `/contest` ;
     const open = useSelector(state => state.show.dialogEdit) ;
     const handleReRender = props.handleReRender
     const dispatch = useDispatch()
-    const [notifyFunc] = useNotifyFunc() 
-    const [list , setList] = useState()
+    const [notifyFunc] = useNotifyFunc()  ;
+    const [list , setList] = useState() ;
+    const [contest , setContest] = useState() ;
     const reRender = props.reRender
+
+
+    const handleGetData = (e) =>{
+        setContest({...contest , [e.target.name] : e.target.value})
+    }
+
+    const handleSubmit = ()=>{
+        console.log(contest);
+    }
+
+
     const setTing = () =>{
         dispatch(setDialogEdit(true))
     }
     const handleSelectId = (id)=>{
         dispatch(setId(id))
     }
+
     useEffect(() =>{
         ApiBase.get(urlGetListContest)
         .then(res =>{
@@ -35,6 +50,7 @@ function ListContest(props) {
             notifyFunc(ERROR , FORBIDDEN , TRUE)
         })
     },[reRender])
+
     return (
         <div className='table-user'>
             <p className='header-list-user'>Quản lý cuộc thi </p>
@@ -64,7 +80,7 @@ function ListContest(props) {
                     : ''}
                 </tbody>
             </table>
-            {open && open ? <DialogEdit handleReRender={handleReRender}/> : ''}
+            {open && open ? <DialogControler handleReRender={handleReRender} handleGetData={handleGetData} handleSubmit={handleSubmit}/> : ''}
                     
         </div>
     );

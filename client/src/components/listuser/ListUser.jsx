@@ -7,10 +7,11 @@ import { ERROR } from '../../contants/notify/type.notify';
 import useNotifyFunc from '../../hooks/notify.func';
 import './index.css'
 import SettingsIcon from '@mui/icons-material/Settings';
-import DialogEdit from '../dialog/DialogEdit';
 import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
+import DialogEdit from '../dialoguser/DialogEdit';
 function ListUser(props) {
+
     const urlGetListUser = `/users` ;
     const open = useSelector(state => state.show.dialogEdit) ;
     const handleReRender = props.handleReRender
@@ -18,12 +19,14 @@ function ListUser(props) {
     const [notifyFunc] = useNotifyFunc() 
     const [listUser , setListUser] = useState()
     const reRender = props.reRender
+
     const setTing = () =>{
         dispatch(setDialogEdit(true))
     }
     const handleSelectId = (id)=>{
         dispatch(setId(id))
     }
+
     useEffect(() =>{
         ApiBase.get(urlGetListUser)
         .then(res =>{
@@ -35,6 +38,7 @@ function ListUser(props) {
             notifyFunc(ERROR , FORBIDDEN , TRUE)
         })
     },[reRender])
+
     return (
         <div className='table-user'>
             <p className='header-list-user'>Quản lý tài khoản</p>

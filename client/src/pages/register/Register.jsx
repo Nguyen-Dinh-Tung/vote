@@ -62,6 +62,7 @@ function Register(props) {
 
 
     const handleSubmit = () =>{
+    
         let flag = true
         if(!user){
 

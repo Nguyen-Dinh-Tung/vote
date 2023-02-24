@@ -15,13 +15,14 @@ import { TRUE } from '../../contants/notify/status.notify';
 import useNotifyFunc from '../../hooks/notify.func';
 import { regexEmail, regexPassword, regexUsername } from '../../regex/userInfo.regex';
 import { ApiBase } from '../../api/api.base';
-import { useResolvedPath } from 'react-router';
 
 export default function DialogEdit(props) {
+
   const open = useSelector(state => state.show.dialogEdit) ;
-  const id = useSelector(state => state.id.id)
-  const reRender = props.reRender
-  const handleReRender = props.handleReRender
+  const id = useSelector(state => state.id.id) ;
+
+  const reRender = props.reRender ;
+  const handleReRender = props.handleReRender ;
   const dispatch = useDispatch() ;
   const [user , setUser] = React.useState()
   const urlUpdateUser = '/users/'
@@ -36,6 +37,7 @@ export default function DialogEdit(props) {
     setUser({...user , ...data})
   }
   const handleSubmit = () =>{
+
     if(user){
       if(user['newPassword'] && user['oldPassword']){
         if(user['newPassword'] == user['oldPassword']){
@@ -106,7 +108,6 @@ export default function DialogEdit(props) {
 
           }
         })
-        console.log(user);
         let form = new FormData()
         Object.keys(user).some(key =>{
             form.append(key,user[key])
@@ -127,7 +128,6 @@ export default function DialogEdit(props) {
     }
 
   } 
-  console.log(user);
   return (
     <div>
       <Dialog
