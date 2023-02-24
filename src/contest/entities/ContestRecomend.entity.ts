@@ -25,7 +25,7 @@ export class ContestRecomendEntity{
     @Column({
         default : 'default'
     })
-    desc : string ;
+    descs : string ;
 
     @Column({
         type : 'timestamp' ,

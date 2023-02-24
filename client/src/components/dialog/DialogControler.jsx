@@ -14,7 +14,7 @@ import useNotifyFunc from '../../hooks/notify.func';
 export default function DialogControler(props) {
   
   const open = useSelector(state => state.show.dialogEdit) ;
-  const Render = props.form
+  const Render = props.render
   const handleSubmit = props.handleSubmit
   const reRender = props.reRender
   const handleReRender = props.handleReRender

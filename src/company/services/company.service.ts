@@ -58,11 +58,11 @@ export class CompanyService {
           id : newCompany.id
         } ,
         relations : {
-          companyrem : true
+          cpRem : true
         }
       })
       .then(async response =>{
-        if(!response.companyrem){
+        if(!response.cpRem){
 
           let newCpRem = await this.cpRemEntity.save(cpRem)
           
@@ -119,7 +119,7 @@ export class CompanyService {
           id : id
         },
         relations : {
-          companyrem : true ,
+          cpRem : true ,
         }
       } 
     )

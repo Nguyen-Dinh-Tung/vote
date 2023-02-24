@@ -1,3 +1,5 @@
+import { FIELD_NOT_HOLLOW } from './../../users/contants/message';
+import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
 import { CompanyEntity } from 'src/company/entities/company.entity';
 import { plainToClass } from 'class-transformer';
 import { ContestEntity } from './../entities/contest.entity';
@@ -10,7 +12,7 @@ import { Validate } from 'src/common/class/validate.entity';
 import { CompanyService } from 'src/company/services/company.service';
 import * as fs from 'fs';
 import { Response } from 'express';
-import { ADD_CONTEST_SUCCES, ADM_MESSAGE, COMPANY_ERROR, CONTEST_EXISTING, GET_LIST_CONTEST_SUCCESS } from '../contants/contants';
+import { ADD_CONTEST_SUCCES, ADM_MESSAGE, COMPANY_ERROR, CONTEST_EXISTING, GET_DETAILS_SUCESS, GET_LIST_CONTEST_SUCCESS, NOT_DATA, UPDATE_SUCCESS } from '../contants/contants';
 import { ContestRecomendEntity } from '../entities/ContestRecomend.entity';
 import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
 
@@ -76,7 +78,7 @@ export class ContestService {
           let newCoRem = await this.contestRemEntity.save(infoRem)
           if(newCoRem){
             
-            newContest.contestRem = newCoRem
+            newContest.coRem = newCoRem
             await this.contentEntity.save(newContest)
 
           }else{
@@ -162,29 +164,74 @@ export class ContestService {
 
   }
 
-  async update(id: string, updateContestDto: UpdateContestDto , userChange) {
+  async update(id: string, updateContestDto: UpdateContestDto , userChange : string , res :Response, file? :Express.Multer.File) {
 
-    try{
+    let checkContest = await this.contentEntity.findOneBy({
+      id : id
+    })
+    let flag = true
+    if(!checkContest)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : CONTEST_NOT_FOUND
+    })
 
-      let checkContest = await this.validateContest({id : id})
+    if(!updateContestDto)
+    return res.status(HttpStatus.BAD_REQUEST).json({
+      message : NOT_DATA
+    })
+    Object.values(updateContestDto).some(val =>{
 
-      if(!checkContest) return "Contest not existing"
-
-      else{
-
-        updateContestDto.historyCreate = userChange
-        checkContest = {...checkContest , ... updateContestDto}
-        this.contentEntity.save(checkContest) 
-        return checkContest
-
+      if(val === ''){
+        flag = false
       }
 
-    }catch(e){
+    })
 
-      if(e) console.log(e);
-      
+    if(!flag)
+    return res.status(HttpStatus.BAD_REQUEST).json({
+      message : FIELD_NOT_HOLLOW
+    })
+
+  
+
+    if(updateContestDto.descs || updateContestDto.slogan){
+
+      let coRem = await this.contentEntity.createQueryBuilder('co').leftJoin('co.coRem' , 'coRem').select('coRem.id').execute()
+      let coRemId : string;
+      if(coRem.length > 0){
+        coRemId = coRem[0].coRem_id
+      }
+      let data = {
+
+      }
+      if(updateContestDto.descs){
+        data['descs'] = updateContestDto.descs
+      }
+      if(updateContestDto.slogan){
+        data['slogan'] = updateContestDto.slogan
+      }
+
+      await this.contestRemEntity.update(coRemId , data)
+    }
+    let data = {
+
+    }
+    Object.keys(updateContestDto).some(key =>{
+
+      if(key !== 'descs' &&  key != "slogan"){
+        data[key] = updateContestDto[key]
+      }
+
+    })
+    if(file){
+      data['background'] = this.saveImage(file)
     }
 
+    await this.contentEntity.update(id , data)
+
+    return res.status(HttpStatus.OK).json({
+      message : UPDATE_SUCCESS
+    })
   }
 
 
@@ -299,4 +346,27 @@ export class ContestService {
     return fileSave;
   }
 
+
+  async getDetailsContest (id : string , res : Response){ 
+
+    let contest = 
+    await this.contentEntity.createQueryBuilder('co')
+    .leftJoin('co.coRem' , 'corem')
+    .select([ 'name','address' , 'email' , 'background','slogan' , 'descs'])
+    .where({
+      id : id
+    }).execute()
+    console.log(contest);
+    
+    if(!contest)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : CONTEST_NOT_FOUND
+    })
+
+    return res.status(HttpStatus.OK).json({
+      contest : contest[0]
+    })
+    
+    
+  } 
 }

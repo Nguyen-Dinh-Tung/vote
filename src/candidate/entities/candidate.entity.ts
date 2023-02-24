@@ -14,5 +14,5 @@ export class CandidateEntity extends InheriTance{
 
     @OneToOne(() => candidateRecomendEntity , (rem) => rem.id)
     @JoinColumn()
-    candidateRem : candidateRecomendEntity ;
+    caRem : candidateRecomendEntity ;
 }

@@ -6,8 +6,6 @@ const imgType =  ['jpeg', 'jpg', 'png']
 export class ImagePipe implements PipeTransform{
     transform(value? : any , metadata? : ArgumentMetadata){
         let file = value
-        console.log(file);
-        
         if(file){
             let type : string = file.mimetype.split('/')[1] ;
             if(!imgType.includes(type))

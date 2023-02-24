@@ -55,14 +55,30 @@ export class ContestController {
 
   @RolesCheck([...Object.values(Roles)])
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contestService.findOne(id);
+  findOne(@Param('id') id: string , @Res() res : Response) {
+    return this.contestService.getDetailsContest(id , res);
   }
 
   @RolesCheck([Roles.admin , Roles.marketing])
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContestDto: UpdateContestDto , @Headers() headers : any) {
-    return this.contestService.update(id, updateContestDto , getUserByReq(headers));
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  update(
+  @Param('id') id: string,
+  @Body() updateContestDto: UpdateContestDto ,
+  @UserByToken() userChange : string , 
+  @Res() res : Response,
+  @UploadedFile() file? : Express.Multer.File ) {
+
+    try{
+
+    return this.contestService.update(id, updateContestDto , userChange ,res, file);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
 

@@ -62,6 +62,7 @@ import { AssmCompanyEntity } from './assignment-company/entities/assignment-comp
       ContestRecomendEntity , CompanyRecomend
     ],
       synchronize: true,
+      logging : true
     }),
     AssignmentContestModule,
     AssignmentCompanyModule,

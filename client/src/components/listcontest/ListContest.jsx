@@ -11,6 +11,7 @@ import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
 import Dialog from '../dialog/DialogControler';
 import DialogControler from '../dialog/DialogControler';
+import FormEditContest from '../form-edit-contest/FormEditContest';
 function ListContest(props) {
 
     const urlGetListContest = `/contest` ;
@@ -20,6 +21,7 @@ function ListContest(props) {
     const [notifyFunc] = useNotifyFunc()  ;
     const [list , setList] = useState() ;
     const [contest , setContest] = useState() ;
+
     const reRender = props.reRender
 
 
@@ -80,7 +82,7 @@ function ListContest(props) {
                     : ''}
                 </tbody>
             </table>
-            {open && open ? <DialogControler handleReRender={handleReRender} handleGetData={handleGetData} handleSubmit={handleSubmit}/> : ''}
+            {open && open ? <FormEditContest/> : ''}
                     
         </div>
     );

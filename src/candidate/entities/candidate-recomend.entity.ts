@@ -12,7 +12,7 @@ export class candidateRecomendEntity{
     @Column()
     slogan : string ;
     @Column()
-    desc : string ;
+    descs : string ;
     @Column({
         default : true
     })
