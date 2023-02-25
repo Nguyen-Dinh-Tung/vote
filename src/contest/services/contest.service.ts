@@ -140,7 +140,7 @@ export class ContestService {
     , 'co.background as background' , 'descs' , 'slogan' 
     , 'co.isActive as isActive' ,
       'cp.name as company'
-  ])
+    ])
     .getRawMany()
     
     return res.status(HttpStatus.OK).json({
@@ -206,6 +206,7 @@ export class ContestService {
       if(updateContestDto.slogan){
         data['slogan'] = updateContestDto.slogan
       }
+        console.log(data);
         
       await this.contestRemEntity.update(coRemId , data)
     }
@@ -383,11 +384,20 @@ export class ContestService {
     let contest = 
     await this.contentEntity.createQueryBuilder('co')
     .leftJoin('co.coRem' , 'corem')
-    .select([ 'name', 'co.isActive as isActive','address' , 'email' , 'background','slogan' , 'descs'])
+    .leftJoin(AssmCompanyEntity , 'ascp', 'co.id = ascp.contestId' )
+    .leftJoin('ascp.company' , 'cp')
+    .select([ 
+    'co.name as name', 'co.isActive as isActive',
+    'co.address as  address' , 'co.email as email' , 
+    'co.background as background',
+    'slogan' , 'descs',
+    'cp.name as company'
+  ])
     .where({
       id : id
-    }).execute()
+    }).getRawOne()
     console.log(contest);
+    
     
     if(!contest)
     return res.status(HttpStatus.NOT_FOUND).json({
@@ -395,7 +405,7 @@ export class ContestService {
     })
 
     return res.status(HttpStatus.OK).json({
-      contest : contest[0]
+      contest : contest
     })
     
     
