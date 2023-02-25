@@ -1,0 +1,10 @@
+.option-edit-contest{
+    display: flex;
+    justify-content: center;
+}
+
+.active-contest{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}

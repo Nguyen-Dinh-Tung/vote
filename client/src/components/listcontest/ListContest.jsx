@@ -16,24 +16,16 @@ function ListContest(props) {
 
     const urlGetListContest = `/contest` ;
     const open = useSelector(state => state.show.dialogEdit) ;
-    const handleReRender = props.handleReRender
     const dispatch = useDispatch()
     const [notifyFunc] = useNotifyFunc()  ;
     const [list , setList] = useState() ;
     const [contest , setContest] = useState() ;
-
+    const [render , setRerender] = useState()
     const reRender = props.reRender
 
-
-    const handleGetData = (e) =>{
-        setContest({...contest , [e.target.name] : e.target.value})
+    const handleReRender = ()=>{
+        setRerender(Date.now())
     }
-
-    const handleSubmit = ()=>{
-        console.log(contest);
-    }
-
-
     const setTing = () =>{
         dispatch(setDialogEdit(true))
     }
@@ -45,13 +37,17 @@ function ListContest(props) {
         ApiBase.get(urlGetListContest)
         .then(res =>{
             console.log(res);
-            setList(res.data.listContest)
+            let listContest = res.data.listContest.sort((a,b) =>{
+                return Number(b.isActive) -  Number(a.isActive)
+            })
+            console.log(res.data.listContest);
+            setList(listContest)
         })
         .catch(e =>{
             if(e.response.status == 403)
             notifyFunc(ERROR , FORBIDDEN , TRUE)
         })
-    },[reRender])
+    },[reRender , render])
 
     return (
         <div className='table-user'>
@@ -69,7 +65,12 @@ function ListContest(props) {
                 <tbody>
                     {list && list.length >0 ? 
                     list.map((e , index) =>{
-                        return <tr className='tr-list-user' >
+                        return <tr className='tr-list-user' 
+                        style={{
+                            backgroundColor : e && e.isActive ? '' : "#374151",
+                            color : e && e.isActive ? '' : "white"
+                        }}
+                        >
                             <td>{e && e.name}</td>
                             <td>{e && e.email}</td>
                             <td>{e && e.address}</td>
@@ -82,7 +83,7 @@ function ListContest(props) {
                     : ''}
                 </tbody>
             </table>
-            {open && open ? <FormEditContest/> : ''}
+            {open && open ? <FormEditContest handleReRender={handleReRender}/> : ''}
                     
         </div>
     );

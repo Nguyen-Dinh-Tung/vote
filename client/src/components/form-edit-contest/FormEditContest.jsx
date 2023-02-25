@@ -2,7 +2,7 @@ import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/
 import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ApiBase } from '../../api/api.base';
+import { ApiBase, host } from '../../api/api.base';
 import { EDIT_CONTEST } from '../../contants/field.desc';
 import { NOT_CHANGE } from '../../contants/notify/message';
 import { EMAIL_REGEX, FIELD_NOT_HOLLOW, IMG_VALIDATE } from '../../contants/notify/notify.register';
@@ -12,7 +12,7 @@ import useNotifyFunc from '../../hooks/notify.func';
 import { setDialogEdit } from '../../redux/features/show.slice';
 import { regexEmail } from '../../regex/userInfo.regex';
 import isValidPhoto from '../../validate/img.validate';
-import AlertComponents from '../alert/Alert'
+import './index.css'
 function FormEditContest(props) {
     const [contest , setContest] = useState() ;
     const [update , setUpdate] = useState()
@@ -31,7 +31,7 @@ function FormEditContest(props) {
     const urlUpdateContest = `/contest/${id && id}`
 
     const handleChange = (e) =>{
-      if(e.target.name == "background"){
+      if(e.target.name == "file"){
         let file = e.target.files[0] 
         if(file){
             if(!isValidPhoto(file.type)){
@@ -41,15 +41,22 @@ function FormEditContest(props) {
             }
             let ObjectUrl = URL.createObjectURL(file)
             setAvatar(ObjectUrl)
+            setUpdate({...contest , [e.target.name] :  e.target.files[0]})
         }
+      }else{
+
       setContest({...contest , [e.target.name] : e.target.value})
       setUpdate({...update , [e.target.name] : e.target.value})
 
       }
-      setContest({...contest , [e.target.name] : e.target.value})
-      setUpdate({...update , [e.target.name] : e.target.value})
-    }
 
+      if(e.target.name === 'isActive'){
+        setContest({...contest , isActive : e.target.checked})
+        setUpdate({...contest , isActive : e.target.checked})
+      }
+      
+    }
+    console.log(update);
     const handleSubmit = () =>{
       let flag = true ;
       if(!update){
@@ -58,7 +65,7 @@ function FormEditContest(props) {
       }
       
       Object.values(update).some(val =>{
-        if(val == ''){
+        if(val === ''){
           flag = false
         }
       })
@@ -84,13 +91,17 @@ function FormEditContest(props) {
           notifiFunc(SUCCESS , res.data.message ,TRUE)
           document.querySelector('#background').reset()
           handleReRender()
+          dispatch(setDialogEdit(false))
           return
+        }else{
+          notifiFunc(ERROR , res.data.message , TRUE)
+
         }
       })
       .catch(e =>{
 
         if(e) {
-          notifiFunc(ERROR , e.response.data.message , TRUE)
+          console.log(e);
         }
       })
     }
@@ -101,15 +112,24 @@ function FormEditContest(props) {
 
     useEffect(() =>{
         const urlGetDetailsContest = `/contest/${id}`
+        const urlGetListCompany = '/company'
         ApiBase.get(urlGetDetailsContest)
         .then(res =>{
-            console.log(res);
+          console.log(res);
             setContest(res.data.contest)
+            setAvatar(res.data.contest.background)
         })
         .catch(e =>{
 
             if(e) console.log(e);
 
+        })
+        ApiBase.get(urlGetListCompany)
+        .then(res =>{
+          setCompany(res.data)
+        })
+        .catch(e =>{
+          if(e) console.log(e);
         })
     },[])
 
@@ -166,14 +186,26 @@ function FormEditContest(props) {
                 <input  onChange={handleChange} className="info-register" 
                 id={'avatar'}
                 type={'file'} 
-                name='background'
+                name='file'
                 accept='image/*'
                 />
+                <div className="option-edit-contest">
+                <select name="idCompany" id="select-status" onChange={handleChange} >
+                        <option value="-1">Ban tổ chức</option>
+                        {company && company.map((e , index) =>{
+                            return <option  value={e.id}>{e.name}</option>
+                        })}
+                  </select>
+                  <div className="active-contest">
+                  <label htmlFor="isActive">Trạng thái</label>
+                  <input id='isActive' type="checkbox" onChange={handleChange} name='isActive' checked={contest && contest.isActive == true ? true : false} />
+                  </div>
+                </div>
                 </form>
                 <div className="avatar-demo" >
                 <Avatar
                     alt="Remy Sharp"
-                    src={avatar && avatar}
+                    src={avatar && host+ avatar}
                     sx={{ width: 56, height: 56 }}
                 />
 

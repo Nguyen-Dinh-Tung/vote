@@ -13,3 +13,5 @@ export enum MessageUpdate {
     PASSWORD_DUPLICATE = "Mật khẩu cũ và mật khẩu mới không được giống nhau ! "
 }
 export const FORBIDDEN = "Bạn không có quyền thực hiện thao tác này !"
+
+export const SERVE_ERROR = "Server lỗi vui lòng liên hệ quản trị viên !"

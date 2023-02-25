@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { CompanyEntity } from 'src/company/entities/company.entity';
 import { CreateContestDto } from './create-contest.dto';
 
@@ -16,7 +16,7 @@ export class UpdateContestDto{
     email? : string ;
     @IsOptional()
     @IsString()
-    idcompany? : string ;
+    idCompany? : string ;
     @IsOptional()
     @IsString()
     slogan? : string ;
@@ -26,4 +26,6 @@ export class UpdateContestDto{
     @IsOptional()
     @IsString()
     background? : string ;
+    @IsOptional()
+    isActive? : boolean
 }

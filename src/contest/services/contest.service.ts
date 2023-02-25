@@ -1,5 +1,6 @@
+import { SERVE_ERROR } from './../../common/constant/message';
 import { FIELD_NOT_HOLLOW } from './../../users/contants/message';
-import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
+import { CONTEST_NOT_FOUND, COMPANY_NOT_EXIST } from './../../assignment-company/contants/contant';
 import { CompanyEntity } from 'src/company/entities/company.entity';
 import { plainToClass } from 'class-transformer';
 import { ContestEntity } from './../entities/contest.entity';
@@ -22,6 +23,7 @@ export class ContestService {
   @InjectRepository(ContestEntity) private readonly contentEntity : Repository<ContestEntity> ,
   @InjectRepository(ContestRecomendEntity) private readonly contestRemEntity : Repository<ContestRecomendEntity> ,
   @InjectRepository(AssmCompanyEntity) private readonly assmCompanyEntity : Repository<AssmCompanyEntity> ,
+  @InjectRepository(CompanyEntity) private readonly companyEntity : Repository<CompanyEntity> ,
   private readonly companyService : CompanyService ,
   ){
 
@@ -128,28 +130,22 @@ export class ContestService {
 
   async findAll(res : Response) {
 
-    let listContest = await this.contentEntity.find()
-    
-    let listRes = []
-
-    for(let e of listContest){
-      let assmCp = await this.assmCompanyEntity.findOne({
-        where : {
-          contest : e
-        } ,
-        relations : {
-          company : true
-        }
-      })
-
-      e['company'] = assmCp.company.name
-      listRes.push(e)
-    }
-
+    let listContest = await this.contentEntity.createQueryBuilder('co')
+    .leftJoin('co.coRem' , 'corem')
+    .leftJoin(AssmCompanyEntity , 'ascp' , 'co.id = ascp.contestId')
+    .leftJoin('ascp.company' , 'cp')
+    .select([ 
+    'co.id as id','co.name as name' , 
+    'co.address as address' , 'co.email as email' 
+    , 'co.background as background' , 'descs' , 'slogan' 
+    , 'co.isActive as isActive' ,
+      'cp.name as company'
+  ])
+    .getRawMany()
     
     return res.status(HttpStatus.OK).json({
       message : GET_LIST_CONTEST_SUCCESS ,
-      listContest : listRes
+      listContest : listContest
     })
 
 
@@ -165,7 +161,7 @@ export class ContestService {
   }
 
   async update(id: string, updateContestDto: UpdateContestDto , userChange : string , res :Response, file? :Express.Multer.File) {
-
+    
     let checkContest = await this.contentEntity.findOneBy({
       id : id
     })
@@ -210,15 +206,48 @@ export class ContestService {
       if(updateContestDto.slogan){
         data['slogan'] = updateContestDto.slogan
       }
-
+        
       await this.contestRemEntity.update(coRemId , data)
     }
+
+
+    if(updateContestDto.idCompany){
+      
+      let assmCp = await this.assmCompanyEntity.findOne({
+        where :{
+          contest : checkContest
+        }
+      })
+
+      if(assmCp){
+        let updateCp = await this.companyEntity.findOne({
+          where : {
+            id : updateContestDto.idCompany
+          }
+        })
+        if(!updateCp)
+        return res.status(HttpStatus.NOT_FOUND).json({
+          message : COMPANY_NOT_EXIST
+        })
+
+
+        assmCp.company = updateCp
+        await this.assmCompanyEntity.save(assmCp)
+      }else{
+        return res.status(HttpStatus.BAD_GATEWAY).json({
+          message : SERVE_ERROR
+        })
+      }
+    }
+
     let data = {
 
     }
+    
+
     Object.keys(updateContestDto).some(key =>{
 
-      if(key !== 'descs' &&  key != "slogan"){
+      if(key !== 'descs' &&  key != "slogan" &&  key != "idCompany"){
         data[key] = updateContestDto[key]
       }
 
@@ -226,6 +255,8 @@ export class ContestService {
     if(file){
       data['background'] = this.saveImage(file)
     }
+    
+
 
     await this.contentEntity.update(id , data)
 
@@ -352,7 +383,7 @@ export class ContestService {
     let contest = 
     await this.contentEntity.createQueryBuilder('co')
     .leftJoin('co.coRem' , 'corem')
-    .select([ 'name','address' , 'email' , 'background','slogan' , 'descs'])
+    .select([ 'name', 'co.isActive as isActive','address' , 'email' , 'background','slogan' , 'descs'])
     .where({
       id : id
     }).execute()

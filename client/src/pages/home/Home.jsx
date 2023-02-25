@@ -106,10 +106,10 @@ function Home(props) {
                 <div className="content-home">
                 {show && show ===  listView[0]  ? <UserForm handleReRender={handleReRender}/> : ''}
                 {show && show === listView[1] ? <ListUser reRender={reRender} handleReRender={handleReRender}/> : ''}
-                {show && show === listView[2] ? <FormCandidate/> : ''}
-                {show && show === listView[3] ? <FormContest/> : ''}
-                {show && show === listView[4] ? <ListContest/> : ''}
-                {show && show === listView[5] ? <ListCandidate/> : ''}
+                {show && show === listView[2] ? <FormCandidate handleReRender={handleReRender}/> : ''}
+                {show && show === listView[3] ? <FormContest handleReRender={handleReRender}/> : ''}
+                {show && show === listView[4] ? <ListContest handleReRender={handleReRender}/> : ''}
+                {show && show === listView[5] ? <ListCandidate handleReRender={handleReRender}/> : ''}
                 <AlertComponents/>
                 </div>
             </div>

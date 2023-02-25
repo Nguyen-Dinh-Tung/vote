@@ -68,7 +68,7 @@ export class ContestController {
   @Body() updateContestDto: UpdateContestDto ,
   @UserByToken() userChange : string , 
   @Res() res : Response,
-  @UploadedFile() file? : Express.Multer.File ) {
+  @UploadedFile('file',new ImagePipe()) file? : Express.Multer.File ) {
 
     try{
 
