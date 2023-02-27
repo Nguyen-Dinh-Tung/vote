@@ -56,7 +56,6 @@ function FormEditContest(props) {
       }
       
     }
-    console.log(update);
     const handleSubmit = () =>{
       let flag = true ;
       if(!update){
@@ -86,7 +85,6 @@ function FormEditContest(props) {
       ApiBase.patch(urlUpdateContest , form)
       .then(res =>{
         if(res.status === 200){
-          console.log(res);
           setUpdate(undefined)
           notifiFunc(SUCCESS , res.data.message ,TRUE)
           document.querySelector('#background').reset()
@@ -115,9 +113,7 @@ function FormEditContest(props) {
         const urlGetListCompany = '/company'
         ApiBase.get(urlGetDetailsContest)
         .then(res =>{
-          console.log(res);
             setContest(res.data.contest)
-            setAvatar(res.data.contest.background)
         })
         .catch(e =>{
 
@@ -191,7 +187,7 @@ function FormEditContest(props) {
                 />
                 <div className="option-edit-contest">
                 <select name="idCompany" id="select-status" onChange={handleChange} >
-                        <option value="-1">Ban tổ chức</option>
+                        <option >Ban tổ chức</option>
                         {company && company.map((e , index) =>{
                             return <option  value={e.id}>{e.name}</option>
                         })}
@@ -205,7 +201,7 @@ function FormEditContest(props) {
                 <div className="avatar-demo" >
                 <Avatar
                     alt="Remy Sharp"
-                    src={avatar && host+ avatar}
+                    src={avatar && host+ avatar ? avatar : contest &&  contest.background ?host +  contest.background : '' }
                     sx={{ width: 56, height: 56 }}
                 />
 

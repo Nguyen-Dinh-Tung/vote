@@ -27,5 +27,5 @@ export class UpdateContestDto{
     @IsString()
     background? : string ;
     @IsOptional()
-    isActive? : boolean
+    isActive : boolean
 }

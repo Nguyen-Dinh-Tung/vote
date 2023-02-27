@@ -6,3 +6,5 @@ export const GET_LIST_CONTEST_SUCCESS = "Lấy danh sách thành công !"
 export const GET_DETAILS_SUCESS = 'Lấy thông tin cuộc thi thành công !'
 export const NOT_DATA = "Không có dữ liệu !"
 export const UPDATE_SUCCESS = "Cập nhật cuộc thi thành công !"
+export const CO_REM_NOT_EXIST : string =  "Lỗi giới thiệu cuộc thi vui lòng liên hệ admin !"
+export const ASSCP_NOT_FOUND : string = "Lỗi quản lý cuộc thi vui lòng liên hệ admin !"

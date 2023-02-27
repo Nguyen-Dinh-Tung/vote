@@ -1,24 +1,10 @@
 import jwtDecode from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import AlertComponents from '../../components/alert/Alert';
-import FormCandidate from '../../components/formcandidate/FormCandidate';
-import FormContest from '../../components/formcontest/FormContest';
-import ListCandidate from '../../components/listcandidate/ListCandidate';
-import ListContest from '../../components/listcontest/ListContest';
-import ListUser from '../../components/listuser/ListUser';
-import UserForm from '../../components/userform/UserForm';
 import { BTN_LOG_OUT } from '../../contants/btn';
 import { LOGO } from '../login/intro';
 import './index.css' ;
-const listView = [
-    'form-user' ,
-    'list-user',
-    'form-candidate',
-    'form-contest',
-    'list-contest',
-    'list-candidate',
-]
 function Home(props) {
     let token = localStorage.getItem('token');
     const navigate = useNavigate() ;
@@ -35,32 +21,27 @@ function Home(props) {
         navigate('/auth/login')
     }
     const showUserForm = () =>{
-        setShow(listView[0])
+        navigate('/new-users')
     }
     const showListUser = () =>{
-        setShow(listView[1])
-        setReRender(Date.now())
+        navigate('/users')
     }
 
-    const showCandidate = () =>{
-        setShow(listView[2])
-    }
+
     const showContest = () =>{
-        setShow(listView[3])
+        navigate('/new-contest')
     }
     
     const showListContest = () =>{
-        console.log('check');
-        setShow(listView[4])
+        navigate('/contests')
     }
 
     const showListCandidate = () =>{
-        setShow(listView[5])
+        navigate('/candidates')
     }
+    const showCandidate = () =>{
+        navigate('/new-candidate')
 
-
-    const handleReRender = () =>{
-        setReRender(Date.now())
     }
 
     useEffect(() =>{
@@ -68,6 +49,8 @@ function Home(props) {
             navigate('/auth/login')
         }
     },[token])
+
+    
     if(token){
         return (
             <div className='container-home'>
@@ -104,12 +87,7 @@ function Home(props) {
                     </div>
                 </div>
                 <div className="content-home">
-                {show && show ===  listView[0]  ? <UserForm handleReRender={handleReRender}/> : ''}
-                {show && show === listView[1] ? <ListUser reRender={reRender} handleReRender={handleReRender}/> : ''}
-                {show && show === listView[2] ? <FormCandidate handleReRender={handleReRender}/> : ''}
-                {show && show === listView[3] ? <FormContest handleReRender={handleReRender}/> : ''}
-                {show && show === listView[4] ? <ListContest handleReRender={handleReRender}/> : ''}
-                {show && show === listView[5] ? <ListCandidate handleReRender={handleReRender}/> : ''}
+                <Outlet/>
                 <AlertComponents/>
                 </div>
             </div>

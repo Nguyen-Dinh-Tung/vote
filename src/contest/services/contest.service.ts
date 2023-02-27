@@ -1,6 +1,6 @@
 import { SERVE_ERROR } from './../../common/constant/message';
 import { FIELD_NOT_HOLLOW } from './../../users/contants/message';
-import { CONTEST_NOT_FOUND, COMPANY_NOT_EXIST } from './../../assignment-company/contants/contant';
+import { CONTEST_NOT_FOUND, COMPANY_NOT_EXIST, COMPANY_NOT_ACTIVE } from './../../assignment-company/contants/contant';
 import { CompanyEntity } from 'src/company/entities/company.entity';
 import { plainToClass } from 'class-transformer';
 import { ContestEntity } from './../entities/contest.entity';
@@ -13,7 +13,7 @@ import { Validate } from 'src/common/class/validate.entity';
 import { CompanyService } from 'src/company/services/company.service';
 import * as fs from 'fs';
 import { Response } from 'express';
-import { ADD_CONTEST_SUCCES, ADM_MESSAGE, COMPANY_ERROR, CONTEST_EXISTING, GET_DETAILS_SUCESS, GET_LIST_CONTEST_SUCCESS, NOT_DATA, UPDATE_SUCCESS } from '../contants/contants';
+import { ADD_CONTEST_SUCCES, ADM_MESSAGE, ASSCP_NOT_FOUND, COMPANY_ERROR, CONTEST_EXISTING, CO_REM_NOT_EXIST, GET_DETAILS_SUCESS, GET_LIST_CONTEST_SUCCESS, NOT_DATA, UPDATE_SUCCESS } from '../contants/contants';
 import { ContestRecomendEntity } from '../entities/ContestRecomend.entity';
 import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
 
@@ -160,59 +160,62 @@ export class ContestService {
 
   }
 
-  async update(id: string, updateContestDto: UpdateContestDto , userChange : string , res :Response, file? :Express.Multer.File) {
+  async   update(id: string, updateContestDto: UpdateContestDto , userChange : string , res :Response, file? :Express.Multer.File) {
     
-    let checkContest = await this.contentEntity.findOneBy({
+    let checkContest = await this.contentEntity.findOne({
+      where : {
       id : id
+      },
+      relations : {
+        coRem : true
+      }
     })
-    let flag = true
+
     if(!checkContest)
     return res.status(HttpStatus.NOT_FOUND).json({
       message : CONTEST_NOT_FOUND
     })
 
-    if(!updateContestDto)
-    return res.status(HttpStatus.BAD_REQUEST).json({
-      message : NOT_DATA
-    })
-    Object.values(updateContestDto).some(val =>{
 
-      if(val === ''){
-        flag = false
-      }
-
-    })
-
-    if(!flag)
-    return res.status(HttpStatus.BAD_REQUEST).json({
-      message : FIELD_NOT_HOLLOW
-    })
-
-  
-
-    if(updateContestDto.descs || updateContestDto.slogan){
-
-      let coRem = await this.contentEntity.createQueryBuilder('co').leftJoin('co.coRem' , 'coRem').select('coRem.id').execute()
-      let coRemId : string;
-      if(coRem.length > 0){
-        coRemId = coRem[0].coRem_id
-      }
-      let data = {
-
-      }
-      if(updateContestDto.descs){
-        data['descs'] = updateContestDto.descs
-      }
-      if(updateContestDto.slogan){
-        data['slogan'] = updateContestDto.slogan
-      }
-        console.log(data);
-        
-      await this.contestRemEntity.update(coRemId , data)
+    if(!updateContestDto && !file){
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message : NOT_DATA
+      })
     }
 
+    let coUpdate = {
+      name : updateContestDto.name,
+      address : updateContestDto.address,
+      email : updateContestDto.email,
+      isActive : updateContestDto.isActive
+    }
 
-    if(updateContestDto.idCompany){
+    let coRem = {
+      slogan : updateContestDto.slogan,
+      descs : updateContestDto.descs,
+    }
+
+    let idNewCp = updateContestDto.idCompany ;
+    let checkCompany : CompanyEntity ;
+
+    if(idNewCp){
+      checkCompany = await this.companyEntity.findOne({
+        where : {
+          id : idNewCp
+        }
+      })
+      if(!checkCompany){
+        return res.status(HttpStatus.NOT_FOUND).json({
+          message : COMPANY_NOT_EXIST
+        })
+      }
+      if(!checkCompany.isActive){
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          message : COMPANY_NOT_ACTIVE
+        })
+      }
+    }
+    if(checkCompany){
       
       let assmCp = await this.assmCompanyEntity.findOne({
         where :{
@@ -220,12 +223,20 @@ export class ContestService {
         }
       })
 
+
+      if(!assmCp){
+        return res.status(HttpStatus.BAD_GATEWAY).json({
+          message : ASSCP_NOT_FOUND
+        })
+      }
+
       if(assmCp){
         let updateCp = await this.companyEntity.findOne({
           where : {
             id : updateContestDto.idCompany
           }
         })
+
         if(!updateCp)
         return res.status(HttpStatus.NOT_FOUND).json({
           message : COMPANY_NOT_EXIST
@@ -234,36 +245,51 @@ export class ContestService {
 
         assmCp.company = updateCp
         await this.assmCompanyEntity.save(assmCp)
-      }else{
-        return res.status(HttpStatus.BAD_GATEWAY).json({
-          message : SERVE_ERROR
-        })
+
       }
     }
 
-    let data = {
-
+    if(coRem.descs || coRem.slogan){
+      let corem = await this.contestRemEntity.findOne({
+        where : {
+        id : checkContest.coRem.id
+        }
+      })
+      Object.keys(coRem).some(key =>{
+        if(coRem[key]){
+          corem[key] = coRem[key]
+        }
+      })
+      
+      await this.contestRemEntity.save(corem)
     }
-    
 
-    Object.keys(updateContestDto).some(key =>{
+    let flagContest = false
 
-      if(key !== 'descs' &&  key != "slogan" &&  key != "idCompany"){
-        data[key] = updateContestDto[key]
+    Object.keys(coUpdate).some(key =>{
+      if(coUpdate[key] !== '' && coUpdate[key] !== undefined){
+        flagContest = true
+        checkContest[key] = coUpdate[key]
       }
-
     })
+
     if(file){
-      data['background'] = this.saveImage(file)
+      checkContest['background'] = this.saveImage(file)
+      flagContest =  true ;
     }
     
-
-
-    await this.contentEntity.update(id , data)
-
+    
+    if(flagContest){
+      await this.contentEntity.save(checkContest)
+    }
+    
+    
     return res.status(HttpStatus.OK).json({
       message : UPDATE_SUCCESS
     })
+
+
+
   }
 
 
@@ -274,6 +300,7 @@ export class ContestService {
       let checkContest = await this.validateContest({id:id})
 
       if(!checkContest) return "Contest not existing" 
+      
       else{
         
         if(checkContest.isActive == false) return "Contest was stop"
@@ -346,7 +373,6 @@ export class ContestService {
       ...data ,
       background : fileSave
     }    
-    console.log(newData);
     
     let checkContest = await this.validateContest({email : newData.email})
 
@@ -396,8 +422,6 @@ export class ContestService {
     .where({
       id : id
     }).getRawOne()
-    console.log(contest);
-    
     
     if(!contest)
     return res.status(HttpStatus.NOT_FOUND).json({

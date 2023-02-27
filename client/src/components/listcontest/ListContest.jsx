@@ -21,7 +21,6 @@ function ListContest(props) {
     const [list , setList] = useState() ;
     const [contest , setContest] = useState() ;
     const [render , setRerender] = useState()
-    const reRender = props.reRender
 
     const handleReRender = ()=>{
         setRerender(Date.now())
@@ -36,18 +35,17 @@ function ListContest(props) {
     useEffect(() =>{
         ApiBase.get(urlGetListContest)
         .then(res =>{
-            console.log(res);
+            console.log(res , 'res list conets');
             let listContest = res.data.listContest.sort((a,b) =>{
                 return Number(b.isActive) -  Number(a.isActive)
             })
-            console.log(res.data.listContest);
             setList(listContest)
         })
         .catch(e =>{
             if(e.response.status == 403)
             notifyFunc(ERROR , FORBIDDEN , TRUE)
         })
-    },[reRender , render])
+    },[render])
 
     return (
         <div className='table-user'>

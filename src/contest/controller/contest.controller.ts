@@ -11,6 +11,7 @@ import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive
 import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { Response } from 'express';
+import { ParserBoolean } from '../pipe/ParserBoolean.pipe';
 
 
 @Controller('contest')
@@ -65,7 +66,7 @@ export class ContestController {
   @UseInterceptors(FileInterceptor('file'))
   update(
   @Param('id') id: string,
-  @Body() updateContestDto: UpdateContestDto ,
+  @Body(new ParserBoolean()) updateContestDto: UpdateContestDto ,
   @UserByToken() userChange : string , 
   @Res() res : Response,
   @UploadedFile('file',new ImagePipe()) file? : Express.Multer.File ) {
