@@ -223,7 +223,6 @@ export class ContestService {
         }
       })
 
-
       if(!assmCp){
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message : ASSCP_NOT_FOUND

@@ -1,3 +1,4 @@
+import { ContestEntity } from './../contest/entities/contest.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module, forwardRef } from '@nestjs/common';
 import { CandidateService } from './services/candidate.service';
@@ -7,9 +8,17 @@ import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { UsersModule } from 'src/users/users.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { candidateRecomendEntity } from './entities/candidate-recomend.entity';
+import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([CandidateEntity , TicketEntity , candidateRecomendEntity]) , forwardRef(() => UsersModule) , MulterModule.register({
+  imports : [TypeOrmModule.forFeature([
+    CandidateEntity , 
+    TicketEntity , 
+    candidateRecomendEntity , 
+    ContestEntity, 
+    AssmContestEntity]) , 
+    forwardRef(() => UsersModule) , 
+    MulterModule.register({
     dest : '/files/images'
   })] ,
   controllers: [CandidateController],

@@ -135,9 +135,7 @@ function FormContest(props) {
         
 
     }
-    const showLogin = () =>{
-        navigate('/auth/login')
-    }
+
     useEffect(() =>{
         ApiBase.get(urlGetListCompany)
         .then(res =>{

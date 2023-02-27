@@ -140,7 +140,6 @@ function FormEditContest(props) {
           {"Chỉnh sửa thông tin tài khoản "}
         </DialogTitle>
         <DialogContent>
-
                <div className="">
                <label style={{width : '100%'}} htmlFor={contest && contest.name}>Tên cuộc thi</label>
                 <input  onChange={handleChange} className="info-register" 

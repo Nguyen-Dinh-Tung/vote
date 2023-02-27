@@ -14,8 +14,6 @@ import * as dayjs from 'dayjs'
 export class TicketEntity {
     @PrimaryGeneratedColumn('uuid')
     id : string ;
-    @Column()
-    namecontest : string
 
     @ManyToOne(() => CandidateEntity , (ca) => ca.id)
     @JoinColumn()

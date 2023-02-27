@@ -1,14 +1,19 @@
+import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
+import { ContestEntity } from './../../contest/entities/contest.entity';
 import { NotFoundError } from 'rxjs';
 import { CandidateEntity } from './../entities/candidate.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Validate } from 'src/common/class/validate.entity';
 import { Repository } from 'typeorm';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateDto } from '../dto/update-candidate.dto';
-
+import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
 import  * as fs from 'fs'
 import * as dotenv from 'dotenv' 
+import { Response } from 'express';
+import { ADD_CANDIDATE_SUCCESS, CANDIDATE_EXIST } from '../contants/message';
+import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 dotenv.config()
 
 
@@ -16,40 +21,63 @@ dotenv.config()
 export class CandidateService {
 
 
-  constructor(@InjectRepository(CandidateEntity)
-  private readonly cadidateEntity : Repository<CandidateEntity>){}
+  constructor(
+  @InjectRepository(CandidateEntity)private readonly cadidateEntity : Repository<CandidateEntity> ,
+  @InjectRepository(ContestEntity)private readonly contestEntity : Repository<ContestEntity> ,
+  @InjectRepository(AssmContestEntity)private readonly AssmContestEntity : Repository<AssmContestEntity> ,
+  @InjectRepository(TicketEntity)private readonly ticketEntity : Repository<TicketEntity> ,
+  
+  ){}
 
 
-  async create(createCandidateDto: CreateCandidateDto , userByToken : string , file? : Express.Multer.File) {
+  async create(createCandidateDto: CreateCandidateDto , userByToken : string , res : Response , file? : Express.Multer.File) {
 
-    try{
+    let checkCandidate = await this.cadidateEntity.findOne({
+      where : [
+        {idno : createCandidateDto.idContest},
+        {email : createCandidateDto.email}
+      ]
+    })
+    if(checkCandidate)
+    return res.status(HttpStatus.CONFLICT).json({
+      message : CANDIDATE_EXIST
+    })
 
-    let checkCadidate = await this.validateCadidate({idno : createCandidateDto.idno})
-      
-    if(!checkCadidate){
-
-      if(file){
-        createCandidateDto.background = await this.uploadImages(file)
+    let newData = {}
+    Object.keys(createCandidateDto).some(key =>{
+      if(key !== 'idContest'){
+        newData[key] = createCandidateDto[key]
       }
+    })
+    let newCandidate = await this.cadidateEntity.save(newData)
 
-      createCandidateDto.historyCreate = userByToken ;
-      let newCadidate = await this.cadidateEntity.save(createCandidateDto)
-      return newCadidate ;
+    if(createCandidateDto.idContest){
+      let checkContest = await this.contestEntity.findOne({
+        where : {
+          id : createCandidateDto.idContest
+        }
+      })
 
-    }else{
+      if(!checkContest)
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : CONTEST_NOT_FOUND
+      })
+      let newTick = {
+        candidate : newCandidate ,
+      }
+      let newTicket = await this.ticketEntity.save(newTick)
 
-      return "Candidate existing"
-
-    }
-
-    }catch(e){
-
-      if(e) console.log(e);
       
+
+    }{
+
+      return res.status(HttpStatus.CREATED).json({
+        message : ADD_CANDIDATE_SUCCESS ,
+        candidate : newCandidate
+      })
+
     }
-
   }
-
 
   async findAll() {
     let listCadidate = await this.cadidateEntity.find() ;

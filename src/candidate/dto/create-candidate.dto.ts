@@ -31,4 +31,7 @@ export class CreateCandidateDto {
     slogan? : string ;
     @IsNotEmpty()
     idno : string ;
+
+    @IsOptional()
+    idContest : string ;
 }

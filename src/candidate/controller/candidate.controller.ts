@@ -1,3 +1,4 @@
+import { UserByToken } from './../../users/interceptor/TransformAccountHistoryActive.decorator';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
@@ -5,13 +6,14 @@ import { UpdateCandidateDto } from '../dto/update-candidate.dto';
 import { CandidateService } from '../services/candidate.service';
 import { Roles } from 'src/common/enum/role.enum';
 import { UsersService } from 'src/users/services/users.service';
-import { Headers, UploadedFile } from '@nestjs/common/decorators/http/route-params.decorator';
+import { Headers, Res, UploadedFile } from '@nestjs/common/decorators/http/route-params.decorator';
 import getUserByReq from 'src/common/func/getUserByHeaderReq';
 import  * as fs from 'fs'
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as dotenv from 'dotenv' 
 import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
+import { Response } from 'express';
 dotenv.config()
 @Controller('candidate')
 
@@ -26,8 +28,16 @@ export class CandidateController {
   @RolesCheck([Roles.admin ,Roles.content])
   @Post()
   @UseInterceptors(FileInterceptor('file') )
-  create(@Body() createCandidateDto: CreateCandidateDto , @Headers() headers? : any , @UploadedFile() file? : Express.Multer.File) {
-    return this.candidateService.create(createCandidateDto , getUserByReq(headers) , file);
+  create(@Body() createCandidateDto: CreateCandidateDto , @UserByToken() userBytoken : any , @Res() res : Response , @UploadedFile() file? : Express.Multer.File) {
+    try{
+
+    return this.candidateService.create(createCandidateDto , userBytoken , res , file);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([...Object.values(Roles)])
