@@ -29,3 +29,29 @@
 .cursor-pointer{
     cursor: pointer;
 }
+
+#search{
+    width: 300px;
+    height: 40px;
+    margin-left: 2px;
+    padding-left: 4px;
+    margin-bottom: 20px;
+    font-size: 17px;
+}
+.pagani-page{
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px;
+}
+#select-filter{
+    height: 46px;
+    width: 200px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.header-page{
+    display: flex;
+    justify-content: space-between;
+}

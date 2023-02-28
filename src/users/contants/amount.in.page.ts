@@ -1,0 +1,1 @@
+export const amount : number = 8 ;

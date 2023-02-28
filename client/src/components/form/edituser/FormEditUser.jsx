@@ -88,9 +88,8 @@ function FormEditUser(props) {
             </form>
             <div className="select-status">
             <select id='select-status' name="isActive" placeholder='Trạng thái' onChange={handleChange} >
-                <option defaultChecked >Trạng thái</option>
-                <option value={1} >Hoạt động</option>
-                <option value={0} >Dừng</option>
+                <option value={1} selected={user && user.isActive == true ? true : ''} >Hoạt động</option>
+                <option value={0} selected={user && user.isActive == false ? false : ''} >Dừng</option>
             </select>
             </div>
             <div className="a" style={{display : 'flex' , justifyContent : 'center' , marginTop : '20px'}}>

@@ -1,7 +1,7 @@
-import { UploadedFile } from '@nestjs/common/decorators';
+import { Req, UploadedFile } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ParserDataPipe } from './../pipe/ParserData.pipe';
-import {Response} from 'express'
+import {Request, Response} from 'express'
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Roles } from './../../common/enum/role.enum';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
@@ -19,6 +19,7 @@ import { UserByToken } from '../interceptor/TransformAccountHistoryActive.decora
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { ImagePipe } from '../pipe/Image.pipe';
 import { ParseBoolenPipe } from '../pipe/ParseBoolen.pipe';
+import { ParseParamPipe } from '../pipe/ParseParamPipe.pipe';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
@@ -140,5 +141,26 @@ export class UsersController {
   ) {
     
     return "Hello"
+  }
+
+  @Get('/:page?')
+  async searchList(
+    @Req() req : Request ,
+    @Param() param : { page? : number} ,
+    @Query(new ParseParamPipe) query : any ,
+    @Res() res : Response ){
+    
+      console.log(param.page);
+      
+    try {
+      
+      await this.usersService.searchList(query.search , query.isActive , param.page , res)
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    } 
+    
   }
 }

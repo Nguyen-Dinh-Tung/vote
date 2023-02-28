@@ -4,3 +4,7 @@ export const GET_LIST_CANDIDATE_SUCCESS = "Lấy danh sách thi sinh thành côn
 export const GET_DETAIL_CANDIDATE_SUCCESS = "Lấy thông tin thí sinh thành công"
 export const CANDIDATE_NOT_EXIST : string = "Thí sinh không tồn tại trên hệ thống!"
 export const UPDATE_CANDIDATE_SUCCESS : string = "Cập nhật thí sinh thành công !"
+export const SEARCH_SUCCESS : string = "Tìm kiếm thành công !"
+export const SEARCH_KEY_NOT_FOUNT : string = "Từ khóa search tìm kiếm không thành công !"
+export const FILTER_SUCCESS = "Phân loại thí sinh thành công !"
+export const FILTER_FAIL : string = "Trạng thái phân loại không có tại dữ liệu !"

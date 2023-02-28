@@ -1,7 +1,8 @@
+import { NOT_DATA } from './../../contest/contants/contants';
 import { ADDRESS_NOT_FOUND, EMAIL_FORMAT, EMAIL_NOT_FOUND, MESSAGE_FORMAT, NAME_NOT_FOUND, USERNAME_NOT_FORMAT, UPDATE_SUCCESS, FIELD_NOT_HOLLOW, EMAIL_UNIQUE } from './../contants/message';
 import { Response } from 'express';
 import { UserEntity } from './../entities/user.entity';
-import { Header, Injectable, Headers, HttpStatus } from '@nestjs/common';
+import { Header, Injectable, Headers, HttpStatus, Body, Param, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -15,6 +16,8 @@ import { MessageUpdate } from 'src/common/constant/message';
 import { GET_USER, PASSWORD_NOT_FOUND, USER_CREATE, USER_DUBLICATE, USER_NOT_EXISTING_SYSTEM, USER_NOT_FOUND, USER_REMOVE } from '../contants/message';
 import * as fs from 'fs'
 import { regexEmail, regexPassword, regexUsername } from 'src/regex/regex';
+import { amount } from '../contants/amount.in.page';
+import { SEARCH_KEY_NOT_FOUNT, SEARCH_SUCCESS ,GET_LIST_CANDIDATE_SUCCESS, FILTER_SUCCESS, FILTER_FAIL} from 'src/candidate/contants/message';
 @Injectable()
 export class UsersService {
 
@@ -104,7 +107,7 @@ export class UsersService {
   }
 
   async findAll(res : Response)  {
-
+    
     let listUser = await this.userEntity.find()
 
     if(listUser.length < 1){
@@ -142,7 +145,107 @@ export class UsersService {
 
   }
 
+  async searchList(search?: string , isActive? : boolean, page? : number , res? : Response){
+    
+    let offset = +page * amount - amount
+    // let listUser = await this.userEntity.createQueryBuilder('user')
+    // .where(query['search'] ? `user.username like "%${search}%"` :'')
+    // .andWhere(query['search'] ? `user.name like "%${search}%"` :'')
+    // .andWhere(query['isActive'] ? `where user.isAvtive = true` : '')
+    // .limit(amount)
+    // .offset(offset)
+    // .getRawMany()
 
+    let listUser : UserEntity[] ;
+
+    if(search){
+      listUser = await this.userEntity.createQueryBuilder('user')
+      .where(`user.username like "%${search}%"`)
+      .andWhere(`user.name like "%${search}%"`)
+      .select([
+        'user.id as id',
+        'user.name as name',
+        'user.background as background',
+        'user.email as email',
+        'user.address as address',
+        'user.isActive as isActive',
+        'user.role as role',
+      ])
+      .limit(amount)
+      .offset(offset)
+      .getRawMany()
+      if(listUser.length > 0){
+        return res.status(HttpStatus.OK).json({
+          message : SEARCH_SUCCESS , 
+          listUser : listUser ,
+          total : listUser.length 
+        })
+      }
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : SEARCH_KEY_NOT_FOUNT , 
+        listUser : listUser
+      })
+    }
+    
+    if(isActive !== undefined){
+      listUser = await this.userEntity.createQueryBuilder('user')
+      .where(`user.isActive = ${isActive}`)
+      .select([
+        'user.id as id',
+        'user.name as name',
+        'user.background as background',
+        'user.email as email',
+        'user.address as address',
+        'user.isActive as isActive',
+        'user.role as role',
+      ])
+      .limit(amount)
+      .offset(offset)
+      .getRawMany()
+      if(listUser.length > 0){
+        return res.status(HttpStatus.OK).json({
+          message : FILTER_SUCCESS , 
+          listUser : listUser,
+          total : listUser.length 
+
+        })
+      }
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : FILTER_FAIL , 
+        listUser : listUser,
+        total : listUser.length 
+
+      })
+    }
+    
+    if(isActive === undefined && search === undefined){
+      listUser = listUser = await this.userEntity.createQueryBuilder('user')
+      .select([
+        'user.id as id',
+        'user.name as name',
+        'user.background as background',
+        'user.email as email',
+        'user.address as address',
+        'user.isActive as isActive',
+        'user.role as role',
+      ])
+      .limit(amount)
+      .offset(offset)
+      .getRawMany()
+      
+    }
+   
+    if(listUser.length < 1)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : NOT_DATA
+    })
+    return res.status(HttpStatus.OK).json({
+      message :  GET_LIST_CANDIDATE_SUCCESS, 
+      listUser : listUser ,
+      total : listUser.length 
+    })
+
+  } 
   async update(id: string, updateUserDto: UpdateUserDto ,userUpdate : string , res : Response ,file?) {
 
     
