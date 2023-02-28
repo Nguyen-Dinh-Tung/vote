@@ -6,19 +6,19 @@ export class UpdateCandidateDto extends PartialType(CreateCandidateDto) {
 
     @IsOptional()
     idno? : string ;
-    
+
     @IsOptional()
     name? : string ;
-    
+
     @IsOptional()
     address? : string ;
-    
+
     @IsOptional()
     email? : string ;
-    
+
     @IsOptional()
     historyChane? : string ; 
-    
+
     @IsOptional()
     weight? : string ; 
 
@@ -34,5 +34,7 @@ export class UpdateCandidateDto extends PartialType(CreateCandidateDto) {
 
     @IsOptional()
     slogan? : string ;
+    @IsOptional()
+    descs? : string ;
 
 }

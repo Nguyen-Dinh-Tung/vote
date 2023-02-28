@@ -77,7 +77,6 @@ function FormEditCandiate(props) {
         }
       }
       console.log(update);
-      return
       let form = new FormData()
 
       Object.keys(update).some(key =>{
@@ -85,6 +84,7 @@ function FormEditCandiate(props) {
       })
       ApiBase.patch(urlUpdateCandidate , form)
       .then(res =>{
+        console.log(res);
         if(res.status === 200){
           setUpdate(undefined)
           notifiFunc(SUCCESS , res.data.message ,TRUE)

@@ -1,3 +1,4 @@
+import { NOT_DATA } from './../../contest/contants/contants';
 import { SERVE_ERROR } from './../../common/constant/message';
 import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
 import { ContestEntity } from './../../contest/entities/contest.entity';
@@ -205,17 +206,76 @@ export class CandidateService {
     userChange : string , 
     res : Response , 
     file? : Express.Multer.File) {
-
+    
+    let flagCaUp = false ;
     let checkCandidate = await this.candidateEntity.findOne({
       where : {
         id : id
-      }
+      } ,
     })
 
     if(!checkCandidate)
     return res.status(HttpStatus.NOT_FOUND).json({
       message : CANDIDATE_NOT_EXIST
     })
+
+    if(!updateCandidateDto && !file)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : NOT_DATA
+    })
+
+    if(updateCandidateDto.descs || updateCandidateDto.slogan){
+      let newCarem = {}
+      if(updateCandidateDto.descs)
+      newCarem['descs'] = updateCandidateDto.descs
+      if(updateCandidateDto.slogan)
+      newCarem['slogan'] = updateCandidateDto.slogan
+
+      let carem : CandidateRecomendEntity;
+      await this.candidateEntity.findOne({
+        where : {
+          id : id
+        },
+        relations : {
+          carem : true
+        } ,
+      }).then(res =>{
+        carem = res.carem
+        return 
+      })
+
+      carem = {
+        ...carem ,
+        ...newCarem
+      }
+      checkCandidate.userhistoryChange = userChange
+      await this.candidateEntity.save(checkCandidate)
+      await this.candidateRemEntity.save(carem)
+      
+    }
+
+    Object.keys(updateCandidateDto).some(key =>{
+
+      if(key)
+      if(key !== "descs" && key !== "slogan")
+      checkCandidate[key] = updateCandidateDto[key]
+
+
+      flagCaUp = true
+    })
+
+    if(file){
+      checkCandidate['background'] = this.saveImage(file)
+      flagCaUp = true
+    }
+
+    if(flagCaUp){
+      
+      checkCandidate.userhistoryChange = userChange
+      await this.candidateEntity.save(checkCandidate)
+
+    }
+
 
     return res.status(HttpStatus.OK).json({
       message : UPDATE_CANDIDATE_SUCCESS ,
