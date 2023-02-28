@@ -28,7 +28,7 @@ import { MiddlewareConsumer, NestModule } from '@nestjs/common/interfaces';
 import { UserMiddlewareTransformData } from './common/middleware/user.middleware.transform.data';
 import { AssignmentContestModule } from './assignment-contest/assignment-contest.module';
 import { AssignmentCompanyModule } from './assignment-company/assignment-company.module';
-import { candidateRecomendEntity } from './candidate/entities/candidate-recomend.entity';
+import { CandidateRecomendEntity } from './candidate/entities/candidate-recomend.entity';
 import { ContestRecomendEntity } from './contest/entities/ContestRecomend.entity';
 import { CompanyRecomend } from './company/entities/company-recomend.entity';
 import { AssmCompanyEntity } from './assignment-company/entities/assignment-company.entity';
@@ -58,7 +58,7 @@ import { AssmCompanyEntity } from './assignment-company/entities/assignment-comp
       FeatureEntity , CompanyEntity,
       ContestEntity , CandidateEntity ,
       UserEntity , AssmContestEntity ,
-      AssmCompanyEntity ,candidateRecomendEntity ,
+      AssmCompanyEntity ,CandidateRecomendEntity ,
       ContestRecomendEntity , CompanyRecomend
     ],
       synchronize: true,

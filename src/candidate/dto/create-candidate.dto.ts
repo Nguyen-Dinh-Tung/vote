@@ -12,8 +12,10 @@ export class CreateCandidateDto {
     @IsEmail()
     email : string ;
 
+    @IsOptional()
     historyCreate : string ;
 
+    @IsOptional()
     historyChange : string ;
 
     @IsOptional()
@@ -28,10 +30,16 @@ export class CreateCandidateDto {
     @IsNotEmpty()
     measure : string ;
 
+    @IsOptional()
     slogan? : string ;
+
     @IsNotEmpty()
     idno : string ;
 
     @IsOptional()
     idContest : string ;
+    
+    @IsNotEmpty()
+    descs : string
 }
+

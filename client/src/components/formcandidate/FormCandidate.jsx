@@ -131,14 +131,17 @@ function FormCandidate(props) {
                 })
                 document.querySelector('.form-info').reset()
                 .catch(e =>{
-                    notifyFunc(ERROR , e.response.data.message , TRUE)
+                    if(e){
+                        notifyFunc(ERROR , e.response.data.message , TRUE)
+                    }
                 })
+            }else{
+                notifyFunc(ERROR , res.response.data.message , TRUE)
             }
         })
         .catch(e =>{
 
             if(e) {
-                notifyFunc(ERROR , e.response.data.message , TRUE)
             }
 
         })
@@ -205,7 +208,7 @@ function FormCandidate(props) {
                     className='button'
                     onClick={handleSubmit}
                     xs={{backgroundColor : '#00acc1'}}
-                    >{ADDCONTEST}
+                    >{ADD_CANDIDATE}
                 </button>
                 </div>
             </div>

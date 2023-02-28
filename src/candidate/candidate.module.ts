@@ -7,14 +7,14 @@ import { CandidateEntity } from './entities/candidate.entity';
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { UsersModule } from 'src/users/users.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { candidateRecomendEntity } from './entities/candidate-recomend.entity';
+import { CandidateRecomendEntity } from './entities/candidate-recomend.entity';
 import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
 
 @Module({
   imports : [TypeOrmModule.forFeature([
     CandidateEntity , 
     TicketEntity , 
-    candidateRecomendEntity , 
+    CandidateRecomendEntity , 
     ContestEntity, 
     AssmContestEntity]) , 
     forwardRef(() => UsersModule) , 

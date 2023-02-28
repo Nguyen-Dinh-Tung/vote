@@ -1,15 +1,38 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { IsOptional } from 'class-validator';
 import { CreateCandidateDto } from './create-candidate.dto';
 
 export class UpdateCandidateDto extends PartialType(CreateCandidateDto) {
 
-    name? : string ;
-    address? : string ;
-    email? : string ;
-    historyChane? : string ; 
-    weight? : string ; 
-    height? : string ;
-    measure? : string ;
-    slogan? : string ;
+    @IsOptional()
     idno? : string ;
+    
+    @IsOptional()
+    name? : string ;
+    
+    @IsOptional()
+    address? : string ;
+    
+    @IsOptional()
+    email? : string ;
+    
+    @IsOptional()
+    historyChane? : string ; 
+    
+    @IsOptional()
+    weight? : string ; 
+
+    @IsOptional()
+
+    height? : string ;
+
+    @IsOptional()
+    measure? : string ;
+
+    @IsOptional()
+    background ? : string ;
+
+    @IsOptional()
+    slogan? : string ;
+
 }

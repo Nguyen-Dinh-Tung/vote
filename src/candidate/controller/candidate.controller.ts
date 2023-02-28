@@ -1,3 +1,4 @@
+import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { UserByToken } from './../../users/interceptor/TransformAccountHistoryActive.decorator';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
@@ -28,7 +29,7 @@ export class CandidateController {
   @RolesCheck([Roles.admin ,Roles.content])
   @Post()
   @UseInterceptors(FileInterceptor('file') )
-  create(@Body() createCandidateDto: CreateCandidateDto , @UserByToken() userBytoken : any , @Res() res : Response , @UploadedFile() file? : Express.Multer.File) {
+  create(@Body() createCandidateDto: CreateCandidateDto , @UserByToken() userBytoken : any , @Res() res : Response , @UploadedFile(new ImagePipe()) file? : Express.Multer.File) {
     try{
 
     return this.candidateService.create(createCandidateDto , userBytoken , res , file);
@@ -42,20 +43,46 @@ export class CandidateController {
 
   @RolesCheck([...Object.values(Roles)])
   @Get()
-  findAll() {
-    return this.candidateService.findAll();
+  findAll( @Res() res : Response) {
+    try{
+
+      return this.candidateService.findAll(res);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([...Object.values(Roles)])
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.candidateService.findOne(id);
+  findOne(@Param('id') id: string , @Res() res : Response)  {
+    try{
+
+      return this.candidateService.findOne(id , res);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([Roles.admin ,Roles.content])
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCandidateDto: UpdateCandidateDto , @Headers() headers? : any) {
-    return this.candidateService.update(id, updateCandidateDto , getUserByReq(headers));
+  @UseInterceptors(FileInterceptor('file') )
+  update(@Param('id') id: string, @Body() updateCandidateDto: UpdateCandidateDto , @UserByToken() user : string, @Res() res : Response , @UploadedFile(new ImagePipe()) file ? : Express.Multer.File)  {
+
+    try{
+
+    return this.candidateService.update(id, updateCandidateDto , user , res , file);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
 
   @RolesCheck([Roles.admin ,Roles.content])

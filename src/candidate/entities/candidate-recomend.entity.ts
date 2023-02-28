@@ -5,7 +5,7 @@ import { CandidateEntity } from './candidate.entity';
 @Entity({
     name : 'carem',
 })
-export class candidateRecomendEntity{
+export class CandidateRecomendEntity{
     @PrimaryGeneratedColumn('uuid')
     id : string ;
 

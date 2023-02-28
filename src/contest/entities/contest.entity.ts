@@ -1,7 +1,5 @@
-import {  AssmCompanyEntity } from './../../assignment-company/entities/assignment-company.entity';
 import { InheriTance } from "src/common/class/inheritance";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
-import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
+import { Column, Entity, JoinColumn,  OneToOne } from "typeorm";
 import { ContestRecomendEntity } from './ContestRecomend.entity';
 
 @Entity({
