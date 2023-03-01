@@ -5,6 +5,7 @@ import AlertComponents from '../../components/alert/Alert';
 import { BTN_LOG_OUT } from '../../contants/btn';
 import { LOGO } from '../login/intro';
 import './index.css' ;
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 function Home(props) {
     let token = localStorage.getItem('token');
     const navigate = useNavigate() ;
@@ -43,7 +44,12 @@ function Home(props) {
         navigate('/new-candidate')
 
     }
-
+    const showCompany = () =>{
+        navigate('/new-company')
+    }
+    const showListCompany = () =>{
+        navigate('/companies')
+    }
     useEffect(() =>{
         if(token == null){
             navigate('/auth/login')
@@ -61,26 +67,38 @@ function Home(props) {
                             <p className="username"> Xin chào <span className='text-username'>{username && username}</span> !</p>
                         </div>
                         <div class="dropdown dropdown-user">
-                            <p>Tài khoản</p>
+                            <p className="box-icons">Tài khoản <span className='icons'> 
+                            <ExpandMoreIcon fontSize={"large"} sx={{widht :'20px'}}/></span></p>
                             <div class="menu-user">
                             <p className='field-controler' onClick={showUserForm}>Tạo mới</p>
                             <p className='field-controler' onClick={showListUser}>Danh sách</p>
                             </div>
                         </div>
+                        <div className="dropdown dropdown-candidate">
+                            <p className="box-icons">Tổ chức <span className='icons'> 
+                            <ExpandMoreIcon fontSize={"large"} sx={{widht :'20px'}}/></span></p>
+                            <div className="menu-candidate">
+                                <p className='field-controler' onClick={showCompany}>Thêm tổ chức</p>
+                                <p className='field-controler 'onClick={showListCompany}>Danh sách tổ chưc</p>
+                            </div>
+                        </div>
                         <div className="dropdown dropdown-contest">
-                            <p>Cuộc thi</p>
+                            <p className="box-icons">Cuộc thi <span className='icons'> 
+                            <ExpandMoreIcon fontSize={"large"} sx={{widht :'20px'}}/></span></p>
                             <div className="menu-contest">
                                 <p className='field-controler' onClick={showContest}>Thêm cuộc thi</p>
                                 <p className='field-controler' onClick={showListContest}>Danh sách cuộc thi</p>
                             </div>
                         </div>
                         <div className="dropdown dropdown-candidate">
-                            <p>Thí sinh</p>
+                            <p className="box-icons">Thí sinh <span className='icons'> 
+                            <ExpandMoreIcon fontSize={"large"} sx={{widht :'20px'}}/></span></p>
                             <div className="menu-candidate">
                                 <p className='field-controler' onClick={showCandidate}>Thêm thí sinh</p>
                                 <p className='field-controler 'onClick={showListCandidate}>Danh sách thí sinh</p>
                             </div>
                         </div>
+                        
                     </div>
                     <div className="btn-log-out">
                         <div className="btn-logout" onClick={showLogin}>{BTN_LOG_OUT}</div>

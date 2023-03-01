@@ -148,13 +148,6 @@ export class UsersService {
   async searchList(search?: string , isActive? : boolean, page? : number , res? : Response){
     
     let offset = +page * amount - amount
-    // let listUser = await this.userEntity.createQueryBuilder('user')
-    // .where(query['search'] ? `user.username like "%${search}%"` :'')
-    // .andWhere(query['search'] ? `user.name like "%${search}%"` :'')
-    // .andWhere(query['isActive'] ? `where user.isAvtive = true` : '')
-    // .limit(amount)
-    // .offset(offset)
-    // .getRawMany()
 
     let listUser : UserEntity[] ;
 

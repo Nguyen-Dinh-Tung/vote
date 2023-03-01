@@ -8,27 +8,23 @@ export class CreateCompanyDto {
     email : string ;
 
     @IsNotEmpty()
-    @Length(2 ,)
     @Expose()
     name : string ;
-
     @IsNotEmpty()
-    @Length(2 ,)
     @Expose()
     address : string ;
 
     @IsNotEmpty()
-    @Length(2 ,)
     @Expose()
-    business_segment : string ;
-
-
+    bss : string ;
+    
+    @IsNotEmpty()
     @Expose()
-    @Length(2 ,)
+    descs : string ;
+
     @IsNotEmpty()
     slogan : string ;
 
-    @Expose()
     historyCreate?  : string ;
 
 

@@ -1,3 +1,6 @@
+import { NOT_DATA } from './../../contest/contants/contants';
+import { COMPANY_NOT_EXIST } from './../../assignment-company/contants/contant';
+import { amount } from './../../users/contants/amount.in.page';
 import { CompanyRecomend } from './../entities/company-recomend.entity';
 import { plainToClass } from 'class-transformer';
 import { Injectable, HttpStatus } from '@nestjs/common';
@@ -8,7 +11,10 @@ import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { CompanyEntity } from '../entities/company.entity';
 import { Response } from 'express';
-import { ADD_COMPANY_SUCCESS, COMPANY_REM_EXIST, CONFLIT_COMPANY } from '../contants/message';
+import { ADD_COMPANY_SUCCESS, COMPANY_REM_EXIST, CONFLIT_COMPANY, GET_DETAILS_COMPANY_SUCCESS, GET_LIST_COMPANY_SUCCESS, UPDATE_COMPANY_SUCCESS } from '../contants/message';
+import * as fs from 'fs';
+import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
+import { SEARCH_KEY_NOT_FOUNT } from 'src/candidate/contants/message';
 
 @Injectable()
 export class CompanyService {
@@ -19,11 +25,11 @@ export class CompanyService {
     ){
 
   }
-  async create(createCompanyDto: CreateCompanyDto , userCreate : string, res : Response) {
+  async create(createCompanyDto: CreateCompanyDto , userCreate : string, res : Response , file? : Express.Multer.File) {
 
-    let checkCompany = await this.companayEntity.findOneBy({
-      email : createCompanyDto.email ,
-      name : createCompanyDto.name
+    let checkCompany = await this.companayEntity.findOne({
+      where : [{email : createCompanyDto.email} ,
+        {name : createCompanyDto.name}]
     })
 
     if(checkCompany){
@@ -41,63 +47,30 @@ export class CompanyService {
       historyCreate : createCompanyDto.historyCreate
     }
 
+    if(file){
+      infoCreateCp['background'] = this.saveImage(file)
+    }
     let cpRem = {
       slogan : createCompanyDto.slogan ,
-      business_segment : createCompanyDto.business_segment ,
+      bss : createCompanyDto.bss ,
+      descs : createCompanyDto.bss
     }
 
     let newCompany = await this.companayEntity.save(infoCreateCp)
 
-    let REM_EXIST = '' ;
-
 
     if(newCompany){
-
-      this.companayEntity.findOne({
-        where : {
-          id : newCompany.id
-        } ,
-        relations : {
-          cpRem : true
-        }
-      })
-      .then(async response =>{
-        if(!response.cpRem){
-
-          let newCpRem = await this.cpRemEntity.save(cpRem)
-          
-          if(newCpRem){
-            
-            await this.companayEntity.save({...newCompany  , companyrem : newCpRem})
-
-          }
       
-        }else{
+      let newCpRem = await this.cpRemEntity.save(cpRem)
 
-          REM_EXIST = COMPANY_REM_EXIST
+      if(cpRem){
 
-        }
-
-      })
-      .catch(e =>{
-        
-        if(e) console.log(e);
-        
-      })
-
-      if(REM_EXIST){
-
-        return res.status(HttpStatus.CREATED).json({
-          message : ADD_COMPANY_SUCCESS ,
-          newCompany : newCompany , 
-          rem : REM_EXIST
-        })
+      newCompany.cpRem = newCpRem
+      await  this.companayEntity.save(newCompany)
 
       }
-    
     }
-
-
+   
     return res.status(HttpStatus.CREATED).json({
       message : ADD_COMPANY_SUCCESS ,
       newCompany : newCompany , 
@@ -107,50 +80,203 @@ export class CompanyService {
 
   }
 
-  async findAll() {
-    let listCompany = await this.companayEntity.find() ;
-    return listCompany
-  }
+  async findAll(page : number, isActive : boolean , search : string,res : Response) {
+    let offset = page * amount - amount;
+    let listCompany : CompanyEntity []  ;
+    if(isActive !== undefined){
+      listCompany = await this.companayEntity.createQueryBuilder('cp')
+      .leftJoin('cp.cpRem' , 'cprem')
+      .where(`cp.isActive = ${isActive}`)
+      .select([
+        'cp.id as id',
+        'cp.name as name',
+        'cp.address as address',
+        'cp.email as email',
+        'cp.background as background',
+        'cprem.descs as descs',
+        'cprem.slogan as slogan',
+        'cprem.bss as bss',
+        "cp.isActive as isActive"
+      ])
+      .limit(amount) 
+      .offset(offset)
+      .getRawMany()
 
-  async findOne(id: string) {
-    let checkCompany = await this.companayEntity.findOne(
-      {
-        where : {
-          id : id
-        },
-        relations : {
-          cpRem : true ,
-        }
-      } 
-    )
-    return checkCompany
-
-  }
-
-
-  async update(id: string, updateCompanyDto: UpdateCompanyDto , userChange) {
-    
-    try{
-      
-      let checkCompay = await this.validateCompany({id : id})
-
-      if(!checkCompay) return "Company not existing"
-
-      else{
-
-        checkCompay.historyChange = userChange
-        checkCompay = {...checkCompay , ...updateCompanyDto}
-        this.companayEntity.save(checkCompay)
-        return checkCompay
-
+      if(listCompany.length < 1){
+        return res.status(HttpStatus.NOT_FOUND).json({
+          message : NOT_DATA, 
+          listCompany : listCompany ,
+          total : listCompany.length
+        })
       }
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_COMPANY_SUCCESS, 
+        listCompany : listCompany ,
+        total : listCompany.length
+      })
+  
+    }
+    if(search){
+      listCompany = await this.companayEntity.createQueryBuilder('cp')
+      .leftJoin('cp.cpRem' , 'cprem')
+      .where(`cp.name like "%${search}%"`)
+      .select([
+      'cp.id as id',
+        'cp.name as name',
+        'cp.address as address',
+        'cp.email as email',
+        'cp.background as background',
+        'cprem.descs as descs',
+        'cprem.slogan as slogan',
+        'cprem.bss as bss',
+      "cp.isActive as isActive"
 
-    }catch(e){
+      ])
+      .limit(amount) 
+      .offset(offset)
+      .getRawMany()
 
-      if(e) console.log(e);
-      
+      if(listCompany.length < 1){
+        return res.status(HttpStatus.NOT_FOUND).json({
+          message : SEARCH_KEY_NOT_FOUNT, 
+          listCompany : listCompany ,
+          total : listCompany.length
+        })
+      }
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_COMPANY_SUCCESS, 
+        listCompany : listCompany ,
+        total : listCompany.length
+      })
+  
+    }
+    
+    if(!search && isActive === undefined){
+    listCompany = await this.companayEntity.createQueryBuilder('cp')
+    .leftJoin('cp.cpRem' , 'cprem')
+    .select([ 
+      'cp.id as id',
+      'cp.name as name',
+      'cp.address as address',
+      'cp.email as email',
+      'cp.background as background',
+      'cprem.descs as descs',
+      'cprem.slogan as slogan',
+      'cprem.bss as bss',
+      "cp.isActive as isActive"
+    ])
+    .limit(amount) 
+    .offset(offset)
+    .getRawMany()
+    return res.status(HttpStatus.OK).json({
+      message : GET_LIST_COMPANY_SUCCESS, 
+      listCompany : listCompany ,
+      total : listCompany.length
+    })
     }
 
+  }
+
+
+  async findOne(id: string , res : Response) {
+    
+    let checkCompany = await this.companayEntity.createQueryBuilder('cp')
+    .leftJoin('cp.cpRem' , 'cprem')
+    .select([
+      'cp.id as id',
+      'cp.name as name',
+      'cp.address as address',
+      'cp.email as email',
+      'cp.background as background',
+      'cprem.descs as descs',
+      'cprem.slogan as slogan',
+      'cprem.bss as bss',
+      "cp.isActive as isActive"
+    ])
+    .where({
+      id : id
+    })
+    .getRawOne()
+
+    if(!checkCompany){
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : COMPANY_NOT_EXIST ,
+      })
+    }
+    return res.status(HttpStatus.OK).json({
+      message : GET_DETAILS_COMPANY_SUCCESS , 
+      company : checkCompany
+    })
+
+  }
+  async update(id: string, updateCompanyDto: UpdateCompanyDto , userChange : string , res : Response, file? : Express.Multer.File) {
+    
+    let checkCompany = await this.companayEntity.findOne({
+      where : {
+        id : id
+      },
+      relations : {
+        cpRem : true
+      }
+    })
+
+    if(!checkCompany)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : COMPANY_NOT_EXIST
+    }) 
+
+    if(updateCompanyDto.bss || updateCompanyDto.descs || updateCompanyDto.slogan){
+
+      let cpRem  = checkCompany.cpRem
+
+      if(!cpRem)
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : COMPANY_NOT_EXIST
+      })
+
+      if(updateCompanyDto.bss !== undefined)
+      cpRem['bss'] = updateCompanyDto.bss
+
+      if(updateCompanyDto.descs !== undefined)
+      cpRem['descs'] = updateCompanyDto.descs
+
+      if(updateCompanyDto.slogan !== undefined)
+      cpRem['slogan'] = updateCompanyDto.slogan
+
+      
+      
+      await this.cpRemEntity.save(cpRem)
+
+    }
+    let updateInfo = {
+
+    }
+    
+    if(updateCompanyDto.address !== undefined)
+    updateInfo['address'] = updateCompanyDto.address
+    if(updateCompanyDto.name !== undefined)
+    updateInfo['name'] = updateCompanyDto.name
+    if(updateCompanyDto.email !== undefined)
+    updateInfo['email'] = updateCompanyDto.email
+    if(updateCompanyDto.email !== undefined)
+    updateInfo['email'] = updateCompanyDto.email
+    if(updateCompanyDto.isActive !== undefined)
+    updateInfo['isActive'] = updateCompanyDto.isActive
+
+    if(file)
+    updateInfo['background'] = this.saveImage(file)
+
+    checkCompany ={
+      ...checkCompany,
+      ...updateInfo
+    }
+
+    await this.companayEntity.save(checkCompany)
+
+    return res.status(HttpStatus.OK).json({
+      message : UPDATE_COMPANY_SUCCESS 
+    })
+    
   }
 
 
@@ -184,4 +310,14 @@ export class CompanyService {
     let checkCompay = await this.companayEntity.findOneBy(data)
     return checkCompay
   } 
+  private saveImage(file: Express.Multer.File) {
+    let filename = file.filename;
+    let path = file.path;
+    let type = file.mimetype.split('/').pop().toLowerCase();
+    let fileSave = `${process.env.STATICIMG + filename}${Date.now()}.${type}`;
+    let buffer = fs.readFileSync(file.path);
+    fs.writeFileSync(`.${fileSave}`, buffer);
+    fs.unlinkSync(path);
+    return fileSave;
+  }
 }

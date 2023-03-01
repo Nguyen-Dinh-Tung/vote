@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateAssignmentCompanyDto } from './create-assignment-company.dto';
+import { IsOptional } from 'class-validator';
 
-export class UpdateAssignmentCompanyDto extends PartialType(CreateAssignmentCompanyDto) {}
+export class UpdateAssignmentCompanyDto  {
+    @IsOptional()
+    idCompany?: string; 
+    @IsOptional()
+    isActive? : boolean ;
+}

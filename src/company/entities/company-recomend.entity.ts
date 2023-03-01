@@ -9,9 +9,6 @@ export class CompanyRecomend{
     @PrimaryGeneratedColumn('uuid')
     id : string ;
     @Column({
-        default : true
-    })
-    @Column({
         default : 'default'
     })
     slogan : string ;

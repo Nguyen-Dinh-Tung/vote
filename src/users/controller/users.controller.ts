@@ -150,8 +150,6 @@ export class UsersController {
     @Query(new ParseParamPipe) query : any ,
     @Res() res : Response ){
     
-      console.log(param.page);
-      
     try {
       
       await this.usersService.searchList(query.search , query.isActive , param.page , res)

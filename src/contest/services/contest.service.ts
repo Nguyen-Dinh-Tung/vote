@@ -39,7 +39,11 @@ export class ContestService {
         ]
       })
 
-      let checkCompany = await this.companyService.findOne(createContestDto.idCompany)
+      let checkCompany = await this.companyEntity.findOne({
+        where : {
+          id : createContestDto.idCompany
+        }
+      })
 
       if(!checkCompany || checkCompany.isActive === false){
         res.status(HttpStatus.BAD_REQUEST).json({

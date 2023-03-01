@@ -6,9 +6,16 @@ import { CompanyController } from './controller/company.controller';
 import { CompanyEntity } from './entities/company.entity';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyRecomend } from './entities/company-recomend.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([CompanyEntity , CompanyRecomend]) , UsersModule  ,forwardRef(() => ContestEntity)] ,
+  imports : [
+    TypeOrmModule.forFeature([CompanyEntity , CompanyRecomend]) , 
+    UsersModule  ,forwardRef(() => ContestEntity) ,
+    MulterModule.register({
+      dest : './files/images'
+    }) 
+] ,
   controllers: [CompanyController],
   providers: [CompanyService],
   exports : [CompanyService ]

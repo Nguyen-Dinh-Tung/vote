@@ -31,6 +31,7 @@ html {
     overflow-y: auto;
     padding-left: 20px;
     flex: 4;
+    position: relative;
 }
 .controler-filed{
     background-color: white;
@@ -156,4 +157,12 @@ display: block;
 .field-controler:hover{
     color: white;
     background-color: #353434;
+}
+
+.box-icons{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 50px;
+    padding-right: 40px;
 }

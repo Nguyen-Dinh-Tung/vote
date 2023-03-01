@@ -1,7 +1,4 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
-import { InheriTance } from "src/common/class/inheritance";
-import { TicketEntity } from 'src/ticket/entities/ticket.entity';
-import { CandidateEntity } from './candidate.entity';
 @Entity({
     name : 'carem',
 })

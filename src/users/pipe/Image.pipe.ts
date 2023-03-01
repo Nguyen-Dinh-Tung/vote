@@ -5,11 +5,15 @@ const imgType =  ['jpeg', 'jpg', 'png']
 @Injectable()
 export class ImagePipe implements PipeTransform{
     transform(value? : any , metadata? : ArgumentMetadata){
-        let file = value
+        let file = value ;
         if(file){
-            let type : string = file.mimetype.split('/')[1] ;
-            if(!imgType.includes(type))
-             throw new HttpException( 'Lỗi định dạng ảnh !' ,HttpStatus.NOT_FOUND)
+            let mimetype : string = file.mimetype
+            if(mimetype){
+                let type : string = mimetype.split('/')[1] 
+                if(!imgType.includes(type))
+                 throw new HttpException( 'Lỗi định dạng ảnh !' ,HttpStatus.NOT_FOUND)
+            }
+
         }
         return file
     }

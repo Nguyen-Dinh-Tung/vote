@@ -15,6 +15,7 @@ export class CompanyEntity extends InheriTance {
         default : 'Default'
     })
     historyCreate  : string ;
+    
     @OneToOne(() => CompanyRecomend , (rem) => rem.id )
     @JoinColumn()
     cpRem : CompanyRecomend  ;
