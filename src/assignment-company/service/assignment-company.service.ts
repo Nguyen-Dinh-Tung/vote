@@ -1,3 +1,4 @@
+import { SERVE_ERROR } from './../../common/constant/message';
 import { SEARCH_KEY_NOT_FOUNT } from './../../candidate/contants/message';
 import { ContestEntity } from 'src/contest/entities/contest.entity';
 import { COMPANY_ERROR, GET_LIST_CONTEST_SUCCESS, NOT_DATA } from './../../contest/contants/contants';
@@ -8,9 +9,9 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAssignmentCompanyDto } from '../dto/create-assignment-company.dto';
 import { UpdateAssignmentCompanyDto } from '../dto/update-assignment-company.dto';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Response } from 'express'
-import { ADD_NEW_ASSIGNMENT_SUCCESS, ASSM_CP_NOT_FOUND, COMPANY_NOT_ACTIVE, COMPANY_NOT_EXIST, CONFLIT_ASSIGNMENT, CONTEST_NOT_ACTIVE, CONTEST_NOT_FOUND, UPDATE_ASSM_COMPANY } from '../contants/contant';
+import { ADD_NEW_ASSIGNMENT_SUCCESS, ASSM_CP_NOT_FOUND, COMPANY_NOT_ACTIVE, COMPANY_NOT_EXIST, CONFLIT_ASSIGNMENT, CONTEST_NOT_ACTIVE, CONTEST_NOT_FOUND, REMOVE_ASCP_SUCCESS, UPDATE_ASSM_COMPANY } from '../contants/contant';
 import { CompanyEntity } from 'src/company/entities/company.entity';
 
 @Injectable()
@@ -160,6 +161,55 @@ export class AssignmentCompanyService {
       total : listAssContest.length
     })
   }
+
+  async removeAscp (id  : string , listId : string [] , res : Response){
+
+    let checkCp = await this.companyEntity.findOne({
+      where : {
+        id : id
+      }
+    }) 
+    
+    if(!checkCp)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : COMPANY_NOT_EXIST
+    })
+
+    let checkListContest = await this.contestEntity.find({
+      where : {
+        id : In(listId)
+      }
+    })
+
+    if(checkListContest.length !== listId.length)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : CONTEST_NOT_FOUND
+    })
+
+
+    let listAscp = await this.assigmCompany.createQueryBuilder('ascp')
+    .leftJoin(ContestEntity , 'co' , 'co.id = ascp.contestId' )
+    .leftJoin(CompanyEntity , 'cp' , 'cp.id = ascp.companyId' )
+    .where('co.id in :listId' , {listId : listId})
+    .where('cp.id = :id' ,{id : id} )
+    .select('ascp')
+    .getMany()
+    
+    if(listAscp.length !== listId.length)
+    return res.status(HttpStatus.BAD_GATEWAY).json({
+      message : SERVE_ERROR
+    })    
+    
+    for(let e of listAscp){
+      e.isActive = false 
+      await this.assigmCompany.save(e)
+    }
+
+    return res.status(HttpStatus.OK).json({
+      message : REMOVE_ASCP_SUCCESS
+    })
+  } 
+
 
   findOne(id: number) {
     return `This action returns a #${id} assignmentCompany`;

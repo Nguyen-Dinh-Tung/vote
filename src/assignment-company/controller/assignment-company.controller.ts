@@ -65,4 +65,18 @@ export class AssignmentCompanyController {
   remove(@Param('id') id: string) {
     return this.assignmentCompanyService.remove(+id);
   }
+
+  @Post(':id')
+  async removeAscp(@Body() listId : string [],@Param('id') id: string , @Res() res : Response) {
+    try{
+
+    return await this.assignmentCompanyService.removeAscp(id,listId , res);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
+
+  }
 }

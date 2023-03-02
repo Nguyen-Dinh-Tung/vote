@@ -1,3 +1,5 @@
+import { UserCo } from './user-co/entities/user-co.entity';
+import { UserCp } from './user-cp/entities/user-cp.entity';
 import { AssmContestEntity } from './assignment-contest/entities/assignment-contest.entity';
 import { Roles } from 'src/common/enum/role.enum';
 import { UsersService } from './users/services/users.service';
@@ -32,6 +34,8 @@ import { CandidateRecomendEntity } from './candidate/entities/candidate-recomend
 import { ContestRecomendEntity } from './contest/entities/ContestRecomend.entity';
 import { CompanyRecomend } from './company/entities/company-recomend.entity';
 import { AssmCompanyEntity } from './assignment-company/entities/assignment-company.entity';
+import { UserCoModule } from './user-co/user-co.module';
+import { UserCpModule } from './user-cp/user-cp.module';
 
 @Module({
   imports: [ 
@@ -59,13 +63,16 @@ import { AssmCompanyEntity } from './assignment-company/entities/assignment-comp
       ContestEntity , CandidateEntity ,
       UserEntity , AssmContestEntity ,
       AssmCompanyEntity ,CandidateRecomendEntity ,
-      ContestRecomendEntity , CompanyRecomend
+      ContestRecomendEntity , CompanyRecomend ,
+      UserCp , UserCo
     ],
       synchronize: true,
       logging : true
     }),
     AssignmentContestModule,
     AssignmentCompanyModule,
+    UserCoModule,
+    UserCpModule,
     
   ],
   controllers: [AppController],

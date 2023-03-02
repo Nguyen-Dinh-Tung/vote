@@ -14,3 +14,4 @@ export const USERNAME_NOT_FORMAT = "Tên tài khoản không đúng định dạ
 export const UPDATE_SUCCESS = "Cập nhật tài khoản thành công !"
 export const FIELD_NOT_HOLLOW = "Không được để trống các trường dữ liệu !"
 export const EMAIL_UNIQUE = "Email đã tồn tại trên hệ thống !"
+export const USER_NOT_ACTIVE : string = "Tài khoản hiện không hoạt động !"

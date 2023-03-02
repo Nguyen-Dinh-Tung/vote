@@ -32,7 +32,6 @@ function ListCandidate(props) {
     useEffect(() =>{
         ApiBase.get(urlGetListCandidate)
         .then(res =>{
-            console.log(res , 'res list conets');
             let listContest = res.data.listCandidate.sort((a,b) =>{
                 return Number(b.isActive) -  Number(a.isActive)
             })

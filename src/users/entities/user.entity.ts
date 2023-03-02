@@ -1,11 +1,11 @@
-import { Column, Entity } from 'typeorm';
+import { UserCo } from './../../user-co/entities/user-co.entity';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { InheriTance } from "src/common/class/inheritance";
 import { Roles, FetureCode } from 'src/common/enum/role.enum';
 @Entity({
     name : 'user',
 })
 export class UserEntity extends InheriTance {
-
 
     @Column({
         type : 'enum' ,

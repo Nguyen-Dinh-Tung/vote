@@ -2,17 +2,59 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApiBase, host } from '../../api/api.base';
 import { TRUE } from '../../contants/notify/status.notify';
-import { ERROR, WARNING } from '../../contants/notify/type.notify';
+import { ERROR, SUCCESS, WARNING } from '../../contants/notify/type.notify';
 import useNotifyFunc from '../../hooks/notify.func';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
 import DialogEdit from '../dialoguser/DialogEdit';
-import { Pagination, Stack } from '@mui/material';
+import { Checkbox, Fab, Pagination, Stack } from '@mui/material';
 import Loadding from '../loadding/Loadding';
 import FormEditCompany from '../form-edit-company/FormEditCompany';
 import { Outlet, useNavigate, useParams } from 'react-router';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import EditIcon from '@mui/icons-material/Edit';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Switch from '@mui/material/Switch';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import PrintIcon from '@mui/icons-material/Print';
+import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Confim from '../confim/Confim';
+import { LIST_NOT_DATA } from '../../contants/notify/message';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import CloudOffIcon from '@mui/icons-material/CloudOff';
+const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
+    position: 'absolute', 
+    '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+    },
+    '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
+      top: theme.spacing(2),
+      left: theme.spacing(2),
+    },
+  }));
+  const actions = [
+    { icon: <DeleteIcon  />, name: 'Xóa cuộc thi',actions : 'delete' },
+    { icon: <ShareIcon />, name: 'Chia sẻ quyền quản lý cuộc thi',actions : 'share' },
+    { icon: <CloudDownloadIcon />, name: 'Thêm cuộc thi vào danh sách quản lý',actions : 'add-new-contest' },
+    { icon: <CloudOffIcon />, name: 'Quản lý cuộc thi cũ',actions : 'old-contest' },
+
+    ];
+
+
 function AssmCompany(props) {
 
     const open = useSelector(state => state.show.dialogEdit) ;
@@ -26,9 +68,77 @@ function AssmCompany(props) {
     const [reRender , setReRender] = useState()
     const refSearch = useRef(null)
     const navigate = useNavigate()
-
+    const [hidden, setHidden] = React.useState(false);
+    const [direction, setDirection] = React.useState('up');
+    const [listCheck , setListCheck] = useState([])
+    const [confim , setConfim] = useState()
     const param = useParams()
     let id = param.id
+
+    const submitDelete = ()=>{
+        const urlRemoveAscp = `/assignment-company/${id && id}`
+        ApiBase.post(urlRemoveAscp , listCheck)
+        .then(res =>{
+            if(res.status === 200){
+                notifyFunc(SUCCESS , res.data.message , TRUE)
+                handleRerender()
+            }
+        })
+        .catch(e =>{
+
+            if(e) {
+                notifyFunc(ERROR , e.response.data.message , TRUE)
+            }
+        })
+    }
+
+    const submitShare = () =>{
+
+        console.log(566);
+
+    }
+
+
+    const handleClickIcon = (action) =>{
+        let actions = action.actions ;
+
+        if(listCheck.length < 1){
+            notifyFunc(ERROR , LIST_NOT_DATA , TRUE)
+            return
+        }
+
+        if(actions === 'delete'){
+
+            setConfim({
+                message : "Bạn có đồng ý xóa ?" ,
+                status : true ,
+                handle : submitDelete
+            })
+
+        }
+
+        if(actions === 'share'){
+            setConfim({
+                message : "Chia sẻ quản lý cuộc thi ?" ,
+                status : true ,
+                handle : submitShare
+
+            })
+
+        }
+
+        if(actions === 'save'){
+            setConfim({
+                message : "Bạn có đồng ý xóa" ,
+                status : true
+            })
+
+        }
+    }
+    
+
+
+
 
     const setTing = () =>{
         dispatch(setDialogEdit(true))
@@ -78,6 +188,24 @@ function AssmCompany(props) {
         navigate('/companies')
     }
 
+    const handleChecked = (e,id) =>{
+        let checked = e.target.checked ;
+        if(checked == true && !listCheck.includes(id)){
+            listCheck.push(id)
+            setListCheck([...listCheck])
+        }
+        if(checked == false && listCheck.includes(id)){
+            listCheck.splice(listCheck.indexOf(id) , 1)
+            setListCheck([...listCheck])
+        }
+    }
+    const handleClose = () =>{
+        setConfim({
+            message : '' ,
+            statu : false
+        })
+    }
+
     useEffect(() =>{
 
     let urlEntity = `/assignment-company/${id}/${page}` ;
@@ -105,7 +233,6 @@ function AssmCompany(props) {
 
     },[reRender , searchKey ,page , filter])
 
-
     return (
         <div className='table-user'>
             <p className='header-list-user'>Tổ chức cuộc thi</p>
@@ -118,7 +245,6 @@ function AssmCompany(props) {
                 backgroundColor : 'rgb(7, 177, 77, 0.42)'}}} 
                 fontSize='large' onClick={backRouter}>
             </ArrowLeftIcon>
-
             <input id='search' type="text" name='search' placeholder='Tìm tên cuộc thi ...' onChange={handChangeSearchKey}/>
             <select id='select-filter' onChange={handleChangeFilter} name="filter">
                 <option selected={searchKey && searchKey ? true : false}>Trạng thái</option>
@@ -136,13 +262,14 @@ function AssmCompany(props) {
             <th>Lĩnh vực</th>
             <th>Avatar</th>
             <th>Trạng thái</th>
-            <th>Tùy chỉnh</th>
+            <th>Chọn</th>
             </thead>
             <tbody>
             {listUser && listUser.length >0 ? 
             
             listUser.map((e , index) =>{
-                return <tr className='tr-list-user' key={e.id} 
+                return <>
+                <tr className='tr-list-user' key={e.id} 
                     style={{
                         backgroundColor : e && e.isActive ? '' : "#374151",
                         color : e && e.isActive ? '' : "white"
@@ -154,8 +281,17 @@ function AssmCompany(props) {
                     <td>{e && e.bss}</td>
                     <td className='align-center'><img className='user-list-avatar' src={e &&host + e.background} alt="" /></td>
                     <td>{e && e.isActive == true ? "Hoạt động" : 'Dừng'}</td>
-                    <td className='align-center cursor-pointer'><SettingsIcon color="secondary" onClick={() => {handleSelectId(e.id) ; setTing()}} sx={{fontSize : '30px'}}/></td>
+                    <td style={{
+                        textAlign : 'center'
+                    }}>
+                    <Checkbox onChange={(event) =>{
+                        handleChecked( event,e.id)
+                    }} color="secondary" />
+                    </td>
                 </tr>
+                      
+                    
+                    </>
             })
             : ''}
                 </tbody>
@@ -167,9 +303,31 @@ function AssmCompany(props) {
                 </div>
                 </>
             }
-            
+            <Box style={{position : 'absolute' , bottom : '10%' , right : '2%'}} >
+                        <StyledSpeedDial
+                        ariaLabel="SpeedDial playground example"
+                        hidden={hidden}
+                        icon={<SpeedDialIcon />}
+                        direction={direction}
+                        >
+                        {actions.map((action) => (
+                            <SpeedDialAction
+                            key={action.name}
+                            icon={action.icon}
+                            tooltipTitle={action.name}
+                            onClick={() =>{
+                                handleClickIcon(action)
+                            }}
+                            describeChild={true}
+                            />
+                        ))}
+                        </StyledSpeedDial>
+                    </Box>
             {open && open ? <FormEditCompany handleReRender={handleRerender}/> : ''}
             
+                {confim && confim  ? <Confim  message={confim && confim.message} 
+                submit={confim && confim.handle} open={confim && confim.status} 
+                handleClose={handleClose}/> : ''}
         </div>
     );
 }

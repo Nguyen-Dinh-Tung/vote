@@ -6,3 +6,4 @@ export const COMPANY_NOT_EXIST : string = 'Công ty phát triển không tồn t
 export const COMPANY_NOT_ACTIVE : string = "Công ty hiện đã ngừng hoạt động !"
 export const ASSM_CP_NOT_FOUND : string = "Không tìm thấy phiếu quản lý cuộc thi !"
 export const UPDATE_ASSM_COMPANY : string = "Cập nhật lý cuộc thi thành công !"
+export const REMOVE_ASCP_SUCCESS : string = "Xóa quyền quản lý cuộc thi thành công!"

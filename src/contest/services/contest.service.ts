@@ -133,7 +133,7 @@ export class ContestService {
   }
 
   async findAll(res : Response) {
-
+    
     let listContest = await this.contentEntity.createQueryBuilder('co')
     .leftJoin('co.coRem' , 'corem')
     .leftJoin(AssmCompanyEntity , 'ascp' , 'co.id = ascp.contestId')

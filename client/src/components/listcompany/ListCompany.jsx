@@ -31,7 +31,6 @@ function ListCompany(props) {
         dispatch(setDialogEdit(true))
     }
     const handleSelectId = (id)=>{
-        console.log(id, 'id');
         dispatch(setId(id))
     }
     const handleRerender = () =>{
