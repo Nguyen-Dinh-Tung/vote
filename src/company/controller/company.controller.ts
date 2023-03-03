@@ -24,7 +24,7 @@ export class CompanyController {
     private readonly usersService : UsersService
     ) {}
 
-  @RolesCheck([Roles.admin , Roles.marketing])
+  @RolesCheck([...Object.values(Roles)])
   @UseInterceptors(FileInterceptor('file'))
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto , 
@@ -92,10 +92,12 @@ export class CompanyController {
   @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('id') id: string, 
-    @Body(new ParserBooleanIsActive()) updateCompanyDto: UpdateCompanyDto , 
+    @Body(new ParserBooleanIsActive()) 
+    updateCompanyDto: UpdateCompanyDto , 
     @UserByToken() userByToken : any,
     @Res() res : Response,
-    @UploadedFile(new ImagePipe()) file? : Express.Multer.File) 
+    @UploadedFile(new ImagePipe()) 
+    file? : Express.Multer.File) 
     {
   
     try{

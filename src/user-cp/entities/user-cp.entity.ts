@@ -24,7 +24,7 @@ export class UserCp {
         default : ROLE_UCP.USER,
         enum : ROLE_UCP
     })
-    role : string ;
+    role : ROLE_UCP ;
     @Column({
         default : true
     })

@@ -1,3 +1,4 @@
+import { UcpCheck } from 'src/common/decorator/ucp.guard';
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { UserCpService } from '../services/user-cp.service';
 import { CreateUserCpDto } from '../dto/create-user-cp.dto';
@@ -5,12 +6,14 @@ import { UpdateUserCpDto } from '../dto/update-user-cp.dto';
 import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
 import { Response } from 'express';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
+import { ROLE_UCP } from '../contants/role.enum';
 
 @Controller('user-cp')
 export class UserCpController {
   constructor(private readonly userCpService: UserCpService) {}
 
   @Post()
+  @UcpCheck([ROLE_UCP.ADMIN])
   async create(
     @Body() createUserCpDto: CreateUserCpDto , 
     @UserByToken() user : string , 

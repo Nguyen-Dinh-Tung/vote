@@ -66,7 +66,7 @@ const submitShare = () =>{
   const urlAddNewUcp = '/user-cp'
   ApiBase.post(urlAddNewUcp,newShare)
   .then(res =>{
-    console.log(res);
+
     if(res.status === 201){
       notifyFunc(SUCCESS , res.data.message , TRUE)
       handleClose()
@@ -111,13 +111,14 @@ const handChangeSearchKey = (e) =>{
 
     ApiBase.get(urlEntity)
     .then(res =>{
-      console.log(res);
         setListUser(res.data.listUser)
         setTotalPage(Math.ceil(res.data.listUser.length / 8))
+        setChecked([])
     })
     .catch(e =>{
       if(e){
         notifyFunc(ERROR , e.response.data.message , TRUE)
+        setChecked([])
 
       }
     })

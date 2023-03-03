@@ -9,4 +9,4 @@ export const UPDATE_ASSM_COMPANY : string = "Cập nhật lý cuộc thi thành 
 export const REMOVE_ASCP_SUCCESS : string = "Xóa quyền quản lý cuộc thi thành công!"
 export const LIST_COMPANY_CHECK_FAIL : string = "Danh sách tổ chức lỗi vui lòng kiểm tra lại !"
 export const LIST_USER_FAILT : string = "Danh sách tài khoản lỗi vui lòng kiểm tra lại !"
-export const UCP_EXISTING : string = "Danh sách chia sẻ quyền đã được thêm vào"
+export const UCP_EXISTING : string = "Danh sách tài khoản chia sẻ đã có quyền truy cập ! Xin cảm ơn ."

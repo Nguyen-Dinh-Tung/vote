@@ -11,7 +11,7 @@ import { UsersService } from 'src/users/services/users.service';
 import { applyDecorators } from '@nestjs/common/decorators';
 import { Request } from 'express';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { FORBIDDEN, USER_FORBIDEN_COMPANY } from '../constant/message';
+import { FORBIDDEN, NOT_PERMISSION_SHARE, USER_FORBIDEN_COMPANY } from '../constant/message';
 import { ROLE_UCP } from 'src/user-cp/contants/role.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -49,7 +49,9 @@ export class RolesGuards implements CanActivate{
                 id : idCompany
             }
         })
-        let ucp = await this.ucpEntity.createQueryBuilder('ucp')
+        if(userCheck.role === Roles.admin)
+        return true
+        let ucp : UserCp = await this.ucpEntity.createQueryBuilder('ucp')
         .leftJoin('ucp.company' , 'cp')
         .leftJoin('ucp.user' , 'user')
         .where("ucp.companyId =:id" ,{id : checkCompany.id})
@@ -57,12 +59,16 @@ export class RolesGuards implements CanActivate{
         .select('ucp')
         .getOne()
 
+        console.log(ucp , 'ucp <          >');
+        
         if(!userCheck)
         throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
         if(!checkCompany)
         throw new HttpException(COMPANY_NOT_EXIST , HttpStatus.NOT_FOUND)
         if(!ucp)
         throw new HttpException(USER_FORBIDEN_COMPANY , HttpStatus.FORBIDDEN)
+        if(!roles.includes(ucp.role))
+        throw new HttpException(NOT_PERMISSION_SHARE , HttpStatus.FORBIDDEN)
         return true
         
     }
