@@ -93,16 +93,13 @@ function FormEditCompany(props) {
           dispatch(setDialogEdit(false))
           return
 
-        }else{
-
-          notifiFunc(ERROR , res.data.message , TRUE)
-
         }
       })
       .catch(e =>{
 
         if(e) {
-          console.log(e);
+          notifiFunc(ERROR , e.response.data.message , TRUE)
+
         }
       })
     }

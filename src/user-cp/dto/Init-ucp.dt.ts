@@ -1,10 +1,11 @@
+import { CompanyEntity } from 'src/company/entities/company.entity';
 import { ROLE_UCP } from './../contants/role.enum';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { IsNotEmpty, IsOptional } from "class-validator";
 
-export class CreateUserCpDto {
+export class InitUcp {
     @IsNotEmpty()
-    idCompany : string ;
+    company : CompanyEntity ;
 
     @IsNotEmpty()
     user : UserEntity ;

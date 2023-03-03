@@ -14,6 +14,9 @@ import { CompanyService } from '../services/company.service';
 import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { ParserDataPipe } from 'src/users/pipe/ParserData.pipe';
 import { ParserBooleanIsActive } from 'src/common/pipe/ParserBooleanIsActive.pipe';
+import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
+import { UcpCheck } from 'src/common/decorator/ucp.guard';
+import { ROLE_UCP } from 'src/user-cp/contants/role.enum';
 
 @Controller('company')
 export class CompanyController {
@@ -43,15 +46,24 @@ export class CompanyController {
   @RolesCheck([...Object.values(Roles)])
   @Get('/:page?')
   findAll(
-  @Param() param?: any ,
+    @Res() res: Response, 
+    @IdUserInterceptor() idUser: any,
+    @Param() param?: any ,
   @Query(new ParseParamPipe()) query? : any ,
-  @Res() res? : Response) {
+  
+  ) {
     try{
 
       let page = Number(param.page)
       if(page === undefined)
       page = 1 ;
-      return this.companyService.findAll(page , query.isActive , query.search ,res);
+      return this.companyService.findAll(
+        page , 
+        query.isActive , 
+        query.search ,
+        query.ucp ,
+        res ,
+        idUser);
 
     }catch(e){
 
@@ -75,6 +87,7 @@ export class CompanyController {
   }
 
   @RolesCheck([Roles.admin , Roles.marketing])
+  @UcpCheck([ROLE_UCP.ADMIN , ROLE_UCP.USER])
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   update(

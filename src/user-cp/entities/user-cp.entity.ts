@@ -1,6 +1,8 @@
 import { CompanyEntity } from './../../company/entities/company.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserEntity } from 'src/users/entities/user.entity';
+
+import { ROLE_UCP } from '../contants/role.enum';
 @Entity({
     name : 'ucp'
 })
@@ -18,10 +20,15 @@ export class UserCp {
     user : UserEntity;
     
     @Column({
+        type : 'enum',
+        default : ROLE_UCP.USER,
+        enum : ROLE_UCP
+    })
+    role : string ;
+    @Column({
         default : true
     })
     isActive : boolean ;
-
 
     @Column({
         type : 'datetime' ,

@@ -1,3 +1,4 @@
+import { USER_NOT_FOUND } from './../../users/contants/message';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { COMPANY_NOT_EXIST } from './../../assignment-company/contants/contant';
 import { amount } from './../../users/contants/amount.in.page';
@@ -10,27 +11,49 @@ import { Repository } from 'typeorm';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { CompanyEntity } from '../entities/company.entity';
-import { Response } from 'express';
-import { ADD_COMPANY_SUCCESS, COMPANY_REM_EXIST, CONFLIT_COMPANY, GET_DETAILS_COMPANY_SUCCESS, GET_LIST_COMPANY_SUCCESS, UPDATE_COMPANY_SUCCESS } from '../contants/message';
+import { Response, json } from 'express';
+import { ADD_COMPANY_SUCCESS, COMPANY_BY_USER_NOT_EXIST, COMPANY_REM_EXIST, CONFLIT_COMPANY, GET_DETAILS_COMPANY_SUCCESS, GET_LIST_COMPANY_SUCCESS, UPDATE_COMPANY_SUCCESS } from '../contants/message';
 import * as fs from 'fs';
 import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
 import { SEARCH_KEY_NOT_FOUNT } from 'src/candidate/contants/message';
+import { UserCpService } from 'src/user-cp/services/user-cp.service';
+import { SERVE_ERROR } from 'src/common/constant/message';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectRepository(CompanyEntity) private readonly companayEntity : Repository<CompanyEntity>,
-    @InjectRepository(CompanyRecomend) private readonly cpRemEntity : Repository<CompanyRecomend>
-    
+    @InjectRepository(CompanyRecomend) private readonly cpRemEntity : Repository<CompanyRecomend>,
+    @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity>,
+    @InjectRepository(UserCp) private readonly ucpEntity : Repository<UserCp>,
+    private readonly userCpService : UserCpService ,
     ){
 
   }
-  async create(createCompanyDto: CreateCompanyDto , userCreate : string, res : Response , file? : Express.Multer.File) {
+  async create(
+    createCompanyDto: CreateCompanyDto , 
+    userCreate : string, 
+    res : Response , 
+    file? : Express.Multer.File) : Promise <Response> {
 
     let checkCompany = await this.companayEntity.findOne({
       where : [{email : createCompanyDto.email} ,
-        {name : createCompanyDto.name}]
+      {name : createCompanyDto.name}]
     })
+
+    let checkUserInit = await this.userEntity.findOne({
+      where : {
+        username : userCreate
+      }
+    })
+
+    if(!checkUserInit)
+    return res.status(HttpStatus.NOT_FOUND).json({
+      message : USER_NOT_FOUND
+    })
+
 
     if(checkCompany){
 
@@ -44,7 +67,7 @@ export class CompanyService {
       name : createCompanyDto.name ,
       email : createCompanyDto.email ,
       address : createCompanyDto.address,
-      historyCreate : createCompanyDto.historyCreate
+      historyCreate : userCreate
     }
 
     if(file){
@@ -65,10 +88,26 @@ export class CompanyService {
 
       if(cpRem){
 
+        let permissionCp = {
+          company : newCompany ,
+          user : checkUserInit
+        }
+      
+      let permissionInit =   await this.userCpService.addAdminCp(permissionCp )
+      
       newCompany.cpRem = newCpRem
-      await  this.companayEntity.save(newCompany)
 
+        if(!permissionInit)
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message : SERVE_ERROR
+        })
+
+        if(permissionInit)
+        await  this.companayEntity.save(newCompany)
       }
+
+  
+
     }
    
     return res.status(HttpStatus.CREATED).json({
@@ -80,7 +119,14 @@ export class CompanyService {
 
   }
 
-  async findAll(page : number, isActive : boolean , search : string,res : Response) {
+  async findAll(
+    page : number, 
+    isActive : boolean , 
+    search : string , 
+    ucp : boolean,
+    res :  Response,
+    idUser : string 
+    ) {
     let offset = page * amount - amount;
     let listCompany : CompanyEntity []  ;
     if(isActive !== undefined){
@@ -151,6 +197,50 @@ export class CompanyService {
   
     }
     
+    if(ucp){
+      let checkUser = await this.userEntity.findOne({
+        where : {
+          id : idUser
+        }
+      })
+
+      
+      if(!checkUser)
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : USER_NOT_FOUND
+      })
+
+      let listUserCompany = await this.ucpEntity.createQueryBuilder('ucp')
+      .leftJoin('ucp.user' , 'user')
+      .leftJoin('ucp.company' , 'cp')
+      .leftJoin('cp.cpRem' , 'cprem')
+      .where(`user.id = "${idUser}"` )
+      .select([ 
+        'cp.id as id',
+        'cp.name as name',
+        'cp.address as address',
+        'cp.email as email',
+        'cp.background as background',
+        'cprem.descs as descs',
+        'cprem.slogan as slogan',
+        'cprem.bss as bss',
+        "cp.isActive as isActive"
+      ])
+      .limit(amount) 
+      .offset(offset)
+      .getRawMany()
+
+      if(listUserCompany.length <1)
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : COMPANY_BY_USER_NOT_EXIST
+      })
+
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_COMPANY_SUCCESS ,
+        listCompany : listUserCompany
+      })
+    }
+
     if(!search && isActive === undefined){
     listCompany = await this.companayEntity.createQueryBuilder('cp')
     .leftJoin('cp.cpRem' , 'cprem')

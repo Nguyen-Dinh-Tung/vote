@@ -1,3 +1,4 @@
+import { UserCpModule } from './../user-cp/user-cp.module';
 import { ContestEntity } from 'src/contest/entities/contest.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module, forwardRef } from '@nestjs/common';
@@ -7,11 +8,15 @@ import { CompanyEntity } from './entities/company.entity';
 import { UsersModule } from 'src/users/users.module';
 import { CompanyRecomend } from './entities/company-recomend.entity';
 import { MulterModule } from '@nestjs/platform-express';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 
 @Module({
   imports : [
-    TypeOrmModule.forFeature([CompanyEntity , CompanyRecomend]) , 
+    TypeOrmModule.forFeature([CompanyEntity , CompanyRecomend , UserEntity , UserCp]) , 
     UsersModule  ,forwardRef(() => ContestEntity) ,
+    UserCpModule ,
+    forwardRef(() => UserCpModule),
     MulterModule.register({
       dest : './files/images'
     }) 

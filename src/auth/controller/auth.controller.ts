@@ -14,8 +14,15 @@ export class AuthController {
   @Post('login')
   login(@Body() loginUserDtn: LoginUserDto , @Res() res : Response) {
 
+    try{
+      
     return this.authService.login(loginUserDtn , res);
-    
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
   }
   @Post('register')
   @ApiResponse({status : 201 , description : 'Tạo tài khoản thành công !'})

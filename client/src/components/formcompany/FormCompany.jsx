@@ -111,7 +111,6 @@ function FormCompany(props) {
                 setAvatar(undefined)
                 setCompany({
                     name : '' ,
-                    idCompany : '' ,
                     address : '' ,
                     file : undefined ,
                     slogan : '' ,
@@ -119,15 +118,12 @@ function FormCompany(props) {
                     email : ''
                 })
                 document.querySelector('.form-info').reset()
-                .catch(e =>{
-                    if(e)
-                    notifyFunc(ERROR , e.response.data.message , TRUE)
-                })
             }
         })
         .catch(e =>{
 
             if(e) {
+                console.log(e);
                 notifyFunc(ERROR , e.response.data.message , TRUE)
             }
 

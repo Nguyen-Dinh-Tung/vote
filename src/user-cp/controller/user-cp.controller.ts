@@ -4,17 +4,23 @@ import { CreateUserCpDto } from '../dto/create-user-cp.dto';
 import { UpdateUserCpDto } from '../dto/update-user-cp.dto';
 import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
 import { Response } from 'express';
+import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
 
 @Controller('user-cp')
 export class UserCpController {
   constructor(private readonly userCpService: UserCpService) {}
 
   @Post()
-  async create(@Body() createUserCpDto: CreateUserCpDto , @UserByToken() user : string , @Res() res : Response) {
+  async create(
+    @Body() createUserCpDto: CreateUserCpDto , 
+    @UserByToken() user : string , 
+    @Res() res : Response,
+    @IdUserInterceptor() idUser : string
+    ) {
 
     try{
 
-    return await this.userCpService.create(createUserCpDto , user , res);
+    return await this.userCpService.create(createUserCpDto , user , res ,idUser);
 
     }catch(e){
 

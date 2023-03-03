@@ -9,6 +9,7 @@ import { UserCp } from './entities/user-cp.entity';
 @Module({
   imports : [TypeOrmModule.forFeature([UserCp , CompanyEntity , UserEntity])] ,
   controllers: [UserCpController],
-  providers: [UserCpService]
+  providers: [UserCpService] ,
+  exports : [UserCpService]
 })
 export class UserCpModule {}
