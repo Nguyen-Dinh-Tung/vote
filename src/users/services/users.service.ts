@@ -154,11 +154,12 @@ export class UsersService {
     if(search){
       listUser = await this.userEntity.createQueryBuilder('user')
       .where(`user.username like "%${search}%"`)
-      .andWhere(`user.name like "%${search}%"`)
+      .orWhere(`user.name like "%${search}%"`)
       .select([
         'user.id as id',
         'user.name as name',
         'user.background as background',
+        'user.username as username' ,
         'user.email as email',
         'user.address as address',
         'user.isActive as isActive',
@@ -187,6 +188,7 @@ export class UsersService {
         'user.id as id',
         'user.name as name',
         'user.background as background',
+        'user.username as username' ,
         'user.email as email',
         'user.address as address',
         'user.isActive as isActive',
@@ -221,6 +223,8 @@ export class UsersService {
         'user.address as address',
         'user.isActive as isActive',
         'user.role as role',
+        'user.username as username' ,
+
       ])
       .limit(amount)
       .offset(offset)

@@ -4,10 +4,10 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateUserCpDto {
     @IsNotEmpty()
-    idCompany : string ;
+    idCompany : string [];
 
     @IsNotEmpty()
-    user : UserEntity ;
+    idUser :  string [] ;
     
     @IsOptional()
     role? : ROLE_UCP ;

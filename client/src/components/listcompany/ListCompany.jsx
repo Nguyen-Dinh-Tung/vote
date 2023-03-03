@@ -333,7 +333,11 @@ function ListCompany(props) {
             {open && open ? <FormEditCompany handleReRender={handleRerender}/> : ''}
             
             
-            {confim && confim.name === "share" ? <DialogShareCompany handleClose={handleCloseDialogShare} open={confim && confim.name == "share" ? true : false}/>:''}
+            {confim && confim.name === "share" ? 
+            <DialogShareCompany 
+            listIdCompany={listCheck}
+            handleClose={handleCloseDialogShare} 
+            open={confim && confim.name == "share" ? true : false}/>:''}
             
         </div>
     );
