@@ -33,12 +33,16 @@ export class RolesGuards implements CanActivate{
         const roles : ROLE_UCP []= this.reflector.get<ROLE_UCP[]>('roles', context.getHandler());
         
         const request : Request = context.switchToHttp().getRequest() ;
+
         if(!request.headers.authorization) return false
+
         let token : any = jwt_decode(request.headers.authorization) ;
         let idUser : string = token.idUser ;
         let idCompany : string  ;
+
         if(request.params.id )
         idCompany  = request.params.id ;
+        
         let userCheck   = await this.userEntity.findOne({
             where : {
                 id : idUser
@@ -49,8 +53,11 @@ export class RolesGuards implements CanActivate{
                 id : idCompany
             }
         })
+
         if(userCheck.role === Roles.admin)
+
         return true
+        
         let ucp : UserCp = await this.ucpEntity.createQueryBuilder('ucp')
         .leftJoin('ucp.company' , 'cp')
         .leftJoin('ucp.user' , 'user')
@@ -59,14 +66,16 @@ export class RolesGuards implements CanActivate{
         .select('ucp')
         .getOne()
 
-        console.log(ucp , 'ucp <          >');
         
         if(!userCheck)
         throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
+        
         if(!checkCompany)
         throw new HttpException(COMPANY_NOT_EXIST , HttpStatus.NOT_FOUND)
+
         if(!ucp)
         throw new HttpException(USER_FORBIDEN_COMPANY , HttpStatus.FORBIDDEN)
+
         if(!roles.includes(ucp.role))
         throw new HttpException(NOT_PERMISSION_SHARE , HttpStatus.FORBIDDEN)
         return true

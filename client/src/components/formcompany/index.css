@@ -1,0 +1,21 @@
+.box-demo{
+    display: flex;
+}
+.box-selected{
+    flex: 1;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+}
+.task-demo{
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    align-items: center;
+    width: 100%;
+    height: 48px;
+    background-color: rgb(184, 114, 250);
+}

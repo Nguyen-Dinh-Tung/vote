@@ -149,8 +149,10 @@ export class UsersService {
     
     let offset = +page * amount - amount
 
-    let listUser : UserEntity[] ;
+    let listUser : any[] ;
+    let total = await this.userEntity.findAndCount()
 
+    
     if(search){
       listUser = await this.userEntity.createQueryBuilder('user')
       .where(`user.username like "%${search}%"`)
@@ -168,11 +170,14 @@ export class UsersService {
       .limit(amount)
       .offset(offset)
       .getRawMany()
+      
       if(listUser.length > 0){
+
+        
         return res.status(HttpStatus.OK).json({
           message : SEARCH_SUCCESS , 
           listUser : listUser ,
-          total : listUser.length 
+          total : total[1]
         })
       }
       return res.status(HttpStatus.NOT_FOUND).json({
@@ -201,7 +206,7 @@ export class UsersService {
         return res.status(HttpStatus.OK).json({
           message : FILTER_SUCCESS , 
           listUser : listUser,
-          total : listUser.length 
+          total : total[1]
 
         })
       }
@@ -214,24 +219,16 @@ export class UsersService {
     }
     
     if(isActive === undefined && search === undefined){
-      listUser = listUser = await this.userEntity.createQueryBuilder('user')
-      .select([
-        'user.id as id',
-        'user.name as name',
-        'user.background as background',
-        'user.email as email',
-        'user.address as address',
-        'user.isActive as isActive',
-        'user.role as role',
-        'user.username as username' ,
-
-      ])
+      listUser  = await this.userEntity.createQueryBuilder('user')
+      .select('user')
       .limit(amount)
       .offset(offset)
-      .getRawMany()
+      .getMany()
       
     }
-   
+
+
+    
     if(listUser.length < 1)
     return res.status(HttpStatus.NOT_FOUND).json({
       message : NOT_DATA
@@ -239,7 +236,7 @@ export class UsersService {
     return res.status(HttpStatus.OK).json({
       message :  GET_LIST_CANDIDATE_SUCCESS, 
       listUser : listUser ,
-      total : listUser.length 
+      total : total[1]
     })
 
   } 

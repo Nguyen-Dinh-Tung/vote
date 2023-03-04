@@ -14,11 +14,12 @@ import {setAlert} from '../../redux/features/show.slice'
 import { regexEmail, regexPassword, regexUsername } from '../../regex/userInfo.regex';
 import useNotifyFunc from '../../hooks/notify.func';
 import isValidPhoto from '../../validate/img.validate';
-import { ApiBase } from '../../api/api.base';
+import { ApiBase, host } from '../../api/api.base';
 import { LOGO } from '../../pages/login/intro';
 import { ADDCONTEST, ADD_COMPANY } from '../../contants/field.desc';
-import { ADD_COMPANY_SUCCESS, ADD_CONTEST_SUCCESS } from '../../contants/notify/message';
-
+import { ADD_COMPANY_SUCCESS, ADD_CONTEST_SUCCESS, LIST_NOT_DATA } from '../../contants/notify/message';
+import { Checkbox, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Pagination, Stack } from '@mui/material';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 const infoRegister = [
 ['name' , 'text' , 'Tên tổ chức '] ,
 ['slogan' , 'text' , 'Slogan tổ chức'] ,
@@ -46,6 +47,132 @@ function FormCompany(props) {
 
 
     const navigate = useNavigate()
+
+
+    const open = props.open
+    const handleCloseDialogShare = props.handleClose
+    const [checked, setChecked] = React.useState([]);
+    const [listUser , setListUser] = React.useState()
+    const [page , setPage] = React.useState(1)
+    const [totalPage , setTotalPage] = React.useState(1)
+    const [searchKey , setSearchKey] = React.useState() 
+    const [totalDemoPage , setTotalDemoPage] = useState(1)
+    const [demoPage , setDemoPage] = useState(1)
+    const refSearch = React.useRef(null)
+    const [listSelectDemo , setListSelectDemo] = useState([])
+    const listIdCompany = props.listIdCompany
+  const handleClose = () => {
+    handleCloseDialogShare()
+  };
+
+  const handleToggle = (value) => () => {
+    const currentIndex = checked.indexOf(value.id);
+    const newChecked = [...checked];
+    const listDemo = [...listSelectDemo]
+    if (currentIndex === -1) {
+      newChecked.push(value.id);
+      listDemo.push(value)
+    } else {
+      newChecked.splice(currentIndex, 1);
+      listDemo.splice(currentIndex,1)
+    }
+
+    setChecked(newChecked);
+    setTotalDemoPage(Math.ceil(listDemo.length /8))
+    setListSelectDemo(listDemo)
+  };
+
+  const handleChangePage = (e , page)=>{
+    setPage(page)
+}
+    const handleChangeDemoPage = (e , page) =>{
+        setDemoPage(page)
+    }
+const submitShare = () =>{
+  if(checked.length < 1){
+    notifyFunc(ERROR , LIST_NOT_DATA , TRUE)
+    return
+  }
+  let newShare = {
+    idCompany : listIdCompany ,
+    idUser : checked
+  }
+
+  const urlAddNewUcp = '/user-cp'
+  ApiBase.post(urlAddNewUcp,newShare)
+  .then(res =>{
+
+    if(res.status === 201){
+      notifyFunc(SUCCESS , res.data.message , TRUE)
+      handleClose()
+    }
+    
+  })
+  .catch(e =>{
+    if(e){
+      notifyFunc(ERROR , e.response.data.message , TRUE)
+      handleClose()
+    }
+  })
+}
+const handleRemoveSelectDemo = (id) =>{
+    listSelectDemo.map((e , index)=>{
+        if(e.id === id){
+            listSelectDemo.splice(index,1)
+            checked.splice(index,1)
+        }
+
+    })
+    setListSelectDemo([...listSelectDemo])
+    setChecked([...checked])
+    setTotalDemoPage(Math.ceil(listSelectDemo.length / 8))
+}
+
+const handChangeSearchKey = (e) =>{
+  if(searchKey ==! '')
+  setPage(1)
+
+  let value = e.target.value ;
+
+  if(refSearch.current)
+  clearTimeout(refSearch.current)
+
+  refSearch.current = setTimeout(() =>{
+
+    if(value !== ''){
+
+          setSearchKey(value)
+
+      }else{
+
+          setSearchKey('')
+
+      }
+  },1000)
+
+}
+  React.useEffect(() =>{
+    let urlEntity = `/users/${page}` ;
+    
+    if(searchKey !== undefined && searchKey !== '')
+    urlEntity += `?search=${searchKey}`
+
+    ApiBase.get(urlEntity)
+    .then(res =>{
+        setListUser(res.data.listUser)
+        setTotalPage(Math.ceil(res.data.total / 8))
+        setChecked([])
+    })
+    .catch(e =>{
+      if(e){
+        
+        notifyFunc(ERROR , e.response.data.message , TRUE)
+        setChecked([])
+
+      }
+    })
+
+  },[searchKey , page])
     const handleChange = (e) =>{
         if(e.target.name == "background"){
             let file = e.target.files[0] 
@@ -70,6 +197,7 @@ function FormCompany(props) {
     }
 
 
+
     const handleSubmit = () =>{
         let flag = true
         if(!company){
@@ -77,12 +205,9 @@ function FormCompany(props) {
             flag = false 
 
         }else if(company){
-            console.log(company);
             Object.values(company).some(val =>{
                 if(val == '') {
                     flag = false
-                    console.log(val);
-
                 }
             })
 
@@ -105,7 +230,6 @@ function FormCompany(props) {
         })
         ApiBase.post(urlCompany , form )
         .then(res => {
-            console.log(res);
             if(res.status == 201){
                 notifyFunc(SUCCESS , ADD_COMPANY_SUCCESS , TRUE)
                 setAvatar(undefined)
@@ -123,7 +247,6 @@ function FormCompany(props) {
         .catch(e =>{
 
             if(e) {
-                console.log(e);
                 notifyFunc(ERROR , e.response.data.message , TRUE)
             }
 
@@ -159,6 +282,72 @@ function FormCompany(props) {
                         </>
                     })}
                 </form>
+                    <div className="box-demo">
+                        <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                            <p>Danh sách tài khoản</p>
+                                {listUser && listUser.map((e) => {
+                                return (
+                                    <ListItem
+                                    key={e &&e.id}
+                                    secondaryAction={
+                                        <Checkbox
+                                        edge="end"
+                                        onChange={handleToggle(e && e)}
+                                        checked={checked.indexOf(e &&e.id) !== -1}
+                                        inputProps={{ 'aria-labelledby': e &&e.id }}
+                                        />
+                                    }
+                                    disablePadding
+                                    >
+                                    <ListItemButton>
+                                        <ListItemAvatar>
+                                        <Avatar
+                                            alt={`Avatar n°${e && e.name}`}
+                                            src={e && host + e.background}
+                                        />
+                                        </ListItemAvatar>
+                                        <ListItemText id={e && e.id} primary={` ${e && e.username} - ${e && e.name}`} />
+                                    </ListItemButton>
+                                    </ListItem>
+                                );
+                                })}
+                            <div className="pagani-page">
+                                <Stack spacing={2}>
+                                    <Pagination count={totalPage && totalPage} variant="outlined" color="primary" onChange={handleChangePage} />
+                                </Stack> 
+                            </div>
+                        </List>
+                        <div className="box-selected">
+                        <p>Danh share</p>
+                            {listSelectDemo && listSelectDemo.map((e,index) =>{
+                                let limit = 8 ;
+                                let offset = limit * demoPage - limit
+                                let count = 0 ;
+                                console.log(offset);
+
+                                if(index >= offset && index < limit){
+                                    console.log('check');
+                                    return<div className="task-demo">
+                                    <Avatar
+                                    alt="Remy Sharp"
+                                    src={e && host + e.background}
+                                    onClick={handleClickAvatar}
+                                    />
+                                    <p>{e && e.username}</p>
+                                    <HighlightOffIcon onClick={() =>{
+                                        handleRemoveSelectDemo(e.id)
+                                    }}/>
+                                    </div>
+                                }
+                                
+                            })}
+                            <div className="pagani-page">
+                                <Stack spacing={2}>
+                                    <Pagination count={totalDemoPage && totalDemoPage} variant="outlined" color="primary" onChange={handleChangeDemoPage} />
+                                </Stack> 
+                            </div>
+                        </div>
+                    </div>
                 <div className="avatar-demo" >
                 <Avatar
                     alt="Remy Sharp"

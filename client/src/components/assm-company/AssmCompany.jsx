@@ -4,37 +4,26 @@ import { ApiBase, host } from '../../api/api.base';
 import { TRUE } from '../../contants/notify/status.notify';
 import { ERROR, SUCCESS, WARNING } from '../../contants/notify/type.notify';
 import useNotifyFunc from '../../hooks/notify.func';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
-import DialogEdit from '../dialoguser/DialogEdit';
-import { Checkbox, Fab, Pagination, Stack } from '@mui/material';
+import { Checkbox, Pagination, Stack } from '@mui/material';
 import Loadding from '../loadding/Loadding';
 import FormEditCompany from '../form-edit-company/FormEditCompany';
-import { Outlet, useNavigate, useParams } from 'react-router';
+import {  useNavigate, useParams } from 'react-router';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import EditIcon from '@mui/icons-material/Edit';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Switch from '@mui/material/Switch';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import PrintIcon from '@mui/icons-material/Print';
 import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Confim from '../confim/Confim';
 import { LIST_NOT_DATA } from '../../contants/notify/message';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
+
+
 const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
     position: 'absolute', 
     '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {

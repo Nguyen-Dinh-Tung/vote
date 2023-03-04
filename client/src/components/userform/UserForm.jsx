@@ -62,13 +62,13 @@ function UserForm(props) {
             flag = false 
 
         }else if(user){
-
+            
             Object.values(user).some(val =>{
-                if(val == '') flag = false
+                if(val === '') flag = false
             })
-
+            
         }
-        
+        console.log(user);
         if(!flag){
             notifyFunc(ERROR , FIELD_NOT_HOLLOW , TRUE)
             return
@@ -78,9 +78,9 @@ function UserForm(props) {
         Object.keys(user).some(key =>{
                 switch(key){
                     case 'username' : {
-                        notifyFunc(ERROR , USER_REGEX , TRUE)
-
+                        
                         if(!regexUsername(user[key])){
+                            notifyFunc(ERROR , USER_REGEX , TRUE)
                             flag = false
                         }
                         break
@@ -113,10 +113,8 @@ function UserForm(props) {
 
             if(res.status == 201){
                 notifyFunc(SUCCESS , res.data.message , TRUE)
-                Object.keys(user).some(key =>{
-                    user[key] = ''
-                })
-                setUser({...user})
+
+                setUser(undefined)
                 document.querySelector('#form-reset').reset()
                 setAvatar(undefined)
             }

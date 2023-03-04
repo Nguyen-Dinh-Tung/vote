@@ -3,16 +3,13 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+
 import { Checkbox, ListItemButton, Pagination, Stack } from '@mui/material';
 import { ApiBase, host } from '../../api/api.base';
 import useNotifyFunc from '../../hooks/notify.func';
@@ -112,11 +109,12 @@ const handChangeSearchKey = (e) =>{
     ApiBase.get(urlEntity)
     .then(res =>{
         setListUser(res.data.listUser)
-        setTotalPage(Math.ceil(res.data.listUser.length / 8))
+        setTotalPage(Math.ceil(res.data.total / 8))
         setChecked([])
     })
     .catch(e =>{
       if(e){
+        
         notifyFunc(ERROR , e.response.data.message , TRUE)
         setChecked([])
 

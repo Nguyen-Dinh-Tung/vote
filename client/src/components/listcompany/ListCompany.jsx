@@ -209,11 +209,12 @@ function ListCompany(props) {
 
     ApiBase.get(urlEntity)
         .then(res =>{
-            console.log(res);
+
             if(res.status === 200){
                 setListUser(res.data.listCompany)
                 setTotalPage(Math.ceil(res.data.total / 8))
             }
+            
         })
         .catch(e =>{
             if(e){
@@ -228,8 +229,6 @@ function ListCompany(props) {
     return (
         <div className='table-user'>
 
-
-            
             <p className='header-list-user'>Quản lý tài khoản</p>
             
             <div className="header-page" >

@@ -76,7 +76,8 @@ function ListUser(props) {
 
     if(filter !== undefined)
     urlGetListUser += `?isActive=${filter}`
-    
+
+
     ApiBase.get(urlGetListUser)
         .then(res =>{
             if(res.status === 200){
