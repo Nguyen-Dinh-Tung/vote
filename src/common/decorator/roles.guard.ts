@@ -9,6 +9,8 @@ import { applyDecorators } from '@nestjs/common/decorators';
 import { Request } from 'express';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { FORBIDDEN } from '../constant/message';
+import { ROLE_UCP } from 'src/user-cp/contants/role.enum';
+import { PemissionGuard } from './ucp.guard';
 
 @Injectable()
 export class RolesGuards implements CanActivate{
@@ -31,7 +33,6 @@ export class RolesGuards implements CanActivate{
         
         let userCheck   = await this.usersService.validateUser({id : idUser})
         let flag = false ;        
-        
         
         if(userCheck){  
 
@@ -65,12 +66,12 @@ export class RolesGuards implements CanActivate{
 }
 
 
-export function RolesCheck(roles : Roles[]){
+export function RolesCheck(roles : Roles []){
 
     return applyDecorators(
 
         SetMetadata('roles' , roles),
-        UseGuards(RolesGuards)
+        UseGuards(RolesGuards , PemissionGuard)
 
     )
     

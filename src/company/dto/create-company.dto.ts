@@ -25,6 +25,9 @@ export class CreateCompanyDto {
     @IsNotEmpty()
     slogan : string ;
 
+    @IsOptional()
+    listIdCompany? : string [] ;
+
     historyCreate?  : string ;
 
 

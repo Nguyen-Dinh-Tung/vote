@@ -49,7 +49,7 @@ function ListContest(props) {
 
     return (
         <div className='table-user'>
-            <p className='header-list-user'>Quản lý cuộc thi </p>
+            <p className='header-list-user'>Danh sách cuộc thi </p>
             <table className='list-user'>
                 <thead>
                 <th>Họ và tên</th>

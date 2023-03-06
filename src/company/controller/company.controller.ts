@@ -15,8 +15,8 @@ import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { ParserDataPipe } from 'src/users/pipe/ParserData.pipe';
 import { ParserBooleanIsActive } from 'src/common/pipe/ParserBooleanIsActive.pipe';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
-import { UcpCheck } from 'src/common/decorator/ucp.guard';
 import { ROLE_UCP } from 'src/user-cp/contants/role.enum';
+import { ParseStringnifyPipe } from 'src/common/pipe/ParseStringnify..pipe';
 
 @Controller('company')
 export class CompanyController {
@@ -27,7 +27,7 @@ export class CompanyController {
   @RolesCheck([...Object.values(Roles)])
   @UseInterceptors(FileInterceptor('file'))
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto , 
+  create(@Body(new ParseStringnifyPipe()) createCompanyDto: CreateCompanyDto , 
   @UserByToken(new ImagePipe()) userBytoken : string ,
   @Res() res : Response , 
   @UploadedFile(new ImagePipe()) file? : Express.Multer.File) {
@@ -85,10 +85,10 @@ export class CompanyController {
       
     }
   }
-
-  @RolesCheck([Roles.admin , Roles.marketing])
-  @UcpCheck([ROLE_UCP.ADMIN , ROLE_UCP.USER])
   @Patch(':id')
+
+  @RolesCheck([Roles.admin , Roles.marketing , Roles.ucp_admin , Roles.ucp_user])
+
   @UseInterceptors(FileInterceptor('file'))
   update(
     @Param('id') id: string, 

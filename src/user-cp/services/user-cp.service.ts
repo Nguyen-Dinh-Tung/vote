@@ -1,3 +1,4 @@
+import { Roles } from 'src/common/enum/role.enum';
 import { USER_FORBIDEN_COMPANY } from './../../common/constant/message';
 import { CreateUserCpDto } from './../dto/create-user-cp.dto';
 import { USER_NOT_ACTIVE, USER_NOT_FOUND } from './../../users/contants/message';
@@ -147,7 +148,7 @@ export class UserCpService {
           let newInfoUcp = {
             user : e ,
             company : element ,
-            role : ROLE_UCP.USER
+            role : Roles.ucp_user
           }
           
           await this.userCpEntity.save(newInfoUcp)
@@ -188,7 +189,7 @@ export class UserCpService {
 
   async addAdminCp (createUserCpDto : InitUcp ){
 
-    createUserCpDto.role = ROLE_UCP.ADMIN
+    createUserCpDto.role = Roles.ucp_admin
     let newUcp = await this.userCpEntity.save(createUserCpDto)
     return newUcp
   }

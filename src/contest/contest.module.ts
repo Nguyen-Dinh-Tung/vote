@@ -9,9 +9,19 @@ import { CompanyModule } from 'src/company/company.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ContestRecomendEntity } from './entities/ContestRecomend.entity';
 import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([ContestEntity , ContestRecomendEntity , AssmCompanyEntity , CompanyEntity]) , forwardRef(() => UsersModule) , forwardRef(() => CompanyModule)  , 
+  imports : [TypeOrmModule.forFeature([
+    ContestEntity , 
+    ContestRecomendEntity , 
+    AssmCompanyEntity , 
+    CompanyEntity ,
+    UserCp ,
+    UserEntity ,
+  
+  ]) , forwardRef(() => UsersModule) , forwardRef(() => CompanyModule)  , 
   MulterModule.register({
     dest : './files/images'
   }) ] ,

@@ -13,10 +13,15 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 
 @Module({
   imports : [
-    TypeOrmModule.forFeature([CompanyEntity , CompanyRecomend , UserEntity , UserCp]) , 
-    UsersModule  ,forwardRef(() => ContestEntity) ,
-    UserCpModule ,
-    forwardRef(() => UserCpModule),
+    TypeOrmModule.forFeature(
+      [
+        CompanyEntity , 
+        CompanyRecomend , 
+        UserEntity , 
+        UserCp
+      ]) , 
+    forwardRef(() =>UsersModule)  ,forwardRef(() => ContestEntity) ,
+    forwardRef(() => UserCpModule) ,
     MulterModule.register({
       dest : './files/images'
     }) 

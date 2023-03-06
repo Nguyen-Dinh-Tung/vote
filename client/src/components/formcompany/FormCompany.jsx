@@ -70,8 +70,12 @@ function FormCompany(props) {
     const newChecked = [...checked];
     const listDemo = [...listSelectDemo]
     if (currentIndex === -1) {
-      newChecked.push(value.id);
-      listDemo.push(value)
+
+        if(!newChecked.includes(value.id)){
+            newChecked.push(value.id);
+            listDemo.push(value)
+        }
+        
     } else {
       newChecked.splice(currentIndex, 1);
       listDemo.splice(currentIndex,1)
@@ -161,7 +165,6 @@ const handChangeSearchKey = (e) =>{
     .then(res =>{
         setListUser(res.data.listUser)
         setTotalPage(Math.ceil(res.data.total / 8))
-        setChecked([])
     })
     .catch(e =>{
       if(e){
@@ -200,6 +203,8 @@ const handChangeSearchKey = (e) =>{
 
     const handleSubmit = () =>{
         let flag = true
+        console.log(checked);
+        console.log(company);
         if(!company){
 
             flag = false 
@@ -228,8 +233,12 @@ const handChangeSearchKey = (e) =>{
         Object.keys(company).some(key =>{
             form.append(key,company[key])
         })
+        
+        if(checked.length > 0)
+        form.append('listIdCompany' , JSON.stringify(checked))
         ApiBase.post(urlCompany , form )
         .then(res => {
+            console.log(res);
             if(res.status == 201){
                 notifyFunc(SUCCESS , ADD_COMPANY_SUCCESS , TRUE)
                 setAvatar(undefined)
@@ -238,9 +247,13 @@ const handChangeSearchKey = (e) =>{
                     address : '' ,
                     file : undefined ,
                     slogan : '' ,
-                    description : '' ,
                     email : ''
                 })
+                setChecked([])
+                setDemoPage([])
+                setListSelectDemo([])
+                setPage(1)
+                setDemoPage(1)
                 document.querySelector('.form-info').reset()
             }
         })
@@ -283,8 +296,12 @@ const handChangeSearchKey = (e) =>{
                     })}
                 </form>
                     <div className="box-demo">
-                        <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                            <p>Danh sách tài khoản</p>
+                        <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' , display : 'flex' , flexDirection : 'column' , alignItems : 'center' }}>
+                            <p className='header-select'>Danh sách tài khoản</p>
+                            <input id='search' 
+                            type="text" name='search' 
+                            placeholder='Tìm tài khoản hoặc tên người dùng ...' 
+                            onChange={handChangeSearchKey}/>
                                 {listUser && listUser.map((e) => {
                                 return (
                                     <ListItem
@@ -293,7 +310,7 @@ const handChangeSearchKey = (e) =>{
                                         <Checkbox
                                         edge="end"
                                         onChange={handleToggle(e && e)}
-                                        checked={checked.indexOf(e &&e.id) !== -1}
+                                        checked={checked.includes(e &&e.id) }
                                         inputProps={{ 'aria-labelledby': e &&e.id }}
                                         />
                                     }
@@ -320,25 +337,20 @@ const handChangeSearchKey = (e) =>{
                         <div className="box-selected">
                         <p>Danh share</p>
                             {listSelectDemo && listSelectDemo.map((e,index) =>{
-                                let limit = 8 ;
-                                let offset = limit * demoPage - limit
-                                let count = 0 ;
-                                console.log(offset);
-
-                                if(index >= offset && index < limit){
-                                    console.log('check');
-                                    return<div className="task-demo">
-                                    <Avatar
-                                    alt="Remy Sharp"
-                                    src={e && host + e.background}
-                                    onClick={handleClickAvatar}
-                                    />
-                                    <p>{e && e.username}</p>
-                                    <HighlightOffIcon onClick={() =>{
-                                        handleRemoveSelectDemo(e.id)
-                                    }}/>
-                                    </div>
-                                }
+                                let limit =8 ;
+                                let offset = demoPage * limit - limit 
+                                if(index >= offset && index < demoPage * limit)
+                                 return<div className="task-demo">
+                                 <Avatar
+                                 alt="Remy Sharp"
+                                 src={e && host + e.background}
+                                 onClick={handleClickAvatar}
+                                 />
+                                 <p>{e && e.username}</p>
+                                 <HighlightOffIcon onClick={() =>{
+                                     handleRemoveSelectDemo(e.id)
+                                 }}/>
+                                 </div>
                                 
                             })}
                             <div className="pagani-page">

@@ -229,7 +229,7 @@ function ListCompany(props) {
     return (
         <div className='table-user'>
 
-            <p className='header-list-user'>Quản lý tài khoản</p>
+            <p className='header-list-user'>Danh sách tổ chức</p>
             
             <div className="header-page" >
 

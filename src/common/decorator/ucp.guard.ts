@@ -17,7 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class RolesGuards implements CanActivate{
+export class PemissionGuard implements CanActivate{
     constructor(
 
         private reflector : Reflector ,
@@ -25,12 +25,13 @@ export class RolesGuards implements CanActivate{
         @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> ,
         @InjectRepository(UserCp) private readonly ucpEntity : Repository<UserCp> ,
         @InjectRepository(CompanyEntity) private readonly cpEntity : Repository<CompanyEntity> ,
+        
         ){}
 
 
     async canActivate(context: ExecutionContext): Promise<boolean>{
 
-        const roles : ROLE_UCP []= this.reflector.get<ROLE_UCP[]>('roles', context.getHandler());
+        const roles : Roles [] = this.reflector.get<Roles[]>('roles', context.getHandler());
         
         const request : Request = context.switchToHttp().getRequest() ;
 
@@ -48,11 +49,17 @@ export class RolesGuards implements CanActivate{
                 id : idUser
             }
         })
+        
+        if(!userCheck)
+        throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
+
         let checkCompany = await this.cpEntity.findOne({
             where : {
                 id : idCompany
             }
         })
+        if(!checkCompany)
+        throw new HttpException(COMPANY_NOT_EXIST , HttpStatus.NOT_FOUND)
 
         if(userCheck.role === Roles.admin)
 
@@ -66,31 +73,14 @@ export class RolesGuards implements CanActivate{
         .select('ucp')
         .getOne()
 
-        
-        if(!userCheck)
-        throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
-        
-        if(!checkCompany)
-        throw new HttpException(COMPANY_NOT_EXIST , HttpStatus.NOT_FOUND)
-
         if(!ucp)
         throw new HttpException(USER_FORBIDEN_COMPANY , HttpStatus.FORBIDDEN)
-
+        console.log(roles);
+        console.log(ucp);
+        
         if(!roles.includes(ucp.role))
         throw new HttpException(NOT_PERMISSION_SHARE , HttpStatus.FORBIDDEN)
         return true
         
     }
-}
-
-
-export function UcpCheck(roles : ROLE_UCP[]){
-
-    return applyDecorators(
-
-        SetMetadata('roles' , roles),
-        UseGuards(RolesGuards)
-
-    )
-    
 }

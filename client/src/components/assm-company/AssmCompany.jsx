@@ -224,7 +224,7 @@ function AssmCompany(props) {
 
     return (
         <div className='table-user'>
-            <p className='header-list-user'>Tổ chức cuộc thi</p>
+            <p className='header-list-user'>Quản lý cuộc thi</p>
             
             <div className="header-page" >
             <ArrowLeftIcon

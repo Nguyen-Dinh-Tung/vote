@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { UserEntity } from 'src/users/entities/user.entity';
 
 import { ROLE_UCP } from '../contants/role.enum';
+import { Roles } from 'src/common/enum/role.enum';
 @Entity({
     name : 'ucp'
 })
@@ -21,10 +22,10 @@ export class UserCp {
     
     @Column({
         type : 'enum',
-        default : ROLE_UCP.USER,
-        enum : ROLE_UCP
+        default : Roles.ucp_user,
+        enum : Roles
     })
-    role : ROLE_UCP ;
+    role : Roles ;
     @Column({
         default : true
     })

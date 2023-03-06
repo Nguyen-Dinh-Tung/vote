@@ -8,5 +8,7 @@ export enum Roles {
     admin = 'admin' , 
     marketing = 'marketing' ,
     content = 'content' ,
-    default = 'default'
+    default = 'default' ,
+    ucp_admin = "adm" ,
+    ucp_user = "use" ,
 }

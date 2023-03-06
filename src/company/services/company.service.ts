@@ -1,3 +1,4 @@
+import { ROLE_UCP } from './../../user-cp/contants/role.enum';
 import { USER_NOT_FOUND } from './../../users/contants/message';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { COMPANY_NOT_EXIST } from './../../assignment-company/contants/contant';
@@ -20,6 +21,7 @@ import { UserCpService } from 'src/user-cp/services/user-cp.service';
 import { SERVE_ERROR } from 'src/common/constant/message';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
+import { Roles } from 'src/common/enum/role.enum';
 
 @Injectable()
 export class CompanyService {
@@ -39,10 +41,11 @@ export class CompanyService {
     file? : Express.Multer.File) : Promise <Response> {
 
     let checkCompany = await this.companayEntity.findOne({
-      where : [{email : createCompanyDto.email} ,
+      where : 
+      [{email : createCompanyDto.email} ,
       {name : createCompanyDto.name}]
     })
-
+    
     let checkUserInit = await this.userEntity.findOne({
       where : {
         username : userCreate
@@ -54,6 +57,8 @@ export class CompanyService {
       message : USER_NOT_FOUND
     })
 
+    let listShareFail = [] ;
+    let listShareSuccess = []
 
     if(checkCompany){
 
@@ -106,13 +111,37 @@ export class CompanyService {
         await  this.companayEntity.save(newCompany)
       }
 
-  
+      console.log(createCompanyDto.listIdCompany);
+      
+      if(createCompanyDto.listIdCompany && createCompanyDto.listIdCompany.length > 0)
+      for(let e of createCompanyDto.listIdCompany){
+        let checkUser = await this.userEntity.findOne({
+          where : {
+            id : e
+          }
+        })
+        if(!checkUser || checkUser.isActive === false){
+          listShareFail.push(e)
+        }
+        let newInfoUcp = {
+          company : newCompany , 
+          user : checkUser ,
+          role : Roles.ucp_user
+        }
+
+        let newUcp = await this.ucpEntity.save(newInfoUcp)
+        listShareSuccess.push(checkUser)
+
+      }
+      
 
     }
    
     return res.status(HttpStatus.CREATED).json({
       message : ADD_COMPANY_SUCCESS ,
       newCompany : newCompany , 
+      listShareFail : listShareFail , 
+      listShareSuccess : listShareSuccess
     })
 
 
