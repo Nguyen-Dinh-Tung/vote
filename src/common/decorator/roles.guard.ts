@@ -1,5 +1,5 @@
 import { USER_NOT_FOUND } from './../../users/contants/message';
-import { SetMetadata, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { SetMetadata, UseGuards, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
 import  jwt_decode  from 'jwt-decode';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -44,19 +44,20 @@ export class RolesGuards implements CanActivate{
 
                 }else{
                     
-                    new UnauthorizedException(USER_NOT_FOUND)
+                    throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
 
                 }
 
             }else{
+                throw new HttpException(FORBIDDEN , HttpStatus.FORBIDDEN)
 
-                new UnauthorizedException(FORBIDDEN)
 
             }
 
         }else{
 
-            new UnauthorizedException(USER_NOT_FOUND)
+            throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
+
 
         }
 

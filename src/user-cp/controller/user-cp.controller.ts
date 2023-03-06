@@ -15,7 +15,7 @@ export class UserCpController {
   constructor(private readonly userCpService: UserCpService) {}
 
   @Post()
-  @RolesCheck([Roles.ucp_admin , Roles.admin])
+  @RolesCheck([ Roles.admin , Roles.ucp_admin])
   async create(
     @Body() createUserCpDto: CreateUserCpDto , 
     @UserByToken() user : string , 

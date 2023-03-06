@@ -17,6 +17,11 @@ import isValidPhoto from '../../validate/img.validate';
 import { ApiBase } from '../../api/api.base';
 import { LOGO } from '../../pages/login/intro';
 import Input from '../input/Input';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 const fieldCreateUser = [
 ['username' , 'text' ,'Tên đăng nhập'] ,            
@@ -57,6 +62,7 @@ function UserForm(props) {
     }
     const handleSubmit = () =>{
         let flag = true
+        console.log(user);
         if(!user){
 
             flag = false 
@@ -68,7 +74,6 @@ function UserForm(props) {
             })
             
         }
-        console.log(user);
         if(!flag){
             notifyFunc(ERROR , FIELD_NOT_HOLLOW , TRUE)
             return
@@ -149,7 +154,23 @@ function UserForm(props) {
                         <Input handleChange={handleChange} placeholder={e[2] != 'file' ? e[2] : ''} name={e[0] && e[0]} type={e[1] && e[1]} />
                         </>
                     })}
-                   
+                     <Box sx={{ minWidth: 120 , width : '60%' }}>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Chức năng hệ thống</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          name='role'
+          value={user && user.role}
+          label="Age"
+          onChange={handleChange}
+        >
+          <MenuItem value={'admin'}>Admin</MenuItem>
+          <MenuItem value={'marketing'}>Marketing</MenuItem>
+          <MenuItem value={'content'}>Nội dung</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
                 </form>
                 <div className="avatar-demo" >
                 <Avatar

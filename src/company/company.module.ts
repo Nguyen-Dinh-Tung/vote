@@ -20,7 +20,8 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
         UserEntity , 
         UserCp
       ]) , 
-    forwardRef(() =>UsersModule)  ,forwardRef(() => ContestEntity) ,
+    forwardRef(() =>UsersModule)  ,
+    forwardRef(() => ContestEntity) ,
     forwardRef(() => UserCpModule) ,
     MulterModule.register({
       dest : './files/images'

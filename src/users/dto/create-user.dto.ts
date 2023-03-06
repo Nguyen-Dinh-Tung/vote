@@ -1,6 +1,6 @@
 import { Roles } from 'src/common/enum/role.enum';
 import { Expose } from "class-transformer";
-import { IsNotEmpty ,IsEmail, Length, IsString} from "class-validator";
+import { IsNotEmpty ,IsEmail, Length, IsString, IsOptional} from "class-validator";
 import * as Joi from 'joi';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateUserDto {
@@ -40,9 +40,11 @@ export class CreateUserDto {
     @IsString()
     @Length(6,20)
     password : string ;
-    @ApiProperty()
 
+    @ApiProperty()
+    @IsOptional()
     role ? : Roles
+    
     @ApiProperty()
 
     code ? : string
