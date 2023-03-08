@@ -10,18 +10,16 @@ import { TRUE } from '../../contants/notify/status.notify';
 import { ERROR, SUCCESS } from '../../contants/notify/type.notify';
 import { EMAIL_REGEX, FIELD_NOT_HOLLOW, IMG_VALIDATE, PASSWORD_MIN, PASSWORD_REGEX, USER_MIN_LENGTH, USER_REGEX } from '../../contants/notify/notify.register';
 import AlertComponents from '../../components/alert/Alert';
-import {setAlert} from '../../redux/features/show.slice'
 import { regexEmail, regexPassword, regexUsername } from '../../regex/userInfo.regex';
 import useNotifyFunc from '../../hooks/notify.func';
 import isValidPhoto from '../../validate/img.validate';
 import { ApiBase } from '../../api/api.base';
-import { LOGO } from '../../pages/login/intro';
 import Input from '../input/Input';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 
 const fieldCreateUser = [
 ['username' , 'text' ,'Tên đăng nhập'] ,            
@@ -31,6 +29,7 @@ const fieldCreateUser = [
 ['email' , 'email' , 'Email đăng ký'] ,
 ['background' , 'file' ,'image/*']
 ]
+
 function UserForm(props) {
     const field = props.field ;
     const [user , setUser] = useState() ;
@@ -40,6 +39,7 @@ function UserForm(props) {
     const handleChange = (e) =>{
 
         if(e.target.name == "background"){
+
             let file = e.target.files[0] 
             if(file){
                 if(!isValidPhoto(file.type)){
@@ -50,19 +50,17 @@ function UserForm(props) {
             let ObjectUrl = URL.createObjectURL(file)
             setAvatar(ObjectUrl)
             setUser({...user , file : e.target.files[0]})
-            
 
         }else{
 
         setUser({...user , [e.target.name] : e.target.value})
         
         }
-
-
     }
+
     const handleSubmit = () =>{
+
         let flag = true
-        console.log(user);
         if(!user){
 
             flag = false 
@@ -118,25 +116,18 @@ function UserForm(props) {
 
             if(res.status == 201){
                 notifyFunc(SUCCESS , res.data.message , TRUE)
-
                 setUser(undefined)
                 document.querySelector('#form-reset').reset()
                 setAvatar(undefined)
             }
         })
         .catch(e =>{
-            console.log(e);
+
             if(e) {
                 notifyFunc(ERROR , e.response.data.message , TRUE)
             }
 
         })
-    }
-
-
-    const handleClickAvatar = () =>{
-        
-
     }
 
     return (
@@ -155,29 +146,28 @@ function UserForm(props) {
                         </>
                     })}
                      <Box sx={{ minWidth: 120 , width : '60%' }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Chức năng hệ thống</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          name='role'
-          value={user && user.role}
-          label="Age"
-          onChange={handleChange}
-        >
-          <MenuItem value={'admin'}>Admin</MenuItem>
-          <MenuItem value={'marketing'}>Marketing</MenuItem>
-          <MenuItem value={'content'}>Nội dung</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Chức năng hệ thống</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            name='role'
+                            value={user && user.role}
+                            label="Age"
+                            onChange={handleChange}
+                            >
+                            <MenuItem value={'admin'}>Admin</MenuItem>
+                            <MenuItem value={'marketing'}>Marketing</MenuItem>
+                            <MenuItem value={'content'}>Nội dung</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
                 </form>
                 <div className="avatar-demo" >
                 <Avatar
                     alt="Remy Sharp"
                     src={avatar && avatar}
                     sx={{ width: 56, height: 56 }}
-                    onClick={handleClickAvatar}
                 />
 
                 </div>

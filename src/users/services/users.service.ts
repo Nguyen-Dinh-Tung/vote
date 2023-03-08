@@ -18,6 +18,7 @@ import * as fs from 'fs'
 import { regexEmail, regexPassword, regexUsername } from 'src/regex/regex';
 import { amount } from '../contants/amount.in.page';
 import { SEARCH_KEY_NOT_FOUNT, SEARCH_SUCCESS ,GET_LIST_CANDIDATE_SUCCESS, FILTER_SUCCESS, FILTER_FAIL} from 'src/candidate/contants/message';
+import { FindList } from 'src/common/interfaces/res.interfaces';
 @Injectable()
 export class UsersService {
 
@@ -145,8 +146,11 @@ export class UsersService {
 
   }
 
-  async searchList(search?: string , isActive? : boolean, page? : number , res? : Response){
-    
+  async searchList(
+    search?: string , 
+    isActive? : boolean, 
+    page? : number , 
+    res? : Response): Promise<Response <UserEntity>>{
     let offset = +page * amount - amount
 
     let listUser : any[] ;
@@ -172,13 +176,13 @@ export class UsersService {
       .getRawMany()
       
       if(listUser.length > 0){
-
         
         return res.status(HttpStatus.OK).json({
           message : SEARCH_SUCCESS , 
           listUser : listUser ,
           total : total[1]
         })
+
       }
       return res.status(HttpStatus.NOT_FOUND).json({
         message : SEARCH_KEY_NOT_FOUNT , 
@@ -202,6 +206,7 @@ export class UsersService {
       .limit(amount)
       .offset(offset)
       .getRawMany()
+      
       if(listUser.length > 0){
         return res.status(HttpStatus.OK).json({
           message : FILTER_SUCCESS , 
@@ -240,11 +245,16 @@ export class UsersService {
     })
 
   } 
-  async update(id: string, updateUserDto: UpdateUserDto ,userUpdate : string , res : Response ,file?) {
+  async update(
+    id: string, 
+    updateUserDto: UpdateUserDto ,
+    userUpdate : string , 
+    res : Response ,
+    file? : Express.Multer.File
+    ) {
 
     
     try{
-
 
     let checkUser = await this.validateUser({id : id})
       
@@ -269,7 +279,7 @@ export class UsersService {
         if(updateUserDto.email != checkUser.email){
           let checkEmail = await this.validateUser({email : updateUserDto.email})
           if(checkEmail)
-          res.status(HttpStatus.NOT_FOUND).json({
+          return res.status(HttpStatus.NOT_FOUND).json({
             message : EMAIL_UNIQUE
           })
         }
@@ -283,11 +293,10 @@ export class UsersService {
           return res.status(HttpStatus.NOT_FOUND).json({
             message : PASSWORD_NOT_FOUND
           })
+
         }
 
       }
-
-
       
       if(updateUserDto.oldPassword && updateUserDto.newPassword){
           
@@ -299,12 +308,10 @@ export class UsersService {
 
         }
         if(!regexPassword(updateUserDto.newPassword)){
-          res.status(HttpStatus.NOT_FOUND).json({
+          return res.status(HttpStatus.NOT_FOUND).json({
             message : MESSAGE_FORMAT
           })
         }
-
-
 
         let compePassword = bcrypt.compareSync(updateUserDto.oldPassword , checkUser.password) ;
         
@@ -322,14 +329,12 @@ export class UsersService {
            })
           }else{
 
-            return {
+            return res.status(HttpStatus.BAD_REQUEST).json({
               message : MessageUpdate.PASSWORD_OLD_NOT_CORRECT ,
-              status : HttpStatus.NOT_FOUND
-            }
+            })
 
           }
       }
-
 
       if(file){
         checkUser['background'] = this.saveImage(file)
@@ -343,8 +348,6 @@ export class UsersService {
         user : checkUser
       })
 
-
-
     }
 
     }catch(e){
@@ -355,7 +358,7 @@ export class UsersService {
   }
 
 
-  async remove(id: string , userRemove , res : Response ) {
+  async remove(id: string , userRemove : string , res : Response ) {
 
     try{
 
@@ -373,7 +376,7 @@ export class UsersService {
       checkUser = {
         ...checkUser , ...newData
       }
-      this.userEntity.save(checkUser);
+      await this.userEntity.save(checkUser);
       return res.status(HttpStatus.OK).json({
         message : USER_REMOVE
       })

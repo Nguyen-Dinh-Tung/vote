@@ -1,8 +1,6 @@
 import React, { useEffect, useState  } from 'react';
 import { useNavigate } from "react-router-dom";
 
-import BtnOutLine from '../../components/button/BtnOutLine';
-import { BTN_SUBMIT, BTN_TO_LOGIN } from '../../contants/btn';
 import './index.css'
 import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,11 +12,15 @@ import {setAlert} from '../../redux/features/show.slice'
 import { regexEmail, regexPassword, regexUsername } from '../../regex/userInfo.regex';
 import useNotifyFunc from '../../hooks/notify.func';
 import isValidPhoto from '../../validate/img.validate';
-import { ApiBase } from '../../api/api.base';
+import { ApiBase, host } from '../../api/api.base';
 import { LOGO } from '../../pages/login/intro';
 import { ADDCONTEST } from '../../contants/field.desc';
 import { ADD_CONTEST_SUCCESS } from '../../contants/notify/message';
-
+import { Button, Checkbox, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Pagination } from '@mui/material';
+import { Stack } from '@mui/system';
+import UserShare from '../user-share/UserShare';
+import CandidateShare from '../candidate-share/CandidateShare';
+import CompanyShare from '../contest-share/CompanyShare';
 const infoRegister = [
 ['name' , 'text' , 'Tên cuộc thi '] ,
 ['slogan' , 'text' , 'Slogan cuộc thi'] ,
@@ -40,13 +42,18 @@ function FormContest(props) {
     }) ;
     const [avatar , setAvatar] = useState() ;
     const [company , setCompany] = useState()
-    const dispatch = useDispatch()
+    const [step , setStep] = useState(1)
     const [notifyFunc] = useNotifyFunc()
+    const [listIdUserShare , setListIdUserShare] = useState()
+    const [listIdCandidate , setListIdCandidate] = useState()
+    const [listIdCompany , setListIdCompany] = useState()
     const urlAddContest = '/contest'
-    const urlLogin = `/auth/login`
-    const urlGetListCompany = '/company'
-    const urlAddAssignment = '/assignment-company'
-    const navigate = useNavigate()
+    const urlGetListCompany = '/company/1'
+
+
+
+
+
     const handleChange = (e) =>{
         if(e.target.name == "background"){
             let file = e.target.files[0] 
@@ -70,9 +77,30 @@ function FormContest(props) {
 
     }
 
+    const nextStep = () =>{
+        if(step < 4 && step>=1)
+        setStep(step+1)
+    }
+    const backStep = () =>{
+        if(step > 1)
+        setStep(step - 1)
+    }
 
+    
+    
+    const handleChangeListUserShare = (data) =>{
+        setListIdUserShare(data)
+    }
+
+    const handleChangeListCandidateShare = (data) =>{
+        setListIdCandidate(data)
+    }
+    const handleChangeListCompanyShare = (data) =>{
+        setListIdCompany(data)
+    }
     const handleSubmit = () =>{
         let flag = true
+
         if(!contest){
 
             flag = false 
@@ -100,6 +128,10 @@ function FormContest(props) {
         Object.keys(contest).some(key =>{
             form.append(key,contest[key])
         })
+        form.append('share' , JSON.stringify({
+            listIdCandidate : listIdCandidate ,
+            listIdUser : listIdUserShare
+        }))
         ApiBase.post(urlAddContest , form )
         .then(res => {
             if(res.status == 201){
@@ -130,31 +162,33 @@ function FormContest(props) {
         })
     }
 
-
-    const handleClickAvatar = () =>{
-        
-
-    }
-
     useEffect(() =>{
         ApiBase.get(urlGetListCompany)
         .then(res =>{
-            console.log(res);
-            setCompany(res.data)
+            setCompany(res.data.listCompany)
         })
         .catch(e =>{
             if(e) console.log(e);
         })
     },[])
+
+
     return (
         <div className='register mt-50'>
             <div className="header">
-                <p className='header'>{ADDCONTEST}</p>
+                <p className='header'>
+                    {step === 1 ? ADDCONTEST : 
+                    step === 4 ? "Chia sẻ quyền quản lý cuộc thi " : step === 2 ?
+                        "Thêm tổ chức phát triển" : step === 3?
+                        "Thêm thí sinh vào cuộc thi " : ""
+                }
+                </p>
             </div>
+            {step && step === 1 
+            ? 
             <div className="form-register">
                 <form className="form-info" onSubmit={(e) =>{
                     e.preventDefault()
-                    
                 }}
                 >
                     {infoRegister && infoRegister.map((e , index) =>{
@@ -165,6 +199,7 @@ function FormContest(props) {
                         id={e[0] && e[0]}
                         type={e[1] && e[1]} 
                         name={e[0] && e[0]} placeholder={e[0] == 'file' ? '' : e[2]} 
+                        value={contest && contest[e[0]]}
                         accept={e[0] == 'file' ? e[2] : ''}/>
                         </>
                     })}
@@ -182,20 +217,67 @@ function FormContest(props) {
                     alt="Remy Sharp"
                     src={avatar && avatar}
                     sx={{ width: 56, height: 56 }}
-                    onClick={handleClickAvatar}
                 />
 
                 </div>
-                <div className="btn-register">
-                <button   
-                    className='button'
-                    onClick={handleSubmit}
-                    xs={{backgroundColor : '#00acc1'}}
-                    >{ADDCONTEST}
-                </button>
-                </div>
-            </div>
 
+            </div>
+            
+            : step === 2  
+            
+            ?
+            <CompanyShare handleGetData={handleChangeListCompanyShare}/>
+            : step === 3 ? 
+            <CandidateShare handleGetData={handleChangeListCandidateShare}/>
+            : step === 4 
+            ? 
+            <UserShare handleGetData={handleChangeListUserShare}/>
+            :""
+            }
+
+            <div className="btn-register">
+                    <button   
+                        className='button'
+                        onClick={handleSubmit}
+                        xs={{backgroundColor : '#00acc1'}}
+                        >{ADDCONTEST}
+                    </button>
+                    </div>
+            {step && step > 0 && step <4 
+            ? 
+                <div style={{
+                    position : 'absolute' ,
+                    right : '0' ,
+                    top : '50%' ,
+                    transform : 'translateX(-50%)'
+                }}>
+                <Button color="secondary" 
+                        variant="outlined"
+                    onClick={nextStep}
+                >
+                    Tiếp theo
+                </Button>
+                </div>
+            : ''
+            }
+
+            {step && step >1 && step <=4 
+            ? 
+                    <div style={{
+                        position : 'absolute' ,
+                        left : '10%' ,
+                        top : '50%' ,
+                        transform : 'translateX(-50%)'
+                    }}>
+                    <Button color="secondary" 
+                            variant="outlined"
+                        onClick={backStep}
+                    >
+                        Trở lại
+                    </Button>
+                    </div> 
+            : ''    
+            }
             <AlertComponents/>
 
         </div>

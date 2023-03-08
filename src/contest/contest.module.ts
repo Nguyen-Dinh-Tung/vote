@@ -1,3 +1,6 @@
+import { AssignmentCompanyModule } from './../assignment-company/assignment-company.module';
+import { CandidateEntity } from './../candidate/entities/candidate.entity';
+import { CandidateModule } from 'src/candidate/candidate.module';
 import { CompanyEntity } from './../company/entities/company.entity';
 import { ContestService } from './services/contest.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,20 +14,31 @@ import { ContestRecomendEntity } from './entities/ContestRecomend.entity';
 import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
+import { TicketModule } from 'src/ticket/ticket.module';
+import { UserCoModule } from 'src/user-co/user-co.module';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([
+  imports : [
+    TypeOrmModule.forFeature([
     ContestEntity , 
     ContestRecomendEntity , 
     AssmCompanyEntity , 
     CompanyEntity ,
     UserCp ,
     UserEntity ,
-  
-  ]) , forwardRef(() => UsersModule) , forwardRef(() => CompanyModule)  , 
+    CandidateEntity
+  ]) ,
+   forwardRef(() => UsersModule) , 
+   forwardRef(() => CandidateModule) , 
+   forwardRef(() => CompanyModule)  , 
+   forwardRef(() => TicketModule) ,
+   forwardRef(() => CandidateModule) ,
+   forwardRef(() => AssignmentCompanyModule) ,
+   forwardRef(() => UserCoModule) ,
   MulterModule.register({
     dest : './files/images'
-  }) ] ,
+  }) ,
+] ,
   controllers: [ContestController],
   providers: [ContestService] ,
   exports : [ContestService]

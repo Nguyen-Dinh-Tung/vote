@@ -1,10 +1,13 @@
-import { IsNotEmpty } from "class-validator";
+import { ContestShareInterface } from 'src/common/interfaces/Contest-share.interface';
+import { IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateTicketDto {
-    namecontest : string ;
     @IsNotEmpty()
     idcontest : string ;
+
     @IsNotEmpty()
-    idcadidate : string ;
-    historyCreate  : string ;
+    idcandidates : string [] ;
+
+    @IsOptional()
+    historyCreate?  : string ;
 }

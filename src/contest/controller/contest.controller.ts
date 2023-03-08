@@ -1,3 +1,4 @@
+import { ParseStrPipe } from './../../common/pipe/ParseStr.pipe';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CreateContestDto } from '../dto/create-contest.dto';
@@ -26,11 +27,12 @@ export class ContestController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   create(
-  @Body() createContestDto: CreateContestDto ,
+  @Body(new ParseStrPipe()) createContestDto: CreateContestDto ,
   @UploadedFile(new ImagePipe()) file? : Express.Multer.File  ,
   @UserByToken() userByToken? : string , @Res() res? : Response) {
     try{
 
+      
       return this.contestService.create(createContestDto , file, userByToken , res);
 
     }catch(e){

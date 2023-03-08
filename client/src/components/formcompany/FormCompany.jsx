@@ -88,37 +88,37 @@ function FormCompany(props) {
 
   const handleChangePage = (e , page)=>{
     setPage(page)
-}
+    }
     const handleChangeDemoPage = (e , page) =>{
         setDemoPage(page)
     }
-const submitShare = () =>{
-  if(checked.length < 1){
-    notifyFunc(ERROR , LIST_NOT_DATA , TRUE)
-    return
-  }
-  let newShare = {
-    idCompany : listIdCompany ,
-    idUser : checked
-  }
-
-  const urlAddNewUcp = '/user-cp'
-  ApiBase.post(urlAddNewUcp,newShare)
-  .then(res =>{
-
-    if(res.status === 201){
-      notifyFunc(SUCCESS , res.data.message , TRUE)
-      handleClose()
+    const submitShare = () =>{
+    if(checked.length < 1){
+        notifyFunc(ERROR , LIST_NOT_DATA , TRUE)
+        return
     }
-    
-  })
-  .catch(e =>{
-    if(e){
-      notifyFunc(ERROR , e.response.data.message , TRUE)
-      handleClose()
+    let newShare = {
+        idCompany : listIdCompany ,
+        idUser : checked
     }
-  })
-}
+
+    const urlAddNewUcp = '/user-cp'
+    ApiBase.post(urlAddNewUcp,newShare)
+    .then(res =>{
+
+        if(res.status === 201){
+        notifyFunc(SUCCESS , res.data.message , TRUE)
+        handleClose()
+        }
+        
+    })
+    .catch(e =>{
+        if(e){
+        notifyFunc(ERROR , e.response.data.message , TRUE)
+        handleClose()
+        }
+    })
+    }
 const handleRemoveSelectDemo = (id) =>{
     listSelectDemo.map((e , index)=>{
         if(e.id === id){

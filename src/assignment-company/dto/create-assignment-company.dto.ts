@@ -2,7 +2,7 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateAssignmentCompanyDto {
     @IsNotEmpty()
-    idCompany : string ;
+    idCompanies : string [];
     @IsNotEmpty()
     idContest : string ;
 }

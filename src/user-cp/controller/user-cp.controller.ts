@@ -1,14 +1,14 @@
+import { join } from 'path';
 import { Roles } from './../../common/enum/role.enum';
-
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, StreamableFile } from '@nestjs/common';
 import { UserCpService } from '../services/user-cp.service';
 import { CreateUserCpDto } from '../dto/create-user-cp.dto';
 import { UpdateUserCpDto } from '../dto/update-user-cp.dto';
 import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
 import { Response } from 'express';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
-import { ROLE_UCP } from '../contants/role.enum';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
+import { createReadStream } from 'fs';
 
 @Controller('user-cp')
 export class UserCpController {
@@ -52,5 +52,12 @@ export class UserCpController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userCpService.remove(+id);
+  }
+
+
+  @Get('/test')
+  download(){
+    const file = createReadStream(join(process.cwd(), 'demo.jpeg'));
+    return new StreamableFile(file);
   }
 }

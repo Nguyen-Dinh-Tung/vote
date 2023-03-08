@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from "class-transformer";
 import { IsNotEmpty, IsOptional, Length } from "class-validator";
+import { ContestShareInterface } from 'src/common/interfaces/Contest-share.interface';
 
 export class CreateContestDto {
 
@@ -44,5 +45,9 @@ export class CreateContestDto {
     @IsOptional()
     @ApiProperty()
     background : string ;
+
+    @IsOptional()
+    @ApiProperty()
+    share : ContestShareInterface ;
 
 }

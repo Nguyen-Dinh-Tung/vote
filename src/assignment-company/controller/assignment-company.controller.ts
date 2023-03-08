@@ -15,7 +15,7 @@ export class AssignmentCompanyController {
   async create(@Body() createAssignmentCompanyDto: CreateAssignmentCompanyDto , @Res() res : Response) {
     try{
 
-    return await this.assignmentCompanyService.create(createAssignmentCompanyDto ,res);
+    return await this.assignmentCompanyService.create(createAssignmentCompanyDto);
 
     }catch(e){
 

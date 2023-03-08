@@ -1,4 +1,4 @@
-import { SERVE_ERROR } from './../../common/constant/message';
+import { ADD_NEW_UCO_SUCCESS, SERVE_ERROR } from './../../common/constant/message';
 import { SEARCH_KEY_NOT_FOUNT } from './../../candidate/contants/message';
 import { ContestEntity } from 'src/contest/entities/contest.entity';
 import { COMPANY_ERROR, GET_LIST_CONTEST_SUCCESS, NOT_DATA } from './../../contest/contants/contants';
@@ -13,6 +13,7 @@ import { In, Repository } from 'typeorm';
 import { Response } from 'express'
 import { ADD_NEW_ASSIGNMENT_SUCCESS, ASSM_CP_NOT_FOUND, COMPANY_NOT_ACTIVE, COMPANY_NOT_EXIST, CONFLIT_ASSIGNMENT, CONTEST_NOT_ACTIVE, CONTEST_NOT_FOUND, REMOVE_ASCP_SUCCESS, UPDATE_ASSM_COMPANY } from '../contants/contant';
 import { CompanyEntity } from 'src/company/entities/company.entity';
+import { FindList } from 'src/common/interfaces/res.interfaces';
 
 @Injectable()
 export class AssignmentCompanyService {
@@ -24,55 +25,54 @@ export class AssignmentCompanyService {
   ){
 
   }
-  async create(createAssignmentCompanyDto: CreateAssignmentCompanyDto , res : Response) {
+  async create(
+    createAssignmentCompanyDto: CreateAssignmentCompanyDto
+    ) : Promise<FindList<AssmCompanyEntity>> {
 
-    
+    let checkCompanies = await this.companyEntity.find({
+      where : {
+        id : In(createAssignmentCompanyDto.idCompanies)
+      }
+    })
 
-    let checkContest = await this.contestEntity.findOneBy({id : createAssignmentCompanyDto.idContest})
-    let checkCompany = await this.companyEntity.findOneBy({id : createAssignmentCompanyDto.idCompany})
-
+    let checkContest = await this.contestEntity.findOne({
+      where : {
+        id : createAssignmentCompanyDto.idContest
+      }
+    })
+    if(checkCompanies.length < 1)
+    return {
+      message : COMPANY_NOT_EXIST ,
+      status : HttpStatus.NOT_FOUND ,
+      data : undefined , 
+      total : undefined
+    }
     if(!checkContest)
-    return res.status(HttpStatus.NOT_FOUND).json({
-      message : CONTEST_NOT_FOUND
-    })
+    return {
+      message : CONTEST_NOT_FOUND ,
+      status : HttpStatus.NOT_FOUND ,
+      data : undefined , 
+      total : undefined
+    }
+    let listAscp : AssmCompanyEntity [] ;
+    for(let e of checkCompanies){
 
-    if(!checkContest.isActive)
-    return res.status(HttpStatus.NOT_FOUND).json({
-      message : CONTEST_NOT_ACTIVE
-    })
+      let infoNewAscp = {
+        company : e ,
+        contest : checkContest
+      }
 
-    if(!checkCompany )
-    return res.status(HttpStatus.NOT_FOUND).json({
-      message : COMPANY_NOT_EXIST
-    })
+      let newAscp = await this.assigmCompany.save(infoNewAscp)
 
-    if(!checkCompany.isActive)
-    return res.status(HttpStatus.NOT_FOUND).json({
-      message : COMPANY_NOT_ACTIVE
-    })
-
-    // let checkAssignment = await this.assigmCompany.findOneBy({
-    //   idContest : createAssignmentCompanyDto.idContest,
-    //   idCompany : createAssignmentCompanyDto.idCompany
-    // })
-
-    // if(!checkAssignment){
-
-    //   let newAssignment = await this.assigmCompany.save(createAssignmentCompanyDto)
-
-
-    //   res.status(HttpStatus.CREATED).json({
-    //     message : ADD_NEW_ASSIGNMENT_SUCCESS , 
-    //     newAssignment : newAssignment
-    //   })
-
-    // }else{
-
-    //   res.status(HttpStatus.CONFLICT).json({
-    //     message : CONFLIT_ASSIGNMENT
-    //   })
-
-    // }
+      if(newAscp)
+      listAscp.push(newAscp)
+    }
+    return {
+      message : ADD_NEW_UCO_SUCCESS ,
+      status : HttpStatus.OK ,
+      data : listAscp , 
+      total : listAscp.length
+    }
 
   }
 

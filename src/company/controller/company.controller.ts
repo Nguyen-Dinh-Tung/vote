@@ -12,17 +12,14 @@ import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { CompanyService } from '../services/company.service';
 import { ImagePipe } from 'src/users/pipe/Image.pipe';
-import { ParserDataPipe } from 'src/users/pipe/ParserData.pipe';
 import { ParserBooleanIsActive } from 'src/common/pipe/ParserBooleanIsActive.pipe';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
-import { ROLE_UCP } from 'src/user-cp/contants/role.enum';
 import { ParseStringnifyPipe } from 'src/common/pipe/ParseStringnify..pipe';
 
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService,
-    private readonly usersService : UsersService
-    ) {}
+  ) {}
 
   @RolesCheck([...Object.values(Roles)])
   @UseInterceptors(FileInterceptor('file'))
@@ -45,7 +42,7 @@ export class CompanyController {
 
   @RolesCheck([...Object.values(Roles)])
   @Get('/:page?')
-  findAll(
+  async findAll(
     @Res() res: Response, 
     @IdUserInterceptor() idUser: any,
     @Param() param?: any ,
@@ -57,13 +54,16 @@ export class CompanyController {
       let page = Number(param.page)
       if(page === undefined)
       page = 1 ;
-      return this.companyService.findAll(
+      return await this.companyService.findAll(
+
         page , 
         query.isActive , 
         query.search ,
         query.ucp ,
         res ,
-        idUser);
+        idUser
+        
+        );
 
     }catch(e){
 

@@ -20,7 +20,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SUCCESS } from '../../contants/notify/type.notify';
 import { LIST_NOT_DATA } from '../../contants/notify/message';
-import DialogShareCompany from '../sharecompany/DialogShareCompany';
+import DialogShareCompany from '../sharecp/DialogShareCompany';
 const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
     position: 'absolute', 
     '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {

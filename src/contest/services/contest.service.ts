@@ -1,3 +1,10 @@
+import { UserCo } from './../../user-co/entities/user-co.entity';
+import { AssmCompanyEntity } from './../../assignment-company/entities/assignment-company.entity';
+import { TicketEntity } from './../../ticket/entities/ticket.entity';
+import { UserCoService } from './../../user-co/services/user-co.service';
+import { AssignmentCompanyService } from './../../assignment-company/service/assignment-company.service';
+import { CandidateEntity } from './../../candidate/entities/candidate.entity';
+import { TicketService } from './../../ticket/services/ticket.service';
 import { SERVE_ERROR } from './../../common/constant/message';
 import { FIELD_NOT_HOLLOW } from './../../users/contants/message';
 import { CONTEST_NOT_FOUND, COMPANY_NOT_EXIST, COMPANY_NOT_ACTIVE } from './../../assignment-company/contants/contant';
@@ -8,14 +15,15 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateContestDto } from '../dto/create-contest.dto';
 import { UpdateContestDto } from '../dto/update-contest.dto';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Validate } from 'src/common/class/validate.entity';
 import { CompanyService } from 'src/company/services/company.service';
 import * as fs from 'fs';
 import { Response } from 'express';
 import { ADD_CONTEST_SUCCES, ADM_MESSAGE, ASSCP_NOT_FOUND, COMPANY_ERROR, CONTEST_EXISTING, CO_REM_NOT_EXIST, GET_DETAILS_SUCESS, GET_LIST_CONTEST_SUCCESS, NOT_DATA, UPDATE_SUCCESS } from '../contants/contants';
 import { ContestRecomendEntity } from '../entities/ContestRecomend.entity';
-import { AssmCompanyEntity } from 'src/assignment-company/entities/assignment-company.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 
 @Injectable()
 export class ContestService {
@@ -24,38 +32,57 @@ export class ContestService {
   @InjectRepository(ContestRecomendEntity) private readonly contestRemEntity : Repository<ContestRecomendEntity> ,
   @InjectRepository(AssmCompanyEntity) private readonly assmCompanyEntity : Repository<AssmCompanyEntity> ,
   @InjectRepository(CompanyEntity) private readonly companyEntity : Repository<CompanyEntity> ,
+  @InjectRepository(CandidateEntity) private readonly candidateEntity : Repository<CandidateEntity> ,
+  @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> ,
   private readonly companyService : CompanyService ,
+  private readonly ticketService : TicketService,
+  private readonly ascpService : AssignmentCompanyService ,
+  private readonly ucoService : UserCoService
+
   ){
 
   }
-  async create(createContestDto: CreateContestDto , file : Express.Multer.File , userCreate : string, res : Response) {
+  async create(
+    createContestDto: CreateContestDto , 
+    file : Express.Multer.File , 
+    userCreate : string,
+    res : Response) {
 
     try{
 
-      let checkContest = await this.contentEntity.find({
+      let checkContest = await this.contentEntity.findOne({
         where : [
           { email : createContestDto.email,} ,
           {name : createContestDto.name}
         ]
       })
 
-      let checkCompany = await this.companyEntity.findOne({
+      let checkCompanies = await this.companyEntity.find({
         where : {
-          id : createContestDto.idCompany
+          id : In(createContestDto.share.listIdCompany)
         }
       })
 
-      if(!checkCompany || checkCompany.isActive === false){
-        res.status(HttpStatus.BAD_REQUEST).json({
-          message : COMPANY_ERROR
-        })
-      }
+      let checkUsers = await this.userEntity.find({
+        where : {
+          id : In(createContestDto.share.listIdUser)
+        }
+      })
 
-        if(checkContest.length > 0) 
+      let checkCandidates = await this.candidateEntity.find({
+        where : {
+          id : In(createContestDto.share.listIdCandidate)
+        }
+      })
+
+      if(checkContest) {
+
         return res.status(HttpStatus.BAD_REQUEST).json({
           message : CONTEST_EXISTING
         })
 
+      }
+      
       else{
 
         let newInfoCo = {
@@ -89,32 +116,49 @@ export class ContestService {
 
           }else{
 
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-              message : ADM_MESSAGE
-            })
+          }
+
+          let listTicket : TicketEntity [] ;
+          if(checkCandidates.length > 0){
+            let infoListTicket = {
+              idcontest : newContest.id ,
+              idcandidates : createContestDto.share.listIdCandidate ,
+              historyCreate : userCreate
+            }
+            let resTicket = await this.ticketService.create(infoListTicket , userCreate)
+            listTicket = resTicket.data
 
           }
 
-          let infoAssmCompany = {
-            company : checkCompany ,
-            contest : newContest
+          let listAscp : AssmCompanyEntity [] ;
+          if(checkCompanies.length > 0){
+            let infoListAscp = {
+              idContest : newContest.id , 
+              idCompanies : createContestDto.share.listIdCompany
+            }
+            let resAscp = await this.ascpService.create(infoListAscp)
+            listAscp = resAscp.data
           }
 
-          let newAssmCompany = await this.assmCompanyEntity.save(infoAssmCompany)
+          let listUco : UserCo [] ;
+          if(checkUsers.length > 0){
 
-          if(newAssmCompany){
-
-            return res.status(HttpStatus.CREATED).json({
-              message : ADD_CONTEST_SUCCES ,
-              newContest : newContest
-            })
-
-          }else{
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-              message : ADM_MESSAGE
-            })
+            let infoListUco = {
+              idContest : newContest.id ,
+              idUsers : createContestDto.share.listIdUser
+            }
+            let resUco = await this.ucoService.create(infoListUco)
+            listUco = resUco.data
           }
 
+
+          return res.status(HttpStatus.CREATED).json({
+            message : ADD_CONTEST_SUCCES ,
+            listTicket : listTicket ,
+            listAscp : listAscp , 
+            listUco : listUco , 
+            newContest : newContest
+          })
         }else{
           return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             message : ADM_MESSAGE

@@ -22,6 +22,8 @@ import Confim from '../confim/Confim';
 import { LIST_NOT_DATA } from '../../contants/notify/message';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
+import DialogShareCompany from '../sharecp/DialogShareCompany';
+import { all } from 'axios';
 
 
 const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
@@ -49,7 +51,7 @@ function AssmCompany(props) {
     const open = useSelector(state => state.show.dialogEdit) ;
     const dispatch = useDispatch()
     const [notifyFunc] = useNotifyFunc() 
-    const [listUser , setListUser] = useState()
+    const [list , setList] = useState()
     const [searchKey , setSearchKey] = useState() 
     const [filter , setFilter] = useState()
     const [page , setPage] = useState(1)
@@ -82,9 +84,6 @@ function AssmCompany(props) {
     }
 
     const submitShare = () =>{
-
-        console.log(566);
-
     }
 
 
@@ -110,6 +109,7 @@ function AssmCompany(props) {
             setConfim({
                 message : "Chia sẻ quản lý cuộc thi ?" ,
                 status : true ,
+                name : 'share' ,
                 handle : submitShare
 
             })
@@ -125,10 +125,6 @@ function AssmCompany(props) {
         }
     }
     
-
-
-
-
     const setTing = () =>{
         dispatch(setDialogEdit(true))
     }
@@ -177,17 +173,35 @@ function AssmCompany(props) {
         navigate('/companies')
     }
 
+
     const handleChecked = (e,id) =>{
         let checked = e.target.checked ;
-        if(checked == true && !listCheck.includes(id)){
-            listCheck.push(id)
-            setListCheck([...listCheck])
+        let name = e.target.name 
+        if(name && name === 'all'){
+            if(checked){
+                let allId = [] ;
+                for(let e of list){
+                    allId.push(e.id)
+                }
+                setListCheck(allId)
+            return
+            }
+            setListCheck([])
+            return
+            
+        }else{
+            if(checked == true && !listCheck.includes(id)){
+                listCheck.push(id)
+                setListCheck([...listCheck])
+            }
+            if(checked == false && listCheck.includes(id)){
+                listCheck.splice(listCheck.indexOf(id) , 1)
+                setListCheck([...listCheck])
+            }
         }
-        if(checked == false && listCheck.includes(id)){
-            listCheck.splice(listCheck.indexOf(id) , 1)
-            setListCheck([...listCheck])
-        }
+        
     }
+    console.log(listCheck);
     const handleClose = () =>{
         setConfim({
             message : '' ,
@@ -208,7 +222,7 @@ function AssmCompany(props) {
     ApiBase.get(urlEntity)
         .then(res =>{
             if(res.status === 200){
-                setListUser(res.data.listContest)
+                setList(res.data.listContest)
                 setTotalPage(Math.ceil(res.data.total / 8))
             }
         })
@@ -241,22 +255,27 @@ function AssmCompany(props) {
                 <option value="false">Ngừng</option>
             </select>
             </div>
-            {!listUser ? <Loadding/> : 
+            {!list ? <Loadding/> : 
                 <>
             <table className='list-user'>
             <thead>
-            <th>Họ và tên</th>
+            <th>
+            <Checkbox name='all' onChange={(event) =>{
+                        handleChecked( event ,'all')
+                    }} color="secondary" 
+            />
+            </th>
+            <th>Tên cuộc thi</th>
             <th>Email</th>
             <th>Địa chỉ</th>
-            <th>Lĩnh vực</th>
+            <th>Tổ chức</th>
             <th>Avatar</th>
             <th>Trạng thái</th>
-            <th>Chọn</th>
             </thead>
             <tbody>
-            {listUser && listUser.length >0 ? 
+            {list && list.length >0 ? 
             
-            listUser.map((e , index) =>{
+            list.map((e , index) =>{
                 return <>
                 <tr className='tr-list-user' key={e.id} 
                     style={{
@@ -264,22 +283,23 @@ function AssmCompany(props) {
                         color : e && e.isActive ? '' : "white"
                     }}
                     >
+                    <td style={{
+                        textAlign : 'center'
+                    }}>
+                    <Checkbox name='element' onChange={(event) =>{
+                        handleChecked( event,e.id)
+                    }} color="secondary" 
+                    checked={listCheck && listCheck.includes(e.id)}
+                    
+                    />
+                    </td>
                     <td>{e && e.name}</td>
                     <td>{e && e.email}</td>
                     <td>{e && e.address}</td>
                     <td>{e && e.bss}</td>
                     <td className='align-center'><img className='user-list-avatar' src={e &&host + e.background} alt="" /></td>
                     <td>{e && e.isActive == true ? "Hoạt động" : 'Dừng'}</td>
-                    <td style={{
-                        textAlign : 'center'
-                    }}>
-                    <Checkbox onChange={(event) =>{
-                        handleChecked( event,e.id)
-                    }} color="secondary" />
-                    </td>
                 </tr>
-                      
-                    
                     </>
             })
             : ''}
@@ -310,13 +330,13 @@ function AssmCompany(props) {
                             describeChild={true}
                             />
                         ))}
-                        </StyledSpeedDial>
+                        </StyledSpeedDial >
                     </Box>
-            {open && open ? <FormEditCompany handleReRender={handleRerender}/> : ''}
-            
-                {confim && confim  ? <Confim  message={confim && confim.message} 
-                submit={confim && confim.handle} open={confim && confim.status} 
-                handleClose={handleClose}/> : ''}
+            {open && open ? <FormEditCompany handleReRender={handleRerender} /> : ''}
+            {confim && confim.name === 'share' ? <DialogShareCompany listIdContest={listCheck} handleClose={handleClose} open={confim && confim.status}/> : ''}
+            {/* {confim && confim  ? <Confim  message={confim && confim.message} 
+            submit={confim && confim.handle} open={confim && confim.status} 
+            handleClose={handleClose}/> : ''} */}
         </div>
     );
 }

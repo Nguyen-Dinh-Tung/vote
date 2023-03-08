@@ -77,7 +77,7 @@ import { UserCpModule } from './user-cp/user-cp.module';
   ],
   controllers: [AppController],
   providers: [AppService  ],
-  exports : [ContestModule , CompanyModule]
+  exports : [ContestModule , CompanyModule , TicketModule , CandidateModule]
 })
 export class AppModule implements OnModuleInit , NestModule {
   constructor(private readonly userService : UsersService ,

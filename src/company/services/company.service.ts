@@ -439,4 +439,11 @@ export class CompanyService {
     fs.unlinkSync(path);
     return fileSave;
   }
+  async getAll(res : Response): Promise<Response<CompanyEntity>> {
+    let listCompany = await this.companayEntity.find()
+    return res.status(HttpStatus.OK).json({
+      message : GET_LIST_COMPANY_SUCCESS ,
+      list : listCompany
+    })
+  }
 }

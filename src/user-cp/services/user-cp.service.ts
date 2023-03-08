@@ -128,7 +128,7 @@ export class UserCpService {
     }
 
     let listUcpNew = [] ;
-    let listExistUcp = []
+    let listExistUcp = [] ;
     for(let e of listUserShare){
       for(let element of listCompanyShare){
 
@@ -192,5 +192,6 @@ export class UserCpService {
     createUserCpDto.role = Roles.ucp_admin
     let newUcp = await this.userCpEntity.save(createUserCpDto)
     return newUcp
+
   }
 }

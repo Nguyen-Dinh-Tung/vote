@@ -2,17 +2,14 @@ import { COMPANY_NOT_EXIST } from './../../assignment-company/contants/contant';
 import { CompanyEntity } from './../../company/entities/company.entity';
 import { UserCp } from './../../user-cp/entities/user-cp.entity';
 import { USER_NOT_FOUND } from './../../users/contants/message';
-import { SetMetadata, UseGuards, UnauthorizedException, HttpException, HttpStatus } from '@nestjs/common';
+import {  HttpException, HttpStatus } from '@nestjs/common';
 import  jwt_decode  from 'jwt-decode';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Roles } from '../enum/role.enum';
-import { UsersService } from 'src/users/services/users.service';
-import { applyDecorators } from '@nestjs/common/decorators';
 import { Request } from 'express';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { FORBIDDEN, NOT_PERMISSION_SHARE, USER_FORBIDEN_COMPANY } from '../constant/message';
-import { ROLE_UCP } from 'src/user-cp/contants/role.enum';
+import {  NOT_PERMISSION_SHARE, USER_FORBIDEN_COMPANY } from '../constant/message';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -58,11 +55,11 @@ export class PemissionGuard implements CanActivate{
                 id : idCompany
             }
         })
+        
         if(!checkCompany)
         throw new HttpException(COMPANY_NOT_EXIST , HttpStatus.NOT_FOUND)
 
         if(userCheck.role === Roles.admin)
-
         return true
         
         let ucp : UserCp = await this.ucpEntity.createQueryBuilder('ucp')
@@ -75,8 +72,6 @@ export class PemissionGuard implements CanActivate{
 
         if(!ucp)
         throw new HttpException(USER_FORBIDEN_COMPANY , HttpStatus.FORBIDDEN)
-        console.log(roles);
-        console.log(ucp);
         
         if(!roles.includes(ucp.role))
         throw new HttpException(NOT_PERMISSION_SHARE , HttpStatus.FORBIDDEN)

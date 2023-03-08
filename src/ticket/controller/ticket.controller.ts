@@ -1,12 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete , Headers } from '@nestjs/common';
+import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
+import { Controller, Get, Post, Body, Patch, Param, Delete , Headers, Res } from '@nestjs/common';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Roles } from 'src/common/enum/role.enum';
 import getUserByReq from 'src/common/func/getUserByHeaderReq';
+import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
 import { UsersService } from 'src/users/services/users.service';
 import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { DataFindByAny } from '../dto/Find-Ticket.dto';
 import { UpdateTicketDto } from '../dto/update-ticket.dto';
 import { TicketService } from '../services/ticket.service';
+import { Response } from 'express';
 
 @Controller('ticket')
 export class TicketController {
@@ -16,8 +19,30 @@ export class TicketController {
 
   @RolesCheck([Roles.admin , Roles.content])
   @Post()
-  async create(@Body() createTicketDto: CreateTicketDto , @Headers() headers : any) {
-    // return this.ticketService.create(createTicketDto , getUserByReq(headers));
+  async create(
+    @Body() createTicketDto: CreateTicketDto , 
+    @UserByToken() userByToken : string,
+    @Res() res : Response
+    
+    
+    ) {
+
+    try{
+
+      const response = await this.ticketService.create(createTicketDto , userByToken);
+
+      return res.status(response.status).json({
+        message : response.message ,
+        data : response.data ,
+        total : response.total ,
+      })
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
+
   }
 
   @RolesCheck([...Object.values(Roles)])

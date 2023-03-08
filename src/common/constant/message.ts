@@ -7,7 +7,7 @@ export enum MessageLogin {
 }
 export enum MessageUpdate {
     USER_NOTEXISTING  =  "Tài khoản không tồn tại !" ,
-    PASSWORD_OLD_NOT_CORRECT = "Mật khuẩ cũ không chính xác !" ,
+    PASSWORD_OLD_NOT_CORRECT = "Mật khẩu cũ không chính xác !" ,
     PASSWORD_NOT_EXIST = "Mật khẩu cũ hoặc mật khẩu mới không tồn tại !" ,
     UPDATE_SUCCESS = "Cập nhật thông tin thành công !",
     PASSWORD_DUPLICATE = "Mật khẩu cũ và mật khẩu mới không được giống nhau ! "
@@ -18,3 +18,5 @@ export const SERVE_ERROR = "Server lỗi vui lòng liên hệ quản trị viên
 export const ADD_NEW_UCP_SUCCESS : string =  "Chia sẻ quyền quản lý thành công !"
 export const USER_FORBIDEN_COMPANY : string = "Không thể thao tác ! Tổ chức này không thuộc quyền quản lý của bạn !"
 export const NOT_PERMISSION_SHARE : string = "Bạn không có quyền sử dụng chức năng này !"
+export const ADD_TICKET_SUCCESS : string = "Thêm thí sinh vào cuộc thi thành công !"
+export const ADD_NEW_UCO_SUCCESS : string = "Chia sẻ quyền quản lý cuộc thi thành công !"

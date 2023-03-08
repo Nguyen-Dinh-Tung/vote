@@ -1,64 +1,86 @@
-import { Injectable } from '@nestjs/common';
+import { CANDIDATE_NOT_EXIST } from './../../candidate/contants/message';
+import { CandidateEntity } from './../../candidate/entities/candidate.entity';
+import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
+import { ContestEntity } from 'src/contest/entities/contest.entity';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CandidateService } from 'src/candidate/services/candidate.service';
-import { ContestEntity } from 'src/contest/entities/contest.entity';
 import { ContestService } from 'src/contest/services/contest.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { DataFindByAny } from '../dto/Find-Ticket.dto';
 import { UpdateTicketDto } from '../dto/update-ticket.dto';
 import { TicketEntity } from '../entities/ticket.entity';
+import { FindList } from 'src/common/interfaces/res.interfaces';
+import { ADD_TICKET_SUCCESS } from 'src/common/constant/message';
 
 
 @Injectable()
 export class TicketService {
   constructor(@InjectRepository(TicketEntity) private readonly ticketEntity : Repository<TicketEntity> ,
-  private readonly contestService : ContestService, 
-  private readonly candidateService : CandidateService
+  @InjectRepository(ContestEntity) private readonly contestEntity : Repository<ContestEntity> ,
+  @InjectRepository(CandidateEntity) private readonly candidateEntity : Repository<CandidateEntity> ,
   ){
 
   }
 
 
-  // async create(createTicketDto: CreateTicketDto , userCreate : string
-  //   ) {
+  async create(
+    createTicketDto: CreateTicketDto ,
+     userCreate : string
+    ) : Promise<FindList<TicketEntity>> {
 
-  //     createTicketDto.historyCreate = userCreate
-  //     let checkTicket = await this.ticketEntity.findOneBy({
-  //       idcadidate : createTicketDto.idcadidate ,
-  //       idcontest : createTicketDto.idcontest
-  //     })
+      let checkContest = await this.contestEntity.findOne({
+          where : {
+            id : createTicketDto.idcontest
+          }
+      })
 
-  //     let contest = await this.contestService.findOne(createTicketDto.idcontest)
-  //     let cadidate = await this.candidateService.findOne(createTicketDto.idcadidate)
+      if(!checkContest)
+      return {
+        status : HttpStatus.NOT_FOUND ,
+        message : CONTEST_NOT_FOUND ,
+        data : undefined ,
+        total : undefined
+      }
 
-  //     if(!contest) return "Contest not existing"
-  //     if(!contest.isActive) return "Contest not active"
+      let listCandidate = await this.candidateEntity.find({
+        where : {
+          id : In(createTicketDto.idcandidates)
+        }
+      })
 
-  //     console.log(contest);
+
+      if(!listCandidate || listCandidate.length < 1)
+      return {
+        status : HttpStatus.NOT_FOUND ,
+        message : CANDIDATE_NOT_EXIST ,
+        data : undefined ,
+        total : undefined
+      }
+      let listNewTicket = []
+      for(let e of listCandidate){
+
+        let newInfoTicket = {
+          contest : checkContest , 
+          candidate : e
+        }
+
+        let newTicket = await this.ticketEntity.save(newInfoTicket)
+
+        if(newTicket)
+        listNewTicket.push(newTicket)
+
+      }
       
-  //     if(!cadidate) return "Cadidate not existing"
-  //     if(!cadidate.isActive) return "Cadidate not active"
+      return {
+        status : HttpStatus.OK ,
+        message : ADD_TICKET_SUCCESS ,
+        data : listNewTicket ,
+        total : listNewTicket.length
+      }
 
-  //     else{
-
-  //       createTicketDto.namecontest = contest.name
-  //       contest.totalCadidate++
-        
-  //     }
-
-  //     if(checkTicket){
-
-  //       return "Ticket existing"
-
-  //     }else{
-
-  //       let newTicket = await this.ticketEntity.save(createTicketDto)
-  //       this.contestService.save(contest)
-  //       return newTicket
-
-  //     }
-  // }
+  }
 
 
   async findAll() {

@@ -11,6 +11,8 @@ import { CompanyModule } from 'src/company/company.module';
 @Module({
   controllers: [AssignmentCompanyController],
   providers: [AssignmentCompanyService],
-  imports : [TypeOrmModule.forFeature([AssmCompanyEntity , ContestEntity ,CompanyEntity]) , forwardRef(() =>ContestModule) , forwardRef(()=>CompanyModule)]
+  imports : [TypeOrmModule.forFeature([AssmCompanyEntity , ContestEntity ,CompanyEntity]) , forwardRef(() =>ContestModule) , forwardRef(()=>CompanyModule)] ,
+  exports : [AssignmentCompanyService]
+
 })
 export class AssignmentCompanyModule {}

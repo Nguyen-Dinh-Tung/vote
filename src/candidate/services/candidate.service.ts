@@ -18,6 +18,7 @@ import { ADD_CANDIDATE_SUCCESS, CANDIDATE_EXIST, CANDIDATE_NOT_EXIST, GET_DETAIL
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { CandidateRecomendEntity } from '../entities/candidate-recomend.entity';
 import { ADM_MESSAGE } from 'src/contest/contants/contants';
+import { QueryFilter } from 'src/common/interfaces/QueryFilter.interface';
 dotenv.config()
 
 
@@ -136,34 +137,91 @@ export class CandidateService {
     }
   }
 
-  async findAll(res : Response) {
-    let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
-    .leftJoin('ca.carem' , 'carem')
-    .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
-    .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
-    .leftJoin('asco.contest' , 'co')
-    .select(
-      [
-        'ca.id as id' , 
-        'ca.idno as idno' , 
-        'ca.name as name ' , 
-        'ca.email as email',
-        'ca.address as address' ,
-        'ca.background as background' ,
-        'ca.height as height' ,
-        'ca.weight as weight' ,
-        'ca.measure as measure' ,
-        'ca.isActive as isActive' ,
-        'carem.slogan as slogan',
-        'carem.descs as descs' ,
-        'co.name as contest'
-      ])
-    .getRawMany()
+  async findAll(page : number  , isActive : boolean , search : string) {
+    
+    if(search){
 
-      return res.status(HttpStatus.OK).json({
-        message : GET_LIST_CANDIDATE_SUCCESS , 
-        listCandidate : listCandidate
-      })
+      let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
+      .leftJoin('ca.carem' , 'carem')
+      .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
+      .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
+      .leftJoin('asco.contest' , 'co')
+      .where('candidate.name = :"%${search}%"' , {search : search})
+      .select(
+        [
+          'ca.id as id' , 
+          'ca.idno as idno' , 
+          'ca.name as name ' , 
+          'ca.email as email',
+          'ca.address as address' ,
+          'ca.background as background' ,
+          'ca.height as height' ,
+          'ca.weight as weight' ,
+          'ca.measure as measure' ,
+          'ca.isActive as isActive' ,
+          'carem.slogan as slogan',
+          'carem.descs as descs' ,
+          'co.name as contest'
+        ])
+      .getRawMany()
+      return listCandidate
+    }
+    
+    if(isActive !== undefined){
+
+      let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
+      .leftJoin('ca.carem' , 'carem')
+      .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
+      .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
+      .leftJoin('asco.contest' , 'co')
+      .where('candidate.isActive =:isActive' , {isActive : isActive})
+      .select(
+        [
+          'ca.id as id' , 
+          'ca.idno as idno' , 
+          'ca.name as name ' , 
+          'ca.email as email',
+          'ca.address as address' ,
+          'ca.background as background' ,
+          'ca.height as height' ,
+          'ca.weight as weight' ,
+          'ca.measure as measure' ,
+          'ca.isActive as isActive' ,
+          'carem.slogan as slogan',
+          'carem.descs as descs' ,
+          'co.name as contest'
+        ])
+      .getRawMany()
+      return listCandidate
+    }
+    if(!search && !isActive){
+
+      let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
+      .leftJoin('ca.carem' , 'carem')
+      .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
+      .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
+      .leftJoin('asco.contest' , 'co')
+      .select(
+        [
+          'ca.id as id' , 
+          'ca.idno as idno' , 
+          'ca.name as name ' , 
+          'ca.email as email',
+          'ca.address as address' ,
+          'ca.background as background' ,
+          'ca.height as height' ,
+          'ca.weight as weight' ,
+          'ca.measure as measure' ,
+          'ca.isActive as isActive' ,
+          'carem.slogan as slogan',
+          'carem.descs as descs' ,
+          'co.name as contest'
+        ])
+      .getRawMany()
+      return listCandidate
+    }
+
+      
   }
 
 

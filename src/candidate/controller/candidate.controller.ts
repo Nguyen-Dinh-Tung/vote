@@ -1,13 +1,15 @@
+import { ParseParamPipe } from 'src/users/pipe/ParseParamPipe.pipe';
+import { GET_LIST_CANDIDATE_SUCCESS } from 'src/candidate/contants/message';
 import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { UserByToken } from './../../users/interceptor/TransformAccountHistoryActive.decorator';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, HttpStatus, DefaultValuePipe } from '@nestjs/common';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateDto } from '../dto/update-candidate.dto';
 import { CandidateService } from '../services/candidate.service';
 import { Roles } from 'src/common/enum/role.enum';
 import { UsersService } from 'src/users/services/users.service';
-import { Headers, Res, UploadedFile } from '@nestjs/common/decorators/http/route-params.decorator';
+import { Headers, Query, Res, UploadedFile } from '@nestjs/common/decorators/http/route-params.decorator';
 import getUserByReq from 'src/common/func/getUserByHeaderReq';
 import  * as fs from 'fs'
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,6 +17,8 @@ import * as dotenv from 'dotenv'
 import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
 import { Response } from 'express';
+import { ParseQuery } from 'src/common/pipe/ParseQuery.pipe';
+import { QueryFilter } from 'src/common/interfaces/QueryFilter.interface';
 dotenv.config()
 @Controller('candidate')
 
@@ -42,12 +46,23 @@ export class CandidateController {
   }
 
   @RolesCheck([...Object.values(Roles)])
-  @Get()
-  findAll( @Res() res : Response) {
+  @Get('/:page')
+  async findAll( 
+    @Res() res : Response ,
+    @Param('page',new DefaultValuePipe(1)) params : {page : number} ,
+    @Query(new ParseQuery()) query : QueryFilter ,
+    
+    ) {
     try{
+      
 
-      return this.candidateService.findAll(res);
+      let listCandidate = await this.candidateService.findAll(params.page , query.isActive , query.search )
 
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_CANDIDATE_SUCCESS,
+        list : listCandidate ,
+        total : listCandidate.length
+      })
     }catch(e){
 
       if(e) console.log(e);
