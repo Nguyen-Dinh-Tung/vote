@@ -1,26 +1,21 @@
 import React, { useEffect, useState  } from 'react';
-import { useNavigate } from "react-router-dom";
 
 import './index.css'
 import Avatar from '@mui/material/Avatar';
-import { useDispatch, useSelector } from 'react-redux';
 import { TRUE } from '../../contants/notify/status.notify';
 import { ERROR, SUCCESS } from '../../contants/notify/type.notify';
 import { EMAIL_REGEX, FIELD_NOT_HOLLOW, IMG_VALIDATE, PASSWORD_MIN, PASSWORD_REGEX, USER_MIN_LENGTH, USER_REGEX } from '../../contants/notify/notify.register';
 import AlertComponents from '../../components/alert/Alert';
-import {setAlert} from '../../redux/features/show.slice'
-import { regexEmail, regexPassword, regexUsername } from '../../regex/userInfo.regex';
+import { regexEmail } from '../../regex/userInfo.regex';
 import useNotifyFunc from '../../hooks/notify.func';
 import isValidPhoto from '../../validate/img.validate';
-import { ApiBase, host } from '../../api/api.base';
-import { LOGO } from '../../pages/login/intro';
+import { ApiBase } from '../../api/api.base';
 import { ADDCONTEST } from '../../contants/field.desc';
 import { ADD_CONTEST_SUCCESS } from '../../contants/notify/message';
-import { Button, Checkbox, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Pagination } from '@mui/material';
-import { Stack } from '@mui/system';
+import { Button} from '@mui/material';
 import UserShare from '../user-share/UserShare';
 import CandidateShare from '../candidate-share/CandidateShare';
-import CompanyShare from '../contest-share/CompanyShare';
+import CompanyShareShare from '../company-share/CompanyShare';
 const infoRegister = [
 ['name' , 'text' , 'Tên cuộc thi '] ,
 ['slogan' , 'text' , 'Slogan cuộc thi'] ,
@@ -33,7 +28,6 @@ function FormContest(props) {
 
     const [contest , setContest] = useState({
         name : '' ,
-        idCompany : '' ,
         address : '' ,
         file : undefined ,
         slogan : '' ,
@@ -49,9 +43,6 @@ function FormContest(props) {
     const [listIdCompany , setListIdCompany] = useState()
     const urlAddContest = '/contest'
     const urlGetListCompany = '/company/1'
-
-
-
 
 
     const handleChange = (e) =>{
@@ -100,7 +91,6 @@ function FormContest(props) {
     }
     const handleSubmit = () =>{
         let flag = true
-
         if(!contest){
 
             flag = false 
@@ -130,7 +120,8 @@ function FormContest(props) {
         })
         form.append('share' , JSON.stringify({
             listIdCandidate : listIdCandidate ,
-            listIdUser : listIdUserShare
+            listIdUser : listIdUserShare ,
+            listIdCompany : listIdCompany
         }))
         ApiBase.post(urlAddContest , form )
         .then(res => {
@@ -203,14 +194,6 @@ function FormContest(props) {
                         accept={e[0] == 'file' ? e[2] : ''}/>
                         </>
                     })}
-                    <select name="idCompany" id="select-status" onChange={handleChange} onLoad={(e) =>{
-                        setContest({...contest , [e.target.name] : e.target.value})
-                    }}>
-                        <option value="-1">Ban tổ chức</option>
-                        {company && company.map((e , index) =>{
-                            return <option  value={e.id}>{e.name}</option>
-                        })}
-                    </select>
                 </form>
                 <div className="avatar-demo" >
                 <Avatar
@@ -226,7 +209,7 @@ function FormContest(props) {
             : step === 2  
             
             ?
-            <CompanyShare handleGetData={handleChangeListCompanyShare}/>
+            <CompanyShareShare handleGetData={handleChangeListCompanyShare}/>
             : step === 3 ? 
             <CandidateShare handleGetData={handleChangeListCandidateShare}/>
             : step === 4 

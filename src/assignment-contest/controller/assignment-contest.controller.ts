@@ -9,7 +9,16 @@ export class AssignmentContestController {
 
   @Post()
   create(@Body() createAssignmentContestDto: CreateAssignmentContestDto) {
-    return this.assignmentContestService.create(createAssignmentContestDto);
+    try{
+      
+      return this.assignmentContestService.create(createAssignmentContestDto);
+
+    }catch(e){
+
+      if(e) console.log(e);
+      
+    }
+
   }
 
   @Get()

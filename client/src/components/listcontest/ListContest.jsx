@@ -12,6 +12,7 @@ import { setId } from '../../redux/features/id.slice';
 import Dialog from '../dialog/DialogControler';
 import DialogControler from '../dialog/DialogControler';
 import FormEditContest from '../form-edit-contest/FormEditContest';
+import { Pagination, Stack } from '@mui/material';
 function ListContest(props) {
 
     const urlGetListContest = `/contest` ;
@@ -21,6 +22,10 @@ function ListContest(props) {
     const [list , setList] = useState() ;
     const [contest , setContest] = useState() ;
     const [render , setRerender] = useState()
+    const [totalPage , setTotalPage] = useState(1)
+    const [page , setPage] = useState(1)
+    const [searchKey , setSearchKey] = useState() 
+    const [filter , setFilter] = useState()
 
     const handleReRender = ()=>{
         setRerender(Date.now())
@@ -31,15 +36,18 @@ function ListContest(props) {
     const handleSelectId = (id)=>{
         dispatch(setId(id))
     }
+    const handleChangePage = (e , page)=>{
+        setPage(page)
+    }
 
     useEffect(() =>{
         ApiBase.get(urlGetListContest)
         .then(res =>{
-            console.log(res , 'res list conets');
-            let listContest = res.data.listContest.sort((a,b) =>{
+            let listContest = res.data.list.sort((a,b) =>{
                 return Number(b.isActive) -  Number(a.isActive)
             })
             setList(listContest)
+            setTotalPage(Math.ceil(res.data.total / 8))
         })
         .catch(e =>{
             if(e.response.status == 403)
@@ -81,10 +89,15 @@ function ListContest(props) {
                     : ''}
                 </tbody>
             </table>
+            <div className="pagani-page">
+                <Stack spacing={2}>
+                    <Pagination page={ page && page} count={totalPage && totalPage} variant="outlined" color="primary" 
+                    onChange={handleChangePage} />
+                </Stack> 
+            </div>
             {open && open ? <FormEditContest handleReRender={handleReRender}/> : ''}
                     
         </div>
     );
 }
-
 export default ListContest;

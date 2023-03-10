@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
+import { ShareCandidateInterface } from "src/common/interfaces/Candidate-share.interface";
 
 export class CreateCandidateDto {
 
@@ -36,10 +37,12 @@ export class CreateCandidateDto {
     @IsNotEmpty()
     idno : string ;
 
-    @IsOptional()
-    idContest : string ;
     
     @IsNotEmpty()
     descs : string
+
+
+    @IsOptional()
+    share : ShareCandidateInterface
 }
 

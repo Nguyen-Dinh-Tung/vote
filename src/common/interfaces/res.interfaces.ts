@@ -5,5 +5,6 @@ export interface FindList<T>  {
     data : T [] | undefined ;
     message : string ;
     total : number | undefined ;
-    status : HttpStatus
+    status : HttpStatus ;
+    failList : any | undefined;
 }

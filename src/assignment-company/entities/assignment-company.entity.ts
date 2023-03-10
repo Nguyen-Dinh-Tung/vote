@@ -16,7 +16,7 @@ export class AssmCompanyEntity {
     @JoinColumn()
     company : CompanyEntity;
  
-    @OneToOne(() => ContestEntity , (co) => co.id)
+    @ManyToOne(() => ContestEntity , (co) => co.id)
     @JoinColumn()
     contest : ContestEntity;
 

@@ -36,8 +36,8 @@ export class CompanyService {
   }
   async create(
     createCompanyDto: CreateCompanyDto , 
-    userCreate : string, 
-    res : Response , 
+    idUser : string, 
+    res : Response ,  
     file? : Express.Multer.File) : Promise <Response> {
 
     let checkCompany = await this.companayEntity.findOne({
@@ -48,10 +48,11 @@ export class CompanyService {
     
     let checkUserInit = await this.userEntity.findOne({
       where : {
-        username : userCreate
+        id : idUser
       }
     })
-
+    console.log(idUser , 'idUser');
+    
     if(!checkUserInit)
     return res.status(HttpStatus.NOT_FOUND).json({
       message : USER_NOT_FOUND
@@ -72,7 +73,7 @@ export class CompanyService {
       name : createCompanyDto.name ,
       email : createCompanyDto.email ,
       address : createCompanyDto.address,
-      historyCreate : userCreate
+      historyCreate : checkUserInit.username
     }
 
     if(file){
@@ -158,6 +159,7 @@ export class CompanyService {
     ) {
     let offset = page * amount - amount;
     let listCompany : CompanyEntity []  ;
+    let total = await this.companayEntity.count()
     if(isActive !== undefined){
       listCompany = await this.companayEntity.createQueryBuilder('cp')
       .leftJoin('cp.cpRem' , 'cprem')
@@ -181,13 +183,13 @@ export class CompanyService {
         return res.status(HttpStatus.NOT_FOUND).json({
           message : NOT_DATA, 
           listCompany : listCompany ,
-          total : listCompany.length
+          total : total
         })
       }
       return res.status(HttpStatus.OK).json({
         message : GET_LIST_COMPANY_SUCCESS, 
         listCompany : listCompany ,
-        total : listCompany.length
+        total : total
       })
   
     }
@@ -215,13 +217,13 @@ export class CompanyService {
         return res.status(HttpStatus.NOT_FOUND).json({
           message : SEARCH_KEY_NOT_FOUNT, 
           listCompany : listCompany ,
-          total : listCompany.length
+          total : total
         })
       }
       return res.status(HttpStatus.OK).json({
         message : GET_LIST_COMPANY_SUCCESS, 
         listCompany : listCompany ,
-        total : listCompany.length
+        total : total
       })
   
     }
@@ -290,7 +292,7 @@ export class CompanyService {
     return res.status(HttpStatus.OK).json({
       message : GET_LIST_COMPANY_SUCCESS, 
       listCompany : listCompany ,
-      total : listCompany.length
+      total : total
     })
     }
 

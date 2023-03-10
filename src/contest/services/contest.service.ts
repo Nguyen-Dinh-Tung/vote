@@ -1,3 +1,4 @@
+import { amount } from './../../users/contants/amount.in.page';
 import { UserCo } from './../../user-co/entities/user-co.entity';
 import { AssmCompanyEntity } from './../../assignment-company/entities/assignment-company.entity';
 import { TicketEntity } from './../../ticket/entities/ticket.entity';
@@ -11,7 +12,7 @@ import { CONTEST_NOT_FOUND, COMPANY_NOT_EXIST, COMPANY_NOT_ACTIVE } from './../.
 import { CompanyEntity } from 'src/company/entities/company.entity';
 import { plainToClass } from 'class-transformer';
 import { ContestEntity } from './../entities/contest.entity';
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateContestDto } from '../dto/create-contest.dto';
 import { UpdateContestDto } from '../dto/update-contest.dto';
@@ -57,23 +58,10 @@ export class ContestService {
         ]
       })
 
-      let checkCompanies = await this.companyEntity.find({
-        where : {
-          id : In(createContestDto.share.listIdCompany)
-        }
-      })
 
-      let checkUsers = await this.userEntity.find({
-        where : {
-          id : In(createContestDto.share.listIdUser)
-        }
-      })
 
-      let checkCandidates = await this.candidateEntity.find({
-        where : {
-          id : In(createContestDto.share.listIdCandidate)
-        }
-      })
+
+
 
       if(checkContest) {
 
@@ -117,40 +105,62 @@ export class ContestService {
           }else{
 
           }
+          let listTicket  ;
+          let listAscp ;
+          let listUco  ;
 
-          let listTicket : TicketEntity [] ;
-          if(checkCandidates.length > 0){
-            let infoListTicket = {
-              idcontest : newContest.id ,
-              idcandidates : createContestDto.share.listIdCandidate ,
-              historyCreate : userCreate
+          console.log('check 1');
+          
+          if(createContestDto.share.listIdCompany){
+            let checkCompanies = await this.companyEntity.find({
+              where : {
+                id : In(createContestDto.share.listIdCompany)
+              }
+            })
+            if(checkCompanies.length > 0){
+              let infoListAscp = {
+                idContest : newContest.id , 
+                idCompanies : createContestDto.share.listIdCompany
+              }
+              let resAscp = await this.ascpService.create(infoListAscp)
+              listAscp = resAscp.data
             }
-            let resTicket = await this.ticketService.create(infoListTicket , userCreate)
-            listTicket = resTicket.data
-
+          }
+          if(createContestDto.share.listIdCandidate){
+            let checkCandidates = await this.candidateEntity.find({
+              where : {
+                id : In(createContestDto.share.listIdCandidate)
+              }
+            })
+            if(checkCandidates.length > 0){
+              let infoListTicket = {
+                idcontest : newContest.id ,
+                idcandidates : createContestDto.share.listIdCandidate ,
+                historyCreate : userCreate
+              }
+              let resTicket = await this.ticketService.create(infoListTicket , userCreate)
+              listTicket = resTicket.data
+            }
           }
 
-          let listAscp : AssmCompanyEntity [] ;
-          if(checkCompanies.length > 0){
-            let infoListAscp = {
-              idContest : newContest.id , 
-              idCompanies : createContestDto.share.listIdCompany
+          if(createContestDto.share.listIdUser){
+
+            let checkUsers = await this.userEntity.find({
+              where : {
+                id : In(createContestDto.share.listIdUser)
+              }
+            })
+            if(checkUsers.length > 0){
+
+              let infoListUco = {
+                idContest : newContest.id ,
+                idUsers : createContestDto.share.listIdUser
+              }
+              let resUco = await this.ucoService.create(infoListUco)
+              listUco = resUco.data
             }
-            let resAscp = await this.ascpService.create(infoListAscp)
-            listAscp = resAscp.data
+  
           }
-
-          let listUco : UserCo [] ;
-          if(checkUsers.length > 0){
-
-            let infoListUco = {
-              idContest : newContest.id ,
-              idUsers : createContestDto.share.listIdUser
-            }
-            let resUco = await this.ucoService.create(infoListUco)
-            listUco = resUco.data
-          }
-
 
           return res.status(HttpStatus.CREATED).json({
             message : ADD_CONTEST_SUCCES ,
@@ -176,24 +186,55 @@ export class ContestService {
     
   }
 
-  async findAll(res : Response) {
-    
+  async findAll(res : Response , page : number , query : any) {
+    let offset = page * amount - amount ;
+    let total = await this.contentEntity.count()
+    if(query.search){
+      let listContest = await this.contentEntity.createQueryBuilder('co')
+      .leftJoin('co.coRem' , 'corem')
+      .where('co.coRemId = corem.id')
+      .andWhere('co.name =:name' , {name : query.search})
+      .andWhere('co.email =:email' , {email : query.search})
+      .select('co')
+      .offset(offset)
+      .limit(amount)
+      .getMany()
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_CONTEST_SUCCESS ,
+        list : listContest ,
+        total : total
+      })
+    }
+
+    if(query.isActive){
+      let listContest = await this.contentEntity.createQueryBuilder('co')
+      .leftJoin('co.coRem' , 'corem')
+      .where('co.coRemId = corem.id')
+      .andWhere('co.isActive =:isActive' , {isActive : query.isActive})
+      .select('co')
+      .offset(offset)
+      .limit(amount)
+      .getMany()
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_CONTEST_SUCCESS ,
+        list : listContest ,
+        total : total
+      })
+    }
+
+
     let listContest = await this.contentEntity.createQueryBuilder('co')
     .leftJoin('co.coRem' , 'corem')
-    .leftJoin(AssmCompanyEntity , 'ascp' , 'co.id = ascp.contestId')
-    .leftJoin('ascp.company' , 'cp')
-    .select([ 
-    'co.id as id','co.name as name' , 
-    'co.address as address' , 'co.email as email' 
-    , 'co.background as background' , 'descs' , 'slogan' 
-    , 'co.isActive as isActive' ,
-      'cp.name as company'
-    ])
-    .getRawMany()
+    .where('co.coRemId = corem.id')
+    .select('co')
+    .offset(offset)
+    .limit(amount)
+    .getMany()
     
     return res.status(HttpStatus.OK).json({
       message : GET_LIST_CONTEST_SUCCESS ,
-      listContest : listContest
+      list : listContest ,
+      total : total
     })
 
 
@@ -481,4 +522,14 @@ export class ContestService {
     
     
   } 
+  async findTest ( data,res : Response){
+    let listContests = await this.contentEntity.find({
+      where : {
+        id : In(data)
+      }
+    })
+    return res.status(HttpStatus.OK).json({
+      list : listContests
+    })
+  }
 }

@@ -45,16 +45,19 @@ export class AssignmentCompanyService {
       message : COMPANY_NOT_EXIST ,
       status : HttpStatus.NOT_FOUND ,
       data : undefined , 
-      total : undefined
+      total : undefined ,
+      failList : undefined
     }
     if(!checkContest)
     return {
       message : CONTEST_NOT_FOUND ,
       status : HttpStatus.NOT_FOUND ,
       data : undefined , 
-      total : undefined
+      total : undefined,
+      failList : undefined
+
     }
-    let listAscp : AssmCompanyEntity [] ;
+    let listAscp = [] ;
     for(let e of checkCompanies){
 
       let infoNewAscp = {
@@ -63,7 +66,8 @@ export class AssignmentCompanyService {
       }
 
       let newAscp = await this.assigmCompany.save(infoNewAscp)
-
+      console.log(newAscp);
+      
       if(newAscp)
       listAscp.push(newAscp)
     }
@@ -71,7 +75,8 @@ export class AssignmentCompanyService {
       message : ADD_NEW_UCO_SUCCESS ,
       status : HttpStatus.OK ,
       data : listAscp , 
-      total : listAscp.length
+      total : listAscp.length ,
+      failList : undefined
     }
 
   }

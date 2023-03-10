@@ -1,3 +1,4 @@
+import { Roles } from "src/common/enum/role.enum";
 import { CompanyEntity } from "src/company/entities/company.entity";
 import { ContestEntity } from "src/contest/entities/contest.entity";
 import { UserEntity } from "src/users/entities/user.entity";
@@ -18,7 +19,12 @@ export class UserCo {
     @ManyToOne(() => UserEntity , (user) => user.id)
     @JoinColumn()
     user : UserEntity;
-    
+    @Column({
+        type : 'enum',
+        default : Roles.ucp_user,
+        enum : Roles
+    })
+    role : Roles ;
     @Column({
         default : true
     })

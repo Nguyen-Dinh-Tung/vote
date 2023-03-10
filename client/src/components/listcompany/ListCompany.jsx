@@ -214,7 +214,6 @@ function ListCompany(props) {
                 setListUser(res.data.listCompany)
                 setTotalPage(Math.ceil(res.data.total / 8))
             }
-            
         })
         .catch(e =>{
             if(e){

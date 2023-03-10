@@ -1,3 +1,4 @@
+import { UserCaModule } from './../user-ca/user-ca.module';
 import { CompanyEntity } from './../company/entities/company.entity';
 import { CompanyModule } from 'src/company/company.module';
 import { ContestEntity } from './../contest/entities/contest.entity';
@@ -14,6 +15,7 @@ import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-co
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 import { UserCpModule } from 'src/user-cp/user-cp.module';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { AssignmentContestModule } from 'src/assignment-contest/assignment-contest.module';
 
 @Module({
   imports : [TypeOrmModule.forFeature([
@@ -29,6 +31,8 @@ import { UserEntity } from 'src/users/entities/user.entity';
     forwardRef(() => UsersModule) , 
     forwardRef(() => CompanyModule) , 
     forwardRef(() => UserCpModule) , 
+    forwardRef(() => AssignmentContestModule) , 
+    forwardRef(() => UserCaModule) , 
     MulterModule.register({
     dest : '/files/images'
   })] ,

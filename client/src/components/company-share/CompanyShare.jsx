@@ -8,7 +8,7 @@ import { TRUE } from '../../contants/notify/status.notify';
 import { Avatar } from '@mui/material'; 
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-function CompanyShare(props) {
+function CompanyShareShare(props) {
 
 
     const [page , setPage] = useState(1)
@@ -102,7 +102,6 @@ function CompanyShare(props) {
     
         ApiBase.get(urlEntity)
         .then(res =>{
-            console.log(res);
             setListUser(res.data.listCompany)
             setTotalPage(Math.ceil(res.data.total / 8))
             setChecked([])
@@ -120,7 +119,7 @@ function CompanyShare(props) {
     return (
             <div className="box-demo">
                         <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' , display : 'flex' , flexDirection : 'column' , alignItems : 'center' }}>
-                            <p className='header-select'>Danh sách thí sinh</p>
+                            <p className='header-select'>Danh sách cuộc thi</p>
                             <input id='search' 
                             type="text" name='search' 
                             placeholder='Tìm tài khoản hoặc tên người dùng ...' 
@@ -185,5 +184,4 @@ function CompanyShare(props) {
                     </div>
     );
 }
-
-export default CompanyShare;
+export default CompanyShareShare;

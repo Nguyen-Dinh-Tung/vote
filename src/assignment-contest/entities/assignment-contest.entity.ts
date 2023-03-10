@@ -1,3 +1,4 @@
+import { CandidateEntity } from './../../candidate/entities/candidate.entity';
 import { JoinColumn, ManyToOne } from 'typeorm';
 import { ContestEntity } from './../../contest/entities/contest.entity';
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
@@ -10,10 +11,10 @@ export class AssmContestEntity {
     @PrimaryGeneratedColumn('uuid')
     id : string ;
 
-    @OneToOne(() => TicketEntity , (tc) => tc.id)
+    @ManyToOne(() => CandidateEntity , (ca) => ca.id)
     @JoinColumn()
 
-    ticket : TicketEntity;
+    candidate : CandidateEntity;
     @ManyToOne(() => ContestEntity , (co) => co.id)
     @JoinColumn()
     contest : ContestEntity;

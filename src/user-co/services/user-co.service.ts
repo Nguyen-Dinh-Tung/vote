@@ -41,7 +41,8 @@ export class UserCoService {
       message : CONTEST_NOT_FOUND ,
       status : HttpStatus.NOT_FOUND ,
       data : undefined , 
-      total : undefined
+      total : undefined ,
+      failList : undefined
     }
 
     if(!checkUsers || checkUsers.length < 1)
@@ -49,10 +50,12 @@ export class UserCoService {
       message : USER_NOT_FOUND ,
       status : HttpStatus.NOT_FOUND ,
       data : undefined , 
-      total : undefined
+      total : undefined ,
+      failList : undefined
+
     }
 
-    let listUco : UserCo [] ;
+    let listUco = [] ;
     for(let e of checkUsers){
 
       let infoNewUco = {
@@ -68,7 +71,8 @@ export class UserCoService {
       message : ADD_NEW_UCO_SUCCESS ,
       status : HttpStatus.NOT_FOUND ,
       data : listUco , 
-      total : listUco.length
+      total : listUco.length ,
+      failList : undefined
     }
   }
 

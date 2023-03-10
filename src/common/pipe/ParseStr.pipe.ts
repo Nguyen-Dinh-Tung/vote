@@ -6,6 +6,7 @@ export class ParseStrPipe implements PipeTransform{
         if(value)
         if(value.share)
         value['share'] = JSON.parse(value.share)
+
         return value
     }
 }

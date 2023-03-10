@@ -10,14 +10,19 @@ import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
 import FormEditContest from '../form-edit-contest/FormEditContest';
 import FormEditCandiate from '../form-edit-candidate/FormEditCandidate';
+import { Pagination, Stack } from '@mui/material';
 function ListCandidate(props) {
 
-    const urlGetListCandidate = `/candidate` ;
+    const urlGetListCandidate = `/candidate/1` ;
     const open = useSelector(state => state.show.dialogEdit) ;
     const dispatch = useDispatch()
     const [notifyFunc] = useNotifyFunc()  ;
     const [list , setList] = useState() ;
     const [render , setRerender] = useState()
+    const [totalPage , setTotalPage] = useState(1)
+    const [page , setPage] = useState(1)
+    const [searchKey , setSearchKey] = useState() 
+    const [filter , setFilter] = useState()
 
     const handleReRender = ()=>{
         setRerender(Date.now())
@@ -28,20 +33,35 @@ function ListCandidate(props) {
     const handleSelectId = (id)=>{
         dispatch(setId(id))
     }
-
+    const handleChangePage = (e , page)=>{
+        setPage(page)
+    }
+    console.log(page);
     useEffect(() =>{
-        ApiBase.get(urlGetListCandidate)
+
+        let urlEntity = `/candidate/${page}` ;
+    
+        if(searchKey !== undefined && searchKey !== '')
+        urlEntity += `?search=${searchKey}`
+    
+        if(filter !== undefined)
+        urlEntity += `?isActive=${filter}`
+
+        ApiBase.get(urlEntity)
         .then(res =>{
-            let listContest = res.data.listCandidate.sort((a,b) =>{
+            console.log(res);
+            let listCandidate = res.data.listCandidate.sort((a,b) =>{
                 return Number(b.isActive) -  Number(a.isActive)
             })
-            setList(listContest)
+            setList(listCandidate)
+            setTotalPage(Math.ceil(res.data.total / 8))
         })
         .catch(e =>{
             if(e.response.status == 403)
             notifyFunc(ERROR , FORBIDDEN , TRUE)
         })
-    },[render])
+
+    },[render , searchKey , filter , page])
 
     return (
         <div className='table-user'>
@@ -83,6 +103,12 @@ function ListCandidate(props) {
                     : ''}
                 </tbody>
             </table>
+            <div className="pagani-page">
+                <Stack spacing={2}>
+                    <Pagination page={ page && page} count={totalPage && totalPage} variant="outlined" color="primary" 
+                    onChange={handleChangePage} />
+                </Stack> 
+            </div>
             {open && open ? <FormEditCandiate handleReRender={handleReRender}/> : ''}
                     
         </div>

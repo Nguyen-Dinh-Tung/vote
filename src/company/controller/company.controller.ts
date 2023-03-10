@@ -24,14 +24,19 @@ export class CompanyController {
   @RolesCheck([...Object.values(Roles)])
   @UseInterceptors(FileInterceptor('file'))
   @Post()
-  create(@Body(new ParseStringnifyPipe()) createCompanyDto: CreateCompanyDto , 
-  @UserByToken(new ImagePipe()) userBytoken : string ,
+  create(
+  @Body(new ParseStringnifyPipe()) createCompanyDto: CreateCompanyDto , 
+  @IdUserInterceptor() idUser : string ,
   @Res() res : Response , 
   @UploadedFile(new ImagePipe()) file? : Express.Multer.File) {
     
     try{
 
-      return this.companyService.create(createCompanyDto , userBytoken , res , file);
+      return this.companyService.create(
+        createCompanyDto , 
+        idUser , 
+        res , 
+        file);
 
     }catch(e){
 
@@ -61,8 +66,7 @@ export class CompanyController {
         query.search ,
         query.ucp ,
         res ,
-        idUser
-        
+        idUser ,
         );
 
     }catch(e){

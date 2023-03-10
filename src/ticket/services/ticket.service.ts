@@ -41,7 +41,8 @@ export class TicketService {
         status : HttpStatus.NOT_FOUND ,
         message : CONTEST_NOT_FOUND ,
         data : undefined ,
-        total : undefined
+        total : undefined ,
+        failList : undefined
       }
 
       let listCandidate = await this.candidateEntity.find({
@@ -56,7 +57,9 @@ export class TicketService {
         status : HttpStatus.NOT_FOUND ,
         message : CANDIDATE_NOT_EXIST ,
         data : undefined ,
-        total : undefined
+        total : undefined ,
+        failList : undefined
+
       }
       let listNewTicket = []
       for(let e of listCandidate){
@@ -77,7 +80,9 @@ export class TicketService {
         status : HttpStatus.OK ,
         message : ADD_TICKET_SUCCESS ,
         data : listNewTicket ,
-        total : listNewTicket.length
+        total : listNewTicket.length ,
+        failList : undefined
+
       }
 
   }

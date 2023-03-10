@@ -23,14 +23,8 @@ export class CreateContestDto {
 
     @Expose()
     @ApiProperty()
-    @IsNotEmpty()
-    idCompany : string ;
-
-    @Expose()
-    @ApiProperty()
     @IsOptional()
     historyCreate : string ;
-
     @Expose()
     @ApiProperty()
     @IsOptional()

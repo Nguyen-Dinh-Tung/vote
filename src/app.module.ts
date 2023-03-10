@@ -3,7 +3,7 @@ import { UserCp } from './user-cp/entities/user-cp.entity';
 import { AssmContestEntity } from './assignment-contest/entities/assignment-contest.entity';
 import { Roles } from 'src/common/enum/role.enum';
 import { UsersService } from './users/services/users.service';
-import { Module  ,forwardRef ,OnModuleInit} from '@nestjs/common';
+import { Module  ,forwardRef ,OnModuleInit, RequestMethod} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -36,6 +36,9 @@ import { CompanyRecomend } from './company/entities/company-recomend.entity';
 import { AssmCompanyEntity } from './assignment-company/entities/assignment-company.entity';
 import { UserCoModule } from './user-co/user-co.module';
 import { UserCpModule } from './user-cp/user-cp.module';
+import { ShareCompanyMiddleWare } from './common/middleware/company.share.middleware';
+import { UserCaModule } from './user-ca/user-ca.module';
+import { UserCa } from './user-ca/entities/user-ca.entity';
 
 @Module({
   imports: [ 
@@ -46,6 +49,11 @@ import { UserCpModule } from './user-cp/user-cp.module';
     UsersModule,
     TicketModule,
     FeatureModule,
+    AssignmentContestModule,
+    AssignmentCompanyModule,
+    UserCoModule,
+    UserCpModule,
+    UserCaModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname,'..', '../data/images/'),
       serveRoot: '/data/images/'
@@ -64,20 +72,22 @@ import { UserCpModule } from './user-cp/user-cp.module';
       UserEntity , AssmContestEntity ,
       AssmCompanyEntity ,CandidateRecomendEntity ,
       ContestRecomendEntity , CompanyRecomend ,
-      UserCp , UserCo
+      UserCa,
+      UserCp , UserCo,
     ],
       synchronize: true,
       logging : true
-    }),
-    AssignmentContestModule,
-    AssignmentCompanyModule,
-    UserCoModule,
-    UserCpModule,
+    })
     
   ],
   controllers: [AppController],
   providers: [AppService  ],
-  exports : [ContestModule , CompanyModule , TicketModule , CandidateModule]
+  exports : [
+    ContestModule , 
+    CompanyModule , 
+    TicketModule , 
+    CandidateModule
+  ]
 })
 export class AppModule implements OnModuleInit , NestModule {
   constructor(private readonly userService : UsersService ,
@@ -85,8 +95,8 @@ export class AppModule implements OnModuleInit , NestModule {
   ){
   }
   configure(consumer : MiddlewareConsumer){
-    consumer.apply(UserMiddlewareTransformData)
-    .forRoutes('users')
+    consumer.apply(ShareCompanyMiddleWare)
+    .exclude({path : 'assignment-company' , method : RequestMethod.POST})
   }
   async onModuleInit() {
     await this.userService.createAdminUser(

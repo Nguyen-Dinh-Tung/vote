@@ -1,13 +1,16 @@
+import { SEARCH_KEY_NOT_FOUNT, FILTER_FAIL } from './../contants/message';
+import { amount } from './../../users/contants/amount.in.page';
+import { UserCa } from './../../user-ca/entities/user-ca.entity';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { SERVE_ERROR } from './../../common/constant/message';
 import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
 import { ContestEntity } from './../../contest/entities/contest.entity';
-import { NotFoundError } from 'rxjs';
+import { NotFoundError, share } from 'rxjs';
 import { CandidateEntity } from './../entities/candidate.entity';
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Validate } from 'src/common/class/validate.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateDto } from '../dto/update-candidate.dto';
 import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
@@ -19,6 +22,9 @@ import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { CandidateRecomendEntity } from '../entities/candidate-recomend.entity';
 import { ADM_MESSAGE } from 'src/contest/contants/contants';
 import { QueryFilter } from 'src/common/interfaces/QueryFilter.interface';
+import { AssignmentContestService } from 'src/assignment-contest/services/assignment-contest.service';
+import { UserCaService } from 'src/user-ca/services/user-ca.service';
+import { Roles } from 'src/common/enum/role.enum';
 dotenv.config()
 
 
@@ -30,24 +36,33 @@ export class CandidateService {
   @InjectRepository(CandidateEntity)private readonly candidateEntity : Repository<CandidateEntity> ,
   @InjectRepository(ContestEntity)private readonly contestEntity : Repository<ContestEntity> ,
   @InjectRepository(AssmContestEntity)private readonly AssmContestEntity : Repository<AssmContestEntity> ,
-  @InjectRepository(TicketEntity)private readonly ticketEntity : Repository<TicketEntity> ,
   @InjectRepository(CandidateRecomendEntity)private readonly candidateRemEntity : Repository<CandidateRecomendEntity> ,
-  
+  private readonly ascoService : AssignmentContestService ,
+  private readonly ucaSerivce : UserCaService
   ){}
 
 
-  async create(createCandidateDto: CreateCandidateDto , userCreate : string , res : Response , file? : Express.Multer.File) {
+  async create(
+    createCandidateDto: CreateCandidateDto , 
+    idUser : string ,
+    res : Response,
+    userCreate : string,
+    file? : Express.Multer.File
+    ) {
 
     let checkCandidate = await this.candidateEntity.findOne({
       where : [
-        {idno : createCandidateDto.idContest},
+        {idno : createCandidateDto.idno},
         {email : createCandidateDto.email}
       ]
     })
     if(checkCandidate)
-    return res.status(HttpStatus.CONFLICT).json({
-      message : CANDIDATE_EXIST
-    })
+    return {
+      message : CANDIDATE_EXIST ,
+      status : HttpStatus.CONFLICT ,
+      data : undefined , 
+      failList : createCandidateDto 
+    }
 
     let newData = {
       name : createCandidateDto.name ,
@@ -78,75 +93,74 @@ export class CandidateService {
         newCandidate.carem = newCarem
         await this.candidateEntity.save(newCandidate)
 
-      }else{
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-          message : ADM_MESSAGE
-        })
       }
   
     }
+    let admin = await this.ucaSerivce.addAminUca({
+      idCandidate : newCandidate.id ,
+      idUser : idUser ,
+      role : Roles.ucp_admin
+    })
 
+    let share = createCandidateDto.share
+    let listAsco : AssmContestEntity [] ;
+    let listFail : any;
+    console.log(share.listIdContest);
     
-
-    if(createCandidateDto.idContest){
-      let checkContest = await this.contestEntity.findOne({
-        where : {
-          id : createCandidateDto.idContest
-        }
-      })
-
-      if(!checkContest)
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message : CONTEST_NOT_FOUND
-      })
-      let infoTicket = {
-        candidate : newCandidate ,
+    if(share.listIdContest){
+      let InfoAsco = {
+        idCandidates : [newCandidate.id] ,
+        listIdContest : share.listIdContest
       }
-      let newTicket = await this.ticketEntity.save(infoTicket)
       
-      if(!newTicket){
-        return res.status(HttpStatus.BAD_GATEWAY).json({
-          message : SERVE_ERROR
-        })
-      }
-
-      let ascoInfo = await this.AssmContestEntity.save({
-        contest : checkContest ,
-        ticket : newTicket
+      let resAsco = await this.ascoService.create({
+        share : InfoAsco
       })
+      listAsco = resAsco.data
+      listFail = resAsco.failList
+    }
 
-      if(ascoInfo){
-        return res.status(HttpStatus.CREATED).json({
-          message : ADD_CANDIDATE_SUCCESS ,
-          newCandidate  : newCandidate ,
-          ticket : checkContest.name
-        })
-      }else{
-        return res.status(HttpStatus.BAD_GATEWAY).json({
-          message : SERVE_ERROR
-        })
+    let listUca  : UserCa [] ;
+    let listFailUca : any ;
+    if(share.listIdUsers.length > 0){
+      let infoUcaNew = {
+        listIdUsers : share.listIdUsers ,
+        idCandidates : [newCandidate.id]
       }
-
-    }{
-
-      return res.status(HttpStatus.CREATED).json({
-        message : ADD_CANDIDATE_SUCCESS ,
-        candidate : newCandidate
+      let resUca = await this.ucaSerivce.create({
+        share : infoUcaNew
       })
+      listUca = resUca.data
+      listFailUca = resUca.failList
+    }
 
+    return {
+      data : newCandidate ,
+      share : {
+        listAsco : listAsco ,
+        listUca : listUca
+      },
+      failList : {
+        listFail : listFail ,
+        listFailUca : listFailUca
+      },
+      status : HttpStatus.CREATED ,
+      message : ADD_CANDIDATE_SUCCESS ,
+      admin : admin
     }
   }
 
-  async findAll(page : number  , isActive : boolean , search : string) {
+  async findAll( res : Response,page : number  , isActive : boolean , search : string) {
+    
+    let offset = page * amount - amount ;
+    let total = await this.candidateEntity.count()
     
     if(search){
-
       let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
       .leftJoin('ca.carem' , 'carem')
-      .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
-      .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
-      .leftJoin('asco.contest' , 'co')
       .where('candidate.name = :"%${search}%"' , {search : search})
+      .offset(offset)
+      .limit(amount)
       .select(
         [
           'ca.id as id' , 
@@ -163,18 +177,27 @@ export class CandidateService {
           'carem.descs as descs' ,
           'co.name as contest'
         ])
-      .getRawMany()
-      return listCandidate
+      .getMany()
+
+      if(listCandidate.length<1)
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : SEARCH_KEY_NOT_FOUNT
+      })
+
+      return res.status(HttpStatus.OK).json({
+        message :GET_LIST_CANDIDATE_SUCCESS , 
+        listCandidate : listCandidate,
+        total : total
+      })
     }
     
     if(isActive !== undefined){
 
       let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
       .leftJoin('ca.carem' , 'carem')
-      .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
-      .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
-      .leftJoin('asco.contest' , 'co')
       .where('candidate.isActive =:isActive' , {isActive : isActive})
+      .offset(offset)
+      .limit(amount)
       .select(
         [
           'ca.id as id' , 
@@ -191,16 +214,25 @@ export class CandidateService {
           'carem.descs as descs' ,
           'co.name as contest'
         ])
-      .getRawMany()
-      return listCandidate
+      .getMany()
+
+      if(listCandidate.length <1)
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message : FILTER_FAIL
+      })
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_CANDIDATE_SUCCESS  ,
+        listCandidate : listCandidate ,
+        total : total
+      })
     }
     if(!search && !isActive){
 
       let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
       .leftJoin('ca.carem' , 'carem')
-      .leftJoin(TicketEntity , 'tc' , 'tc.candidateId = ca.id')
-      .leftJoin(AssmContestEntity , 'asco' , 'tc.id = asco.ticketId')
-      .leftJoin('asco.contest' , 'co')
+      .where('ca.caremId = carem.id')
+      .offset(offset)
+      .limit(amount)
       .select(
         [
           'ca.id as id' , 
@@ -215,12 +247,15 @@ export class CandidateService {
           'ca.isActive as isActive' ,
           'carem.slogan as slogan',
           'carem.descs as descs' ,
-          'co.name as contest'
         ])
       .getRawMany()
-      return listCandidate
+      
+      return res.status(HttpStatus.OK).json({
+        message : GET_LIST_CANDIDATE_SUCCESS,
+        listCandidate : listCandidate , 
+        total : total
+      })
     }
-
       
   }
 

@@ -7,12 +7,20 @@ import { AssignmentCompanyService } from './service/assignment-company.service';
 import { AssignmentCompanyController } from './controller/assignment-company.controller';
 import { ContestModule } from 'src/contest/contest.module';
 import { CompanyModule } from 'src/company/company.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   controllers: [AssignmentCompanyController],
   providers: [AssignmentCompanyService],
-  imports : [TypeOrmModule.forFeature([AssmCompanyEntity , ContestEntity ,CompanyEntity]) , forwardRef(() =>ContestModule) , forwardRef(()=>CompanyModule)] ,
+  imports : [
+    TypeOrmModule.forFeature([
+      AssmCompanyEntity , 
+      ContestEntity ,
+      CompanyEntity
+    ]) , 
+    forwardRef(() =>ContestModule) , 
+    forwardRef(()=>CompanyModule) ,
+    forwardRef(()=>UsersModule)] ,
   exports : [AssignmentCompanyService]
-
 })
 export class AssignmentCompanyModule {}

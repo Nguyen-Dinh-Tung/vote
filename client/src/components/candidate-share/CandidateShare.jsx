@@ -102,8 +102,7 @@ function CandidateShare(props) {
     
         ApiBase.get(urlEntity)
         .then(res =>{
-            console.log(res);
-            setListUser(res.data.list)
+            setListUser(res.data.listCandidate)
             setTotalPage(Math.ceil(res.data.total / 8))
             setChecked([])
         })

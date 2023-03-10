@@ -5,10 +5,15 @@ import { AssmContestEntity } from './entities/assignment-contest.entity';
 import { ContestEntity } from 'src/contest/entities/contest.entity';
 import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { AssignmentContestController } from './controller/assignment-contest.controller';
+import { CandidateEntity } from 'src/candidate/entities/candidate.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([AssmContestEntity ,ContestEntity , TicketEntity])],
+  imports : [TypeOrmModule.forFeature([
+    AssmContestEntity ,
+    ContestEntity , 
+    CandidateEntity])],
   controllers: [AssignmentContestController],
-  providers: [AssignmentContestService , AssmContestEntity]
+  providers: [AssignmentContestService , AssmContestEntity] ,
+  exports : [AssignmentContestService]
 })
 export class AssignmentContestModule {}

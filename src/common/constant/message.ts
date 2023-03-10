@@ -20,3 +20,6 @@ export const USER_FORBIDEN_COMPANY : string = "Không thể thao tác ! Tổ ch�
 export const NOT_PERMISSION_SHARE : string = "Bạn không có quyền sử dụng chức năng này !"
 export const ADD_TICKET_SUCCESS : string = "Thêm thí sinh vào cuộc thi thành công !"
 export const ADD_NEW_UCO_SUCCESS : string = "Chia sẻ quyền quản lý cuộc thi thành công !"
+export const ADD_NEW_UCA_SUCCESS : string = "Chia sẻ quyền quản lý thí sinh thành công !"
+export const ADD_NEW_UCA_FAIL : string = "Chia sẻ quyền quản lý thí sinh không thành công !"
+export const ADD_NEW_ASCO_FAIL : string = "Thêm thí sinh vào cuộc thi thất bại"

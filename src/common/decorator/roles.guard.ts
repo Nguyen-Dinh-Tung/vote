@@ -31,8 +31,11 @@ export class RolesGuards implements CanActivate{
         
         let userCheck   = await this.usersService.validateUser({id : idUser})
         
-        if(userCheck){  
+        
 
+        if(userCheck){  
+            if(userCheck.role === "admin")
+            return true
             if(roles.includes(userCheck.role)) {
                 
                 if(userCheck.isActive == true){
@@ -67,7 +70,7 @@ export function RolesCheck(roles : Roles []){
     return applyDecorators(
 
         SetMetadata('roles' , roles),
-        UseGuards(RolesGuards , PemissionGuard)
+        UseGuards(RolesGuards )
 
     )
     

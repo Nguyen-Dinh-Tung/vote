@@ -1,5 +1,6 @@
 import React, { useEffect, useState  } from 'react';
 import { useNavigate } from "react-router-dom";
+import { Button } from '@mui/material';
 
 import BtnOutLine from '../../components/button/BtnOutLine';
 import { BTN_SUBMIT, BTN_TO_LOGIN } from '../../contants/btn';
@@ -17,6 +18,8 @@ import { ApiBase } from '../../api/api.base';
 import { LOGO } from '../../pages/login/intro';
 import { ADDCONTEST, ADD_CANDIDATE } from '../../contants/field.desc';
 import { ADD_CONTEST_SUCCESS } from '../../contants/notify/message';
+import UserShare from '../user-share/UserShare';
+import CompanyShare from '../contest-share/ContestShare';
 
 const infoRegister = [
 ['idno' , 'text' , 'Số báo danh'] ,
@@ -34,7 +37,6 @@ function FormCandidate(props) {
 
     const [candidate , setCandidate] = useState({
         name : '' ,
-        idContest : '' ,
         address : '' ,
         file : undefined ,
         email : '' ,
@@ -49,6 +51,9 @@ function FormCandidate(props) {
     const [contests , setContests] = useState()
     const dispatch = useDispatch()
     const [notifyFunc] = useNotifyFunc()
+    const [step , setStep] = useState(1)
+    const [listIdUsers , setListIdUsers] = useState()
+    const [listIdContest , setListIdContest] = useState()
     const urlGetListContest = '/contest'
     const urlAddCandidate = '/candidate'
 
@@ -75,7 +80,12 @@ function FormCandidate(props) {
 
 
     }
-
+    const handleChangeListUserShare = (data) =>{
+        setListIdUsers(data)
+    }
+    const handleChangeListContestShare = (data) =>{
+        setListIdContest(data)
+    }
 
     const handleSubmit = () =>{
         let flag = true
@@ -110,15 +120,19 @@ function FormCandidate(props) {
         Object.keys(candidate).some(key =>{
             form.append(key,candidate[key])
         })
+        if(listIdContest.length > 0 || listIdUsers.length > 0)
+        form.append('share' , JSON.stringify({
+            listIdContest ,
+            listIdUsers
+        }))
         ApiBase.post(urlAddCandidate , form )
         .then(res => {
+            console.log(res);
             if(res.status == 201){
-                console.log(res);
-                notifyFunc(SUCCESS , ADD_CONTEST_SUCCESS , TRUE)
+                notifyFunc(SUCCESS , res.data.message , TRUE)
                 setAvatar(undefined)
                 setCandidate({
                     name : '' ,
-                    idContest : '' ,
                     address : '' ,
                     file : undefined ,
                     email : '' ,
@@ -130,46 +144,53 @@ function FormCandidate(props) {
                     measure : '',
                 })
                 document.querySelector('.form-info').reset()
-                .catch(e =>{
-                    if(e){
-                        notifyFunc(ERROR , e.response.data.message , TRUE)
-                    }
-                })
-            }else{
-                notifyFunc(ERROR , res.response.data.message , TRUE)
             }
         })
         .catch(e =>{
 
             if(e) {
+                notifyFunc(ERROR , e.response.data.message , TRUE)
             }
 
         })
     }
 
 
-    const handleClickAvatar = () =>{
-        
 
+    const nextStep = () =>{
+        if(step < 3 && step>=1)
+        setStep(step+1)
+    }
+    const backStep = () =>{
+        if(step > 1)
+        setStep(step - 1)
     }
 
+
     useEffect(() =>{
-        ApiBase.get(urlGetListContest)
-        .then(res =>{
-            console.log(res);
-            setContests(res.data.listContest)
-        })
-        .catch(e =>{
-            if(e) console.log(e);
-        })
+        // ApiBase.get(urlGetListContest)
+        // .then(res =>{
+        //     console.log(res);
+        //     setContests(res.data.listContest)
+        // })
+        // .catch(e =>{
+        //     if(e) console.log(e);
+        // })
     },[])
     return (
         <div className='register mt-50'>
             <div className="header">
-                <p className='header'>{ADD_CANDIDATE}</p>
+                <p className='header'>{
+
+                    step  && step === 1 ? ADD_CANDIDATE :
+                    step && step === 2 ? "Chọn cuộc thi tham gia" :
+                    step && step === 3 ? "Chia sẻ quyền quản lý" :""
+
+                }</p>
             </div>
             <div className="form-register">
-                <form className="form-info" onSubmit={(e) =>{
+                {step && step === 1 ? <>
+                    <form className="form-info" onSubmit={(e) =>{
                     e.preventDefault()
                     
                 }}
@@ -185,24 +206,32 @@ function FormCandidate(props) {
                         accept={e[0] == 'file' ? e[2] : ''}/>
                         </>
                     })}
-                    <select name="idContest" id="select-status" onChange={handleChange} onLoad={(e) =>{
+                    {/* <select name="idContest" id="select-status" onChange={handleChange} onLoad={(e) =>{
                         setCandidate({...candidate , [e.target.name] : e.target.value})
                     }}>
                         <option value="-1">Cuộc thi</option>
                         {contests && contests.map((e , index) =>{
                             return <option  value={e.id}>{e.name}</option>
                         })}
-                    </select>
+                    </select> */}
                 </form>
                 <div className="avatar-demo" >
                 <Avatar
                     alt="Remy Sharp"
                     src={avatar && avatar}
                     sx={{ width: 56, height: 56 }}
-                    onClick={handleClickAvatar}
                 />
 
                 </div>
+                </>: 
+                
+                step === 3 ? 
+                <UserShare 
+                handleGetData={handleChangeListUserShare}/> :
+                step === 2 ?
+                <CompanyShare 
+                handleGetData={handleChangeListContestShare}/> : ''
+                }
                 <div className="btn-register">
                 <button   
                     className='button'
@@ -212,7 +241,41 @@ function FormCandidate(props) {
                 </button>
                 </div>
             </div>
+            {step && step > 0 && step <3 
+            ? 
+                <div style={{
+                    position : 'absolute' ,
+                    right : '0' ,
+                    top : '50%' ,
+                    transform : 'translateX(-50%)'
+                }}>
+                <Button color="secondary" 
+                        variant="outlined"
+                    onClick={nextStep}
+                >
+                    Tiếp theo
+                </Button>
+                </div>
+            : ''
+            }
 
+            {step && step >1 && step <=3 
+            ? 
+                    <div style={{
+                        position : 'absolute' ,
+                        left : '10%' ,
+                        top : '50%' ,
+                        transform : 'translateX(-50%)'
+                    }}>
+                    <Button color="secondary" 
+                            variant="outlined"
+                        onClick={backStep}
+                    >
+                        Trở lại
+                    </Button>
+                    </div> 
+            : ''    
+            }
             <AlertComponents/>
 
         </div>

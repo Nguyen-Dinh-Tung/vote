@@ -19,6 +19,8 @@ import { forwardRef } from '@nestjs/common/utils';
 import { Response } from 'express';
 import { ParseQuery } from 'src/common/pipe/ParseQuery.pipe';
 import { QueryFilter } from 'src/common/interfaces/QueryFilter.interface';
+import { ParseStrPipe } from 'src/common/pipe/ParseStr.pipe';
+import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
 dotenv.config()
 @Controller('candidate')
 
@@ -33,11 +35,23 @@ export class CandidateController {
   @RolesCheck([Roles.admin ,Roles.content])
   @Post()
   @UseInterceptors(FileInterceptor('file') )
-  create(@Body() createCandidateDto: CreateCandidateDto , @UserByToken() userBytoken : any , @Res() res : Response , @UploadedFile(new ImagePipe()) file? : Express.Multer.File) {
+  async create(
+    @Body(new ParseStrPipe()) createCandidateDto: CreateCandidateDto , 
+    @UserByToken() userBytoken : any ,
+    @Res() res : Response ,
+    @IdUserInterceptor() idUser : string , 
+    @UploadedFile(new ImagePipe()) file? : Express.Multer.File
+    ) {
     try{
-
-    return this.candidateService.create(createCandidateDto , userBytoken , res , file);
-
+      
+      let resAddCa = await this.candidateService.create(createCandidateDto , idUser ,res , userBytoken, file)
+      return res.status(resAddCa.status).json({
+        message : resAddCa.message , 
+        failList : resAddCa.failList ,
+        newCandidate : resAddCa?.data ,
+        share : resAddCa?.share , 
+        admin : resAddCa?.admin
+      })
     }catch(e){
 
       if(e) console.log(e);
@@ -54,15 +68,14 @@ export class CandidateController {
     
     ) {
     try{
+
+      let page : number = Number(params) ;
+      if(!page)
+      page = 1
       
+      return await this.candidateService.findAll(res  , page , query.isActive , query.search )
 
-      let listCandidate = await this.candidateService.findAll(params.page , query.isActive , query.search )
 
-      return res.status(HttpStatus.OK).json({
-        message : GET_LIST_CANDIDATE_SUCCESS,
-        list : listCandidate ,
-        total : listCandidate.length
-      })
     }catch(e){
 
       if(e) console.log(e);
@@ -108,9 +121,7 @@ export class CandidateController {
 
   @Post('upload/image')
   async upload(@UploadedFile() bg? : Express.Multer.File){
-    console.log(bg);
     let mimeType = bg.mimetype.split('/')[1] ;
-    console.log(bg);
     let filename = bg.filename ;
     let path = bg.path
     let bufferFile = fs.readFileSync(path)
@@ -130,8 +141,4 @@ export class CandidateController {
     fs.readFileSync(path)
     
   }
-
-
-
-
 }

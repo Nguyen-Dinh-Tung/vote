@@ -1,3 +1,4 @@
+import { CheckShareDto } from './../dto/check-share.dto';
 import { Roles } from 'src/common/enum/role.enum';
 import { USER_FORBIDEN_COMPANY } from './../../common/constant/message';
 import { CreateUserCpDto } from './../dto/create-user-cp.dto';
@@ -16,6 +17,7 @@ import { ADD_NEW_UCP_SUCCESS, FORBIDDEN, USER_FORBIDEN } from 'src/common/consta
 import { ROLE_UCP } from '../contants/role.enum';
 import { InitUcp } from '../dto/Init-ucp.dt';
 import { USER_FORBIDEN_COMPANY_SHARE } from '../contants/message';
+import { CheckShareInterface, NextCheckShare } from 'src/common/interfaces/Check-share.interface';
 
 @Injectable()
 export class UserCpService {
@@ -193,5 +195,48 @@ export class UserCpService {
     let newUcp = await this.userCpEntity.save(createUserCpDto)
     return newUcp
 
+  }
+
+  async checkShare(checkShareDto : CheckShareDto) : Promise<CheckShareInterface>{
+
+    let checkUser = await this.userEntity.findOne({
+      where : {
+        id : checkShareDto.idUser ,
+      }
+    })
+
+    if(!checkUser)
+    return {
+      next : NextCheckShare.NOT ,
+      message : USER_NOT_FOUND
+    }
+    let checkCompany = await this.companyEntity.findOne({
+      where : {
+        id : checkShareDto.idCompany ,
+      }
+    })
+
+    if(!checkCompany)
+    return {
+      next : NextCheckShare.NOT ,
+      message : COMPANY_NOT_EXIST
+    }
+
+    let ucp = await this.userCpEntity.findOne({
+      where : {
+        company : checkCompany , 
+        user : checkUser
+      }
+    })
+    if(!ucp || ucp.role !== "admin")
+    return {
+      next : NextCheckShare.NOT ,
+      message : USER_FORBIDEN
+    }
+
+    return { 
+      next : NextCheckShare.CAN ,
+      message : undefined
+    }
   }
 }
