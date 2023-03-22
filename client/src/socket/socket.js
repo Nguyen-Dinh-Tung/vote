@@ -6,5 +6,6 @@ let token = localStorage.getItem('token')
 export const socket = io(URL , {
     auth : {
         token : token
-    }
+    } ,
+    autoConnect : false
 }); 

@@ -1,3 +1,4 @@
+import { ConnectIoEntity } from './uio/entity/connect.io.entity';
 import { Uio } from './uio/uio.module';
 import { addTransactionalDataSource } from 'typeorm-transactional/dist/common';
 import { UserCo } from './user-co/entities/user-co.entity';
@@ -44,7 +45,8 @@ import { DataSource } from 'typeorm';
 import { NotifyAppModule } from './notify-app/notify-app.module';
 import { AuthShareModule } from './auth-share/auth-share.module';
 import { Socket } from './socket/socket.module';
-import { UioEntity } from './uio/entity/uio.entity';
+import { IoEntity } from './uio/entity/io.entity';
+import { RoomEntity } from './uio/entity/rooms.io.entity';
 @Module({
   imports: [ 
     AuthModule,
@@ -85,7 +87,8 @@ import { UioEntity } from './uio/entity/uio.entity';
             AssmCompanyEntity ,CandidateRecomendEntity ,
             ContestRecomendEntity , CompanyRecomend ,
             UserCp , UserCo,
-            UserCa, UioEntity 
+            UserCa, IoEntity ,
+            RoomEntity , ConnectIoEntity ,
           ],
         }
       },

@@ -1,15 +1,15 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
-@Entity('uio')
+@Entity('io')
 
-export class UioEntity{
+export class IoEntity{
 
     @PrimaryGeneratedColumn('uuid')
     id : string ;
 
     @Column({
-        default : 'default'
+        default : '-1'
     })
     ioId : string ;
         
@@ -17,4 +17,10 @@ export class UioEntity{
         default : true
     })
     isActive : boolean
+
+    @Column({
+        default : false
+    })
+    isOnline : boolean ;
+
 }

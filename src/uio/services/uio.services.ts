@@ -4,18 +4,19 @@ import { USER_NOT_FOUND } from './../../users/contants/message';
 import { HttpStatus } from '@nestjs/common';
 import { UioDto } from './../dto/uio.dto';
 import { UserEntity } from './../../users/entities/user.entity';
-import { UioEntity } from './../entity/uio.entity';
+import { IoEntity } from '../entity/io.entity';
 import { Injectable } from "@nestjs/common/decorators/core/injectable.decorator";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
+import { ConnectIoDto } from '../dto/connect-io.dto';
+import { DisConnectIo } from '../dto/disConnect-io.dto';
 import { Response } from 'express';
-
 
 @Injectable()
 export class UioServices {
 
     constructor(
-        @InjectRepository(UioEntity) private readonly uioEntity : Repository<UioEntity> ,
+        @InjectRepository(IoEntity) private readonly uioEntity : Repository<IoEntity> ,
         @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity>
 
     ){
@@ -36,7 +37,7 @@ export class UioServices {
 
         let uio = await this.uioEntity.save({})
 
-        checkuser.uio = uio
+        checkuser.io = uio
         await this.userEntity.save(checkuser)
     }       
 
@@ -47,7 +48,7 @@ export class UioServices {
                 id : updateUioDto.idUser
             } ,
             relations : {
-                uio : true
+                io : true
             }
         })
         if(!checkUser)
@@ -55,14 +56,14 @@ export class UioServices {
             message : USER_NOT_FOUND
         })
 
-        let uio = checkUser.uio ;
+        let io = checkUser.io ;
 
-        if(!uio)
+        if(!io)
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             message : SERVE_ERROR
         })
-        uio.ioId = updateUioDto.ioId
-        await this.uioEntity.save(uio)
+        io.ioId = updateUioDto.ioId
+        await this.uioEntity.save(io)
     }
 
     async removeIoId (idUser : string , res : Response){
@@ -72,22 +73,68 @@ export class UioServices {
                 id : idUser
             } ,
             relations : {
-                uio : true
+                io : true
             }
         })
-        let uio = checkUser.uio
+        let io = checkUser.io
         if(!checkUser)
-        return   res.status(HttpStatus.NOT_FOUND).json({
+        return  res.status(HttpStatus.NOT_FOUND).json({
             message : USER_NOT_FOUND
         })
 
-        if(!uio)
+        if(!io)
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message : SERVE_ERROR
+        })
+        
+        io.ioId = ''
+        await this.uioEntity.save(io)
+    }
+
+    async connect(connectIoDto : ConnectIoDto){
+        let checkUser : UserEntity = await this.userEntity.findOne({
+            where : {
+                id : connectIoDto.idUser
+            } ,
+            relations : {
+                io : true
+            }
+        })
+        let io : IoEntity ;
+        
+
+        if(!checkUser)
+        return false
+        io = checkUser.io
+        if(!io)
+        return false
+
+        io.isOnline = connectIoDto.isOnline 
+        io.ioId = connectIoDto.ioId
+        return true
+    }   
+
+    async disConnect(disConnectIoDto : DisConnectIo , res : Response){
+        let checkUser : UserEntity = await this.userEntity.findOne({
+            where : {
+                id : disConnectIoDto.idUser
+            } ,
+            relations : {
+                io : true
+            }
+        })
+        let io : IoEntity  = checkUser.io
+
+        if(!checkUser)
+        return res.status(HttpStatus.NOT_FOUND).json({
+            message : USER_NOT_FOUND
+        })
+
+        if(!io)
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             message : SERVE_ERROR
         })
 
-        
-        uio.ioId = ''
-        await this.uioEntity.save(uio)
+        io.isOnline = disConnectIoDto.isOnline
     }
 }

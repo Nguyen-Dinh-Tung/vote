@@ -1,4 +1,4 @@
-import { UioEntity } from './../../uio/entity/uio.entity';
+import { IoEntity } from '../../uio/entity/io.entity';
 import { UserCo } from './../../user-co/entities/user-co.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { InheriTance } from "src/common/class/inheritance";
@@ -37,7 +37,7 @@ export class UserEntity extends InheriTance {
     })
     historyChange  : string ;
 
-    @OneToOne(() => UioEntity , (uio) => uio.id) 
+    @OneToOne(() => IoEntity , (io) => io.id) 
     @JoinColumn()
-    uio : UioEntity | null
+    io : IoEntity 
 }

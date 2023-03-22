@@ -99,7 +99,7 @@ function ListUser(props) {
         <div className='table-user'>
             <p className='header-list-user'>Quản lý tài khoản</p>
             <div className="header-page" >
-
+            <SocketIo/>
             <input id='search' type="text" name='search' placeholder='Tìm tài khoản hoặc tên người dùng ...' onChange={handChangeSearchKey}/>
             <select id='select-filter' onChange={handleChangeFilter} name="filter">
                 <option selected={searchKey && searchKey ? true : false}>Trạng thái</option>
@@ -146,7 +146,6 @@ function ListUser(props) {
                 <Pagination count={totalPage && totalPage} variant="outlined" color="primary" onChange={handleChangePage} />
             </Stack> 
             </div>
-            <SocketIo/>
         </div>
     );
 }

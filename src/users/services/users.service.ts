@@ -1,3 +1,4 @@
+import { IoEntity } from './../../uio/entity/io.entity';
 import  jwt_decode  from 'jwt-decode';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { ADDRESS_NOT_FOUND, EMAIL_FORMAT, EMAIL_NOT_FOUND, MESSAGE_FORMAT, NAME_NOT_FOUND, USERNAME_NOT_FORMAT, UPDATE_SUCCESS, FIELD_NOT_HOLLOW, EMAIL_UNIQUE } from './../contants/message';
@@ -19,15 +20,18 @@ import { regexEmail, regexPassword, regexUsername } from 'src/regex/regex';
 import { amount } from '../contants/amount.in.page';
 import { SEARCH_KEY_NOT_FOUNT, SEARCH_SUCCESS ,GET_LIST_CANDIDATE_SUCCESS, FILTER_SUCCESS, FILTER_FAIL} from 'src/candidate/contants/message';
 import { FindList } from 'src/common/interfaces/res.interfaces';
+import { Transactional } from 'typeorm-transactional';
 @Injectable()
 export class UsersService {
 
   
   constructor(
     @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> , 
+    @InjectRepository(IoEntity) private readonly ioEntity : Repository<IoEntity> , 
   ){
   }
 
+  @Transactional()
   async create(createUserDto: CreateUserDto , userCreated? : string ,file? : Express.Multer.File , res? : Response) {
 
       let checkUserEmail = await this.validateUser({email : createUserDto.email})
@@ -397,7 +401,6 @@ export class UsersService {
     }
   }
 
-
   async createAdminUser(createUserDto : CreateUserDto) {
 
     let checkUser = await this.validateUser({email : 'admin@gmail.com'})
@@ -410,6 +413,12 @@ export class UsersService {
 
       createUserDto.password = bcrypt.hashSync(createUserDto.password , 10)
       let user = await this.userEntity.save(createUserDto)
+      let newIo : IoEntity ;
+      if(user)
+      newIo = await this.ioEntity.save({})
+      
+      user.io = newIo
+      await this.userEntity.save(user)
       return user
 
     }

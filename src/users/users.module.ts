@@ -1,3 +1,4 @@
+import { IoEntity } from './../uio/entity/io.entity';
 import { CompanyEntity } from './../company/entities/company.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module, forwardRef } from '@nestjs/common';
@@ -17,7 +18,8 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
     FeatureEntity , 
     RtokenEntity ,
     UserCp ,
-    CompanyEntity
+    CompanyEntity ,
+    IoEntity
   ],
     ) ,
     MulterModule.register({

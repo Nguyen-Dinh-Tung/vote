@@ -11,7 +11,6 @@ async function bootstrap() {
     abortOnError : true ,
     cors : true ,
   });
-  app.setGlobalPrefix('api')
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.use(json({ limit: '50mb' }));
