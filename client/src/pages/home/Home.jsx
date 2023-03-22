@@ -6,11 +6,14 @@ import { BTN_LOG_OUT } from '../../contants/btn';
 import { LOGO } from '../login/intro';
 import './index.css' ;
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import Sse from '../../components/sse/sse';
 function Home(props) {
     let token = localStorage.getItem('token');
     const navigate = useNavigate() ;
     const [show , setShow] = useState()
     const [reRender , setReRender]  = useState()
+    const [amounNotify , setAmounNotify] = useState(0)
     let username =''
 
     if(token){
@@ -62,9 +65,17 @@ function Home(props) {
             <div className='container-home'>
                 <div className="side-bar">
                     <div className="top-side-bar">
+                        <div className="top">
                         <div className="logo">{LOGO}</div>
+                        <div className='notify'>
+                            <NotificationsNoneIcon/>
+                            <p className='amount-notify'>{amounNotify}</p>
+                            <Sse/>
+                        </div>
+                        </div>
                         <div className="user">
                             <p className="username"> Xin chào <span className='text-username'>{username && username}</span> !</p>
+
                         </div>
                         <div class="dropdown dropdown-user">
                             <p className="box-icons">Tài khoản <span className='icons'> 

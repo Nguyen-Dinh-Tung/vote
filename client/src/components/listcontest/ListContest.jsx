@@ -57,13 +57,12 @@ function ListContest(props) {
 
     return (
         <div className='table-user'>
-            <p className='header-list-user'>Danh sách cuộc thi </p>
+            <p className='header-list-user'>Quản lý cuộc thi </p>
             <table className='list-user'>
                 <thead>
                 <th>Họ và tên</th>
                 <th>Email</th>
                 <th>Địa chỉ</th>
-                <th>Tổ chức</th>
                 <th>Avatar</th>
                 <th>Trạng thái</th>
                 <th>Tùy chỉnh</th>
@@ -80,7 +79,6 @@ function ListContest(props) {
                             <td>{e && e.name}</td>
                             <td>{e && e.email}</td>
                             <td>{e && e.address}</td>
-                            <td>{e && e.company}</td>
                             <td className='align-center'><img className='user-list-avatar' src={e &&host + e.background} alt="" /></td>
                             <td>{e && e.isActive == true ? "Hoạt động" : 'Dừng'}</td>
                             <td className='align-center cursor-pointer'><SettingsIcon color="secondary" onClick={() => {handleSelectId(e.id) ; setTing()}} sx={{fontSize : '30px'}}/></td>

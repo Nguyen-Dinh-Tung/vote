@@ -22,7 +22,7 @@ import { SERVE_ERROR } from 'src/common/constant/message';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 import { Roles } from 'src/common/enum/role.enum';
-
+import {Transactional , runOnTransactionRollback} from 'typeorm-transactional' ;
 @Injectable()
 export class CompanyService {
   constructor(
@@ -33,7 +33,11 @@ export class CompanyService {
     private readonly userCpService : UserCpService ,
     ){
 
-  }
+    }
+
+  @Transactional(
+    {connectionName : 'missgrand'}
+    )
   async create(
     createCompanyDto: CreateCompanyDto , 
     idUser : string, 
@@ -51,7 +55,6 @@ export class CompanyService {
         id : idUser
       }
     })
-    console.log(idUser , 'idUser');
     
     if(!checkUserInit)
     return res.status(HttpStatus.NOT_FOUND).json({
@@ -112,8 +115,6 @@ export class CompanyService {
         await  this.companayEntity.save(newCompany)
       }
 
-      console.log(createCompanyDto.listIdCompany);
-      
       if(createCompanyDto.listIdCompany && createCompanyDto.listIdCompany.length > 0)
       for(let e of createCompanyDto.listIdCompany){
         let checkUser = await this.userEntity.findOne({
@@ -132,21 +133,16 @@ export class CompanyService {
 
         let newUcp = await this.ucpEntity.save(newInfoUcp)
         listShareSuccess.push(checkUser)
-
       }
-      
 
     }
-   
+    runOnTransactionRollback((e) => e)
     return res.status(HttpStatus.CREATED).json({
       message : ADD_COMPANY_SUCCESS ,
       newCompany : newCompany , 
       listShareFail : listShareFail , 
       listShareSuccess : listShareSuccess
     })
-
-
-
   }
 
   async findAll(
@@ -225,7 +221,6 @@ export class CompanyService {
         listCompany : listCompany ,
         total : total
       })
-  
     }
     
     if(ucp){
@@ -363,24 +358,27 @@ export class CompanyService {
 
       if(updateCompanyDto.slogan !== undefined)
       cpRem['slogan'] = updateCompanyDto.slogan
-
-      
       
       await this.cpRemEntity.save(cpRem)
 
     }
+    
     let updateInfo = {
 
     }
     
     if(updateCompanyDto.address !== undefined)
     updateInfo['address'] = updateCompanyDto.address
+
     if(updateCompanyDto.name !== undefined)
     updateInfo['name'] = updateCompanyDto.name
+
     if(updateCompanyDto.email !== undefined)
     updateInfo['email'] = updateCompanyDto.email
+
     if(updateCompanyDto.email !== undefined)
     updateInfo['email'] = updateCompanyDto.email
+
     if(updateCompanyDto.isActive !== undefined)
     updateInfo['isActive'] = updateCompanyDto.isActive
 
@@ -401,7 +399,7 @@ export class CompanyService {
   }
 
 
-  async remove(id: string , userRemove) {
+  async remove(id: string , userRemove: string) {
 
     try{
 

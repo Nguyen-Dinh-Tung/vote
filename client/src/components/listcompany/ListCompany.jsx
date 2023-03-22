@@ -68,9 +68,6 @@ function ListCompany(props) {
     }
     const handChangeSearchKey = (e) =>{
         setFilter(undefined)
-        if(!searchKey)
-        setPage(1)
-
         let value = e.target.value ;
 
         if(refSearch.current)
@@ -78,8 +75,8 @@ function ListCompany(props) {
 
         refSearch.current = setTimeout(() =>{
 
-            if(searchKey != ''){
-
+            if(value !== ''){
+                setPage(1)
                 setSearchKey(value)
 
             }else{
@@ -88,8 +85,6 @@ function ListCompany(props) {
 
             }
         },1000)
-
-
 
     }
 
@@ -217,7 +212,6 @@ function ListCompany(props) {
         })
         .catch(e =>{
             if(e){
-                console.log(e , 'e');
             notifyFunc(ERROR , e.response.data.message , TRUE)
             }
         })

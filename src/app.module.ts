@@ -1,3 +1,5 @@
+import { Uio } from './uio/uio.module';
+import { addTransactionalDataSource } from 'typeorm-transactional/dist/common';
 import { UserCo } from './user-co/entities/user-co.entity';
 import { UserCp } from './user-cp/entities/user-cp.entity';
 import { AssmContestEntity } from './assignment-contest/entities/assignment-contest.entity';
@@ -27,7 +29,6 @@ import { FetureCode } from './common/enum/role.enum';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MiddlewareConsumer, NestModule } from '@nestjs/common/interfaces';
-import { UserMiddlewareTransformData } from './common/middleware/user.middleware.transform.data';
 import { AssignmentContestModule } from './assignment-contest/assignment-contest.module';
 import { AssignmentCompanyModule } from './assignment-company/assignment-company.module';
 import { CandidateRecomendEntity } from './candidate/entities/candidate-recomend.entity';
@@ -39,7 +40,11 @@ import { UserCpModule } from './user-cp/user-cp.module';
 import { ShareCompanyMiddleWare } from './common/middleware/company.share.middleware';
 import { UserCaModule } from './user-ca/user-ca.module';
 import { UserCa } from './user-ca/entities/user-ca.entity';
-
+import { DataSource } from 'typeorm';
+import { NotifyAppModule } from './notify-app/notify-app.module';
+import { AuthShareModule } from './auth-share/auth-share.module';
+import { Socket } from './socket/socket.module';
+import { UioEntity } from './uio/entity/uio.entity';
 @Module({
   imports: [ 
     AuthModule,
@@ -54,31 +59,48 @@ import { UserCa } from './user-ca/entities/user-ca.entity';
     UserCoModule,
     UserCpModule,
     UserCaModule,
+    Socket , 
+    Uio,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname,'..', '../data/images/'),
       serveRoot: '/data/images/'
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '123123',
-      database: 'missgrand',
-      entities: [
-      TicketEntity , RtokenEntity ,
-      FeatureEntity , CompanyEntity,
-      ContestEntity , CandidateEntity ,
-      UserEntity , AssmContestEntity ,
-      AssmCompanyEntity ,CandidateRecomendEntity ,
-      ContestRecomendEntity , CompanyRecomend ,
-      UserCa,
-      UserCp , UserCo,
-    ],
-      synchronize: true,
-      logging : true
-    })
-    
+    TypeOrmModule.forRootAsync({
+      
+      useFactory(){
+        return {
+          type : 'mysql' ,
+          host: 'localhost',
+          port: 3306,
+          username: 'root',
+          password: '123123',
+          database: 'missgrand',
+          synchronize : true ,
+          logging : true ,
+          entities : [
+            TicketEntity , RtokenEntity ,
+            FeatureEntity , CompanyEntity,
+            ContestEntity , CandidateEntity ,
+            UserEntity , AssmContestEntity ,
+            AssmCompanyEntity ,CandidateRecomendEntity ,
+            ContestRecomendEntity , CompanyRecomend ,
+            UserCp , UserCo,
+            UserCa, UioEntity 
+          ],
+        }
+      },
+      async dataSourceFactory(options){
+        if(!options)
+        throw new Error('Invalid option passed')
+        return addTransactionalDataSource({
+          name: 'missgrand',
+          dataSource: new DataSource(options)
+        })
+      }
+    } 
+    ),
+    NotifyAppModule,
+    AuthShareModule,
   ],
   controllers: [AppController],
   providers: [AppService  ],
@@ -129,3 +151,24 @@ export class AppModule implements OnModuleInit , NestModule {
     })
   }
 }
+
+
+// type: 'mysql',
+//       host: 'localhost',
+//       port: 3306,
+//       username: 'root',
+//       password: '123123',
+//       database: 'missgrand',
+//       entities: [
+//       TicketEntity , RtokenEntity ,
+//       FeatureEntity , CompanyEntity,
+//       ContestEntity , CandidateEntity ,
+//       UserEntity , AssmContestEntity ,
+//       AssmCompanyEntity ,CandidateRecomendEntity ,
+//       ContestRecomendEntity , CompanyRecomend ,
+//       UserCp , UserCo,
+//       UserCa,
+//     ],
+//       synchronize: true,
+//       logging : true
+//     } ,

@@ -76,7 +76,6 @@ function FormEditCandiate(props) {
           return
         }
       }
-      console.log(update);
       let form = new FormData()
 
       Object.keys(update).some(key =>{
@@ -84,7 +83,6 @@ function FormEditCandiate(props) {
       })
       ApiBase.patch(urlUpdateCandidate , form)
       .then(res =>{
-        console.log(res);
         if(res.status === 200){
           setUpdate(undefined)
           notifiFunc(SUCCESS , res.data.message ,TRUE)
@@ -110,7 +108,7 @@ function FormEditCandiate(props) {
     }
 
     useEffect(() =>{
-        const urlGetDetailsCandidate = `/candidate/${id}`
+        const urlGetDetailsCandidate = `/candidate/detail/${id}`
         const urlGetListContest = '/contest'
         ApiBase.get(urlGetDetailsCandidate)
         .then(res =>{

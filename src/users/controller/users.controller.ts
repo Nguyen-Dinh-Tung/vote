@@ -13,17 +13,23 @@ import { UsersService } from '../services/users.service';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
 import {UsePipes} from '@nestjs/common';
 import { JoiValidatePipes } from '../pipe/JoinValidate.pipe';
-import { Test } from '../test';
 import { TransformResCreateUser } from '../interceptor/TransformResCreateUser';
 import { UserByToken } from '../interceptor/TransformAccountHistoryActive.decorator';import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParseUUIDPipe } from '@nestjs/common/pipes';
 import { ImagePipe } from '../pipe/Image.pipe';
 import { ParseBoolenPipe } from '../pipe/ParseBoolen.pipe';
 import { ParseParamPipe } from '../pipe/ParseParamPipe.pipe';
+import { Test } from '../dto/test.array';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { boolean } from 'joi';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService ,
+    @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> ,
+    ) {}
 
 
   @Post()
@@ -35,9 +41,11 @@ export class UsersController {
     summary: 'Tạo tài khoản mới !',
   })
   @UseInterceptors(FileInterceptor('file'))
-  create(@Body() createUserDto  , @UploadedFile(new ImagePipe()) file? : Express.Multer.File, @UserByToken()  userCreated? : string  , @Res() res? : Response) {
+  async create(@Body() createUserDto : CreateUserDto   , 
+  @UploadedFile(new ImagePipe()) file? : Express.Multer.File, @UserByToken()  userCreated? : string  ,
+  @Res() res? : Response) {
     try{
-
+      
       return this.usersService.create(createUserDto , userCreated , file , res);
 
     }catch(e){

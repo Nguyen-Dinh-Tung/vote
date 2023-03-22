@@ -2,15 +2,13 @@ import { SEARCH_KEY_NOT_FOUNT, FILTER_FAIL } from './../contants/message';
 import { amount } from './../../users/contants/amount.in.page';
 import { UserCa } from './../../user-ca/entities/user-ca.entity';
 import { NOT_DATA } from './../../contest/contants/contants';
-import { SERVE_ERROR } from './../../common/constant/message';
-import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
 import { ContestEntity } from './../../contest/entities/contest.entity';
-import { NotFoundError, share } from 'rxjs';
+import { NotFoundError } from 'rxjs';
 import { CandidateEntity } from './../entities/candidate.entity';
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import {  InjectRepository } from '@nestjs/typeorm';
 import { Validate } from 'src/common/class/validate.entity';
-import { Repository, In } from 'typeorm';
+import { Repository,Like } from 'typeorm';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateDto } from '../dto/update-candidate.dto';
 import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
@@ -18,10 +16,7 @@ import  * as fs from 'fs'
 import * as dotenv from 'dotenv' 
 import { Response } from 'express';
 import { ADD_CANDIDATE_SUCCESS, CANDIDATE_EXIST, CANDIDATE_NOT_EXIST, GET_DETAIL_CANDIDATE_SUCCESS, GET_LIST_CANDIDATE_SUCCESS, UPDATE_CANDIDATE_SUCCESS } from '../contants/message';
-import { TicketEntity } from 'src/ticket/entities/ticket.entity';
 import { CandidateRecomendEntity } from '../entities/candidate-recomend.entity';
-import { ADM_MESSAGE } from 'src/contest/contants/contants';
-import { QueryFilter } from 'src/common/interfaces/QueryFilter.interface';
 import { AssignmentContestService } from 'src/assignment-contest/services/assignment-contest.service';
 import { UserCaService } from 'src/user-ca/services/user-ca.service';
 import { Roles } from 'src/common/enum/role.enum';
@@ -156,66 +151,49 @@ export class CandidateService {
     let total = await this.candidateEntity.count()
     
     if(search){
-      let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
-      .leftJoin('ca.carem' , 'carem')
-      .where('candidate.name = :"%${search}%"' , {search : search})
-      .offset(offset)
-      .limit(amount)
-      .select(
-        [
-          'ca.id as id' , 
-          'ca.idno as idno' , 
-          'ca.name as name ' , 
-          'ca.email as email',
-          'ca.address as address' ,
-          'ca.background as background' ,
-          'ca.height as height' ,
-          'ca.weight as weight' ,
-          'ca.measure as measure' ,
-          'ca.isActive as isActive' ,
-          'carem.slogan as slogan',
-          'carem.descs as descs' ,
-          'co.name as contest'
-        ])
-      .getMany()
 
-      if(listCandidate.length<1)
+      let listCandidate = await this.candidateEntity
+      .find({
+        where : [
+        {name : Like(`%${search}%`)},
+        {email : Like(`%${search}%`)},
+        ],
+        take : amount ,
+        skip : offset ,
+      })
+
+      let count = await this.candidateEntity.count({
+        where :[
+          {name : Like(`%${search}%`)},
+          {email : Like(`%${search}%`)},
+          ], 
+      })
+      if(listCandidate.length <1)
       return res.status(HttpStatus.NOT_FOUND).json({
         message : SEARCH_KEY_NOT_FOUNT
       })
-
       return res.status(HttpStatus.OK).json({
         message :GET_LIST_CANDIDATE_SUCCESS , 
         listCandidate : listCandidate,
-        total : total
+        total : count
       })
     }
     
     if(isActive !== undefined){
+      let listCandidate = await this.candidateEntity.find({
+        where : {
+          isActive : isActive
+        } ,
+        take : amount ,
+        skip : offset ,
+      })
+      let count = await this.candidateEntity.count({
+        where : {
+          isActive : isActive
+        } ,
+      })
 
-      let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
-      .leftJoin('ca.carem' , 'carem')
-      .where('candidate.isActive =:isActive' , {isActive : isActive})
-      .offset(offset)
-      .limit(amount)
-      .select(
-        [
-          'ca.id as id' , 
-          'ca.idno as idno' , 
-          'ca.name as name ' , 
-          'ca.email as email',
-          'ca.address as address' ,
-          'ca.background as background' ,
-          'ca.height as height' ,
-          'ca.weight as weight' ,
-          'ca.measure as measure' ,
-          'ca.isActive as isActive' ,
-          'carem.slogan as slogan',
-          'carem.descs as descs' ,
-          'co.name as contest'
-        ])
-      .getMany()
-
+      
       if(listCandidate.length <1)
       return res.status(HttpStatus.NOT_FOUND).json({
         message : FILTER_FAIL
@@ -223,46 +201,27 @@ export class CandidateService {
       return res.status(HttpStatus.OK).json({
         message : GET_LIST_CANDIDATE_SUCCESS  ,
         listCandidate : listCandidate ,
-        total : total
+        total : count
       })
     }
     if(!search && !isActive){
 
-      let listCandidate = await this.candidateEntity.createQueryBuilder('ca')
-      .leftJoin('ca.carem' , 'carem')
-      .where('ca.caremId = carem.id')
-      .offset(offset)
-      .limit(amount)
-      .select(
-        [
-          'ca.id as id' , 
-          'ca.idno as idno' , 
-          'ca.name as name ' , 
-          'ca.email as email',
-          'ca.address as address' ,
-          'ca.background as background' ,
-          'ca.height as height' ,
-          'ca.weight as weight' ,
-          'ca.measure as measure' ,
-          'ca.isActive as isActive' ,
-          'carem.slogan as slogan',
-          'carem.descs as descs' ,
-        ])
-      .getRawMany()
-      
+      let listCandidate = await this.candidateEntity.find({
+        skip : offset ,
+        take : amount
+      })
+      let count = await this.candidateEntity.count()
       return res.status(HttpStatus.OK).json({
         message : GET_LIST_CANDIDATE_SUCCESS,
         listCandidate : listCandidate , 
-        total : total
+        total : count
       })
     }
       
   }
 
-
   async findOne(id: string , res : Response) {
-    
-    let candidate = await this.candidateEntity.createQueryBuilder('ca')
+    let candidate : CandidateEntity = await this.candidateEntity.createQueryBuilder('ca')
     .leftJoin('ca.carem' , 'carem')
     .select([
       'ca.id as id' , 

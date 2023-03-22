@@ -109,7 +109,8 @@ function FormEditContest(props) {
     }
 
     useEffect(() =>{
-        const urlGetDetailsContest = `/contest/${id}`
+
+        const urlGetDetailsContest = `/contest/detail/${id}`
         const urlGetListCompany = '/company'
         ApiBase.get(urlGetDetailsContest)
         .then(res =>{
@@ -127,6 +128,7 @@ function FormEditContest(props) {
         .catch(e =>{
           if(e) console.log(e);
         })
+
     },[])
 
     return (
@@ -209,6 +211,7 @@ function FormEditContest(props) {
 
         </DialogContent>
         <DialogActions>
+          
           <Button onClick={handleClose}>Huỷ</Button>
           <Button onClick={handleSubmit} >
             Đồng ý

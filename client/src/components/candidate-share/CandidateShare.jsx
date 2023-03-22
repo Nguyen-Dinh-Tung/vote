@@ -21,12 +21,10 @@ function CandidateShare(props) {
     const [demoPage , setDemoPage] = useState(1)
     const handleGetData = props.handleGetData ;
     const [checked, setChecked] = React.useState([]);
+    const [filter , setFilter] = useState()
 
 
     const [notifyFunc] = useNotifyFunc()
-
-
-
 
 
     const handleChangeDemoPage = (e , page) =>{
@@ -46,28 +44,30 @@ function CandidateShare(props) {
     }
 
     const handChangeSearchKey = (e) =>{
-        if(searchKey ==! '')
-        setPage(1)
-      
+        setFilter(undefined)
         let value = e.target.value ;
-      
+        if(value !== '')
+        setPage(1)
+
+
         if(refSearch.current)
         clearTimeout(refSearch.current)
-      
+
         refSearch.current = setTimeout(() =>{
-      
-          if(value !== ''){
-      
+
+            if(value !== ''){
+
                 setSearchKey(value)
-      
+
             }else{
-      
+
                 setSearchKey('')
-      
+
             }
         },1000)
+
       
-      }
+    }
 
       const handleChangePage = (e , page)=>{
         setPage(page)

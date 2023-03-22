@@ -1,3 +1,4 @@
+import './index.css'
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApiBase, host } from '../../api/api.base';
@@ -8,9 +9,9 @@ import useNotifyFunc from '../../hooks/notify.func';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
-import FormEditContest from '../form-edit-contest/FormEditContest';
 import FormEditCandiate from '../form-edit-candidate/FormEditCandidate';
-import { Pagination, Stack } from '@mui/material';
+import { Box, FormControl, InputLabel, MenuItem, Pagination, Stack } from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 function ListCandidate(props) {
 
     const urlGetListCandidate = `/candidate/1` ;
@@ -23,6 +24,7 @@ function ListCandidate(props) {
     const [page , setPage] = useState(1)
     const [searchKey , setSearchKey] = useState() 
     const [filter , setFilter] = useState()
+    const refSearch = React.useRef(null)
 
     const handleReRender = ()=>{
         setRerender(Date.now())
@@ -36,7 +38,35 @@ function ListCandidate(props) {
     const handleChangePage = (e , page)=>{
         setPage(page)
     }
-    console.log(page);
+    const handChangeSearchKey = (e) =>{
+        setFilter(undefined)
+        let value = e.target.value ;
+        if(value !== '')
+        setPage(1)
+
+
+        if(refSearch.current)
+        clearTimeout(refSearch.current)
+
+        refSearch.current = setTimeout(() =>{
+
+            if(value !== ''){
+
+                setSearchKey(value)
+
+            }else{
+
+                setSearchKey('')
+
+            }
+        },1000)
+
+    }
+    const handleChangeFilter = (event) =>{
+        setFilter(event.target.value)
+    }
+
+
     useEffect(() =>{
 
         let urlEntity = `/candidate/${page}` ;
@@ -46,10 +76,8 @@ function ListCandidate(props) {
     
         if(filter !== undefined)
         urlEntity += `?isActive=${filter}`
-
         ApiBase.get(urlEntity)
         .then(res =>{
-            console.log(res);
             let listCandidate = res.data.listCandidate.sort((a,b) =>{
                 return Number(b.isActive) -  Number(a.isActive)
             })
@@ -57,15 +85,30 @@ function ListCandidate(props) {
             setTotalPage(Math.ceil(res.data.total / 8))
         })
         .catch(e =>{
-            if(e.response.status == 403)
-            notifyFunc(ERROR , FORBIDDEN , TRUE)
+            if(e)
+            notifyFunc(ERROR , e.response.data.message , TRUE)
         })
+
+        const urlListCompany = '/'
+        ApiBase.get()
 
     },[render , searchKey , filter , page])
 
     return (
         <div className='table-user'>
             <p className='header-list-user'>Quản lý thí sinh </p>
+            <div className="filter">
+            <input id='search' 
+            type="text" name='search' 
+            placeholder='Tìm tài khoản hoặc tên người dùng ...' 
+            onChange={handChangeSearchKey}/>
+            <select id='select-filter' onChange={handleChangeFilter} name="filter">
+                <option selected={searchKey && searchKey ? true : false}>Lọc</option>
+                <option value="true">Hoạt động</option>
+                <option value="false">Ngừng</option>
+            </select>
+            </div>
+        
             <table className='list-user'>
                 <thead>
                 <th>SBD</th>
@@ -109,7 +152,11 @@ function ListCandidate(props) {
                     onChange={handleChangePage} />
                 </Stack> 
             </div>
-            {open && open ? <FormEditCandiate handleReRender={handleReRender}/> : ''}
+            {
+                open && open ?
+                <FormEditCandiate handleReRender={handleReRender}/> 
+                : ''
+            }
                     
         </div>
     );

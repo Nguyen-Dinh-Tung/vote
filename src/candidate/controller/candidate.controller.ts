@@ -82,9 +82,8 @@ export class CandidateController {
       
     }
   }
-
   @RolesCheck([...Object.values(Roles)])
-  @Get(':id')
+  @Get('/detail/:id')
   findOne(@Param('id') id: string , @Res() res : Response)  {
     try{
 

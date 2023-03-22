@@ -166,3 +166,17 @@ display: block;
     padding-left: 50px;
     padding-right: 40px;
 }
+.top{
+    display: flex;
+    justify-content: space-between;
+}
+.notify{
+    position: relative;
+}
+.amount-notify{
+    position: absolute;
+    margin: 0;
+    right: 0;
+    top: -50%;
+    transform: translateY(40%);
+}

@@ -10,6 +10,7 @@ import { setDialogEdit } from '../../redux/features/show.slice';
 import { setId } from '../../redux/features/id.slice';
 import DialogEdit from '../dialoguser/DialogEdit';
 import { Pagination, Stack } from '@mui/material';
+import SocketIo from '../socket/SocketIo';
 function ListUser(props) {
 
     const open = useSelector(state => state.show.dialogEdit) ;
@@ -117,8 +118,8 @@ function ListUser(props) {
                 <th>Tùy chỉnh</th>
                 </thead>
                 <tbody>
-                    {listUser && listUser.length >0 ? 
-                    
+                    {
+                    listUser && listUser.length >0 ? 
                     listUser.map((e , index) =>{
                         return <tr className='tr-list-user' key={e.id} 
                             style={{
@@ -145,6 +146,7 @@ function ListUser(props) {
                 <Pagination count={totalPage && totalPage} variant="outlined" color="primary" onChange={handleChangePage} />
             </Stack> 
             </div>
+            <SocketIo/>
         </div>
     );
 }

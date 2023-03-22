@@ -24,9 +24,9 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
       dest : './files/images'
     }) ,
     forwardRef(() => UserCpModule) ,
-    forwardRef(() => CompanyEntity)
+    forwardRef(() => CompanyEntity) ,
 ],
-  controllers: [UsersController],
+  controllers: [UsersController ],
   providers: [UsersService , JwtStrategy ],
   exports : [UsersService]
 })

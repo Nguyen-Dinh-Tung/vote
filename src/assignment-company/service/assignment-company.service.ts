@@ -97,6 +97,7 @@ export class AssignmentCompanyService {
       'co.address as address' ,
       'co.email as email' ,
       'co.isActive as isActive' ,
+      'co.background as background' ,
       'cp.name as company'
       ])
       .getRawMany()
@@ -128,6 +129,7 @@ export class AssignmentCompanyService {
     'co.address as address' ,
     'co.email as email' ,
     'co.isActive as isActive' ,
+    'co.background as background' ,
     'cp.name as company'
     ])
     .getRawMany()
@@ -157,6 +159,7 @@ export class AssignmentCompanyService {
     'co.address as address' ,
     'co.email as email' ,
     'co.isActive as isActive' ,
+    'co.background as background' ,
     'cp.name as company'
     ])
     .getRawMany()

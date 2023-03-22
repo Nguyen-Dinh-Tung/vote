@@ -35,7 +35,7 @@ function UserForm(props) {
     const [user , setUser] = useState() ;
     const [avatar , setAvatar] = useState() ;
     const [notifyFunc] = useNotifyFunc()
-    const urlAddUser = '/users'
+    const urlAddUser = '/api/users'
     const handleChange = (e) =>{
 
         if(e.target.name == "background"){
@@ -59,7 +59,6 @@ function UserForm(props) {
     }
 
     const handleSubmit = () =>{
-
         let flag = true
         if(!user){
 
@@ -120,6 +119,7 @@ function UserForm(props) {
                 document.querySelector('#form-reset').reset()
                 setAvatar(undefined)
             }
+            
         })
         .catch(e =>{
 

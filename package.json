@@ -28,9 +28,11 @@
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-socket.io": "^9.3.11",
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/swagger": "^6.2.1",
     "@nestjs/typeorm": "^9.0.1",
+    "@nestjs/websockets": "^9.3.11",
     "@types/firebase": "^3.2.1",
     "@types/uuid": "^9.0.0",
     "antd": "^5.2.1",
@@ -43,6 +45,7 @@
     "dotenv": "^16.0.3",
     "joi": "^17.7.0",
     "jwt-decode": "^3.1.2",
+    "kafkajs": "^2.2.4",
     "mongoose": "^6.9.0",
     "mysql2": "^2.3.3",
     "passport": "^0.6.0",
@@ -51,10 +54,11 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.11"
+    "typeorm": "^0.3.11",
+    "typeorm-transactional": "^0.4.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^9.0.0",
+    "@nestjs/cli": "^9.3.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
     "@types/bcrypt": "^5.0.0",

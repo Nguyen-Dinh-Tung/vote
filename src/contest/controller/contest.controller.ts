@@ -45,7 +45,7 @@ export class ContestController {
   }
 
   @RolesCheck([...Object.values(Roles)])
-  @Get('/:page?')
+  @Get(':page?')
   findAll(
     @Res() res : Response ,
     @Param() params : {page : number} ,
@@ -68,7 +68,7 @@ export class ContestController {
   }
 
   @RolesCheck([...Object.values(Roles)])
-  @Get(':id')
+  @Get('/detail/:id')
   findOne(@Param('id') id: string , @Res() res : Response) {
     return this.contestService.getDetailsContest(id , res);
   }

@@ -53,9 +53,6 @@ export class AssignmentContestService {
         }
       }
     }
-
-    console.log(share.listIdContest , ' share.listIdContest');
-    
     
     if(share.listIdContest.length > 0){
       
@@ -64,7 +61,6 @@ export class AssignmentContestService {
           id : In(share.listIdContest)
         }
       })
-      console.log( checkContests , 'checkContests');
       if(checkContests.length !== share.listIdContest.length){
 
         for(let e of share.listIdContest){
@@ -79,7 +75,6 @@ export class AssignmentContestService {
           }
         }
       }
-      console.log( checkContests , 'checkContests');
 
     }
 
@@ -102,7 +97,6 @@ export class AssignmentContestService {
             candidate : e
           }
           let newAsco = await this.ascoEntity.save(infoAsco)
-          console.log(newAsco , 'newAsco');
           
           if(newAsco)
           listUco.push(newAsco)
@@ -120,7 +114,6 @@ export class AssignmentContestService {
         failContest : failContest
       }
     }
-
   }
 
   findAll() {

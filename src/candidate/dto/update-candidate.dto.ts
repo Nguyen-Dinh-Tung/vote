@@ -36,5 +36,5 @@ export class UpdateCandidateDto extends PartialType(CreateCandidateDto) {
     slogan? : string ;
     @IsOptional()
     descs? : string ;
-
+    
 }

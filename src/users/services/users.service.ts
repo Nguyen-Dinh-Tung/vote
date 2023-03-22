@@ -1,3 +1,4 @@
+import  jwt_decode  from 'jwt-decode';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { ADDRESS_NOT_FOUND, EMAIL_FORMAT, EMAIL_NOT_FOUND, MESSAGE_FORMAT, NAME_NOT_FOUND, USERNAME_NOT_FORMAT, UPDATE_SUCCESS, FIELD_NOT_HOLLOW, EMAIL_UNIQUE } from './../contants/message';
 import { Response } from 'express';
@@ -7,10 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt'
 import {plainToClass} from 'class-transformer'
 import { Validate } from 'src/common/class/validate.entity';
-import jwt_decode from "jwt-decode";
 import { NotFoundError } from 'rxjs';
 import { MessageUpdate } from 'src/common/constant/message';
 import { GET_USER, PASSWORD_NOT_FOUND, USER_CREATE, USER_DUBLICATE, USER_NOT_EXISTING_SYSTEM, USER_NOT_FOUND, USER_REMOVE } from '../contants/message';
@@ -24,10 +24,9 @@ export class UsersService {
 
   
   constructor(
-    @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity>
+    @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> , 
   ){
   }
-
 
   async create(createUserDto: CreateUserDto , userCreated? : string ,file? : Express.Multer.File , res? : Response) {
 
@@ -41,6 +40,7 @@ export class UsersService {
         })
 
       }else{
+
         if(file){
           
           let fileSave = this.saveImage(file);          
@@ -49,38 +49,45 @@ export class UsersService {
         }
       
       if(createUserDto.username){
+
         if(!regexUsername(createUserDto.username)){
-          res.status(HttpStatus.NOT_FOUND).json({
+          return res.status(HttpStatus.NOT_FOUND).json({
             message : USERNAME_NOT_FORMAT
           })
         }
+
       }
 
       if(createUserDto.email){
+
         if(!regexEmail(createUserDto.email)){
-          res.status(HttpStatus.NOT_FOUND).json({
+
+          return res.status(HttpStatus.NOT_FOUND).json({
             message : EMAIL_FORMAT
           })
+
         }
+
       }else{
-        res.status(HttpStatus.NOT_FOUND).json({
+
+        return res.status(HttpStatus.NOT_FOUND).json({
           message : EMAIL_NOT_FOUND
         })
+
       }
 
 
       if(createUserDto.name === ''){
-        res.status(HttpStatus.NOT_FOUND).json({
+        return res.status(HttpStatus.NOT_FOUND).json({
           message : NAME_NOT_FOUND
         })
       }
 
       if(createUserDto.address === ''){
-        res.status(HttpStatus.NOT_FOUND).json({
+        return res.status(HttpStatus.NOT_FOUND).json({
           message : ADDRESS_NOT_FOUND
         })
       }
-
 
         createUserDto.historyCreate = userCreated
         createUserDto.password = bcrypt.hashSync(createUserDto.password , 10)

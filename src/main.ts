@@ -3,9 +3,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { urlencoded, json } from 'express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  initializeTransactionalContext()
+  const app = await NestFactory.create(AppModule , {
+    abortOnError : true ,
+    cors : true ,
+  });
+  app.setGlobalPrefix('api')
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.use(json({ limit: '50mb' }));

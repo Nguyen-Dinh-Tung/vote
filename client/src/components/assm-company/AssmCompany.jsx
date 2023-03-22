@@ -201,7 +201,6 @@ function AssmCompany(props) {
         }
         
     }
-    console.log(listCheck);
     const handleClose = () =>{
         setConfim({
             message : '' ,
@@ -222,6 +221,7 @@ function AssmCompany(props) {
     ApiBase.get(urlEntity)
         .then(res =>{
             if(res.status === 200){
+
                 setList(res.data.listContest)
                 setTotalPage(Math.ceil(res.data.total / 8))
             }
@@ -296,8 +296,10 @@ function AssmCompany(props) {
                     <td>{e && e.name}</td>
                     <td>{e && e.email}</td>
                     <td>{e && e.address}</td>
-                    <td>{e && e.bss}</td>
-                    <td className='align-center'><img className='user-list-avatar' src={e &&host + e.background} alt="" /></td>
+                    <td>{e && e.company}</td>
+                    <td className='align-center'>
+                    <img className='user-list-avatar' src={e &&host + e.background} alt="" />
+                    </td>
                     <td>{e && e.isActive == true ? "Hoạt động" : 'Dừng'}</td>
                 </tr>
                     </>
@@ -334,9 +336,7 @@ function AssmCompany(props) {
                     </Box>
             {open && open ? <FormEditCompany handleReRender={handleRerender} /> : ''}
             {confim && confim.name === 'share' ? <DialogShareCompany listIdContest={listCheck} handleClose={handleClose} open={confim && confim.status}/> : ''}
-            {/* {confim && confim  ? <Confim  message={confim && confim.message} 
-            submit={confim && confim.handle} open={confim && confim.status} 
-            handleClose={handleClose}/> : ''} */}
+
         </div>
     );
 }
