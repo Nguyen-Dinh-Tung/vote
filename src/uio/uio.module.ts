@@ -1,6 +1,6 @@
 import { UserEntity } from './../users/entities/user.entity';
 import { UsersModule } from './../users/users.module';
-import { IoEntity } from './entity/io.entity';
+import { IoEntity } from './entities/io.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from "@nestjs/common";
 import { UioController } from "./controller/uio.controller";

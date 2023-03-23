@@ -1,16 +1,17 @@
 import { SERVE_ERROR } from './../../common/constant/message';
 import { UpdateUioDto } from './../dto/update-uio.dto';
 import { USER_NOT_FOUND } from './../../users/contants/message';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, HttpException } from '@nestjs/common';
 import { UioDto } from './../dto/uio.dto';
 import { UserEntity } from './../../users/entities/user.entity';
-import { IoEntity } from '../entity/io.entity';
+import { IoEntity } from '../entities/io.entity';
 import { Injectable } from "@nestjs/common/decorators/core/injectable.decorator";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
 import { ConnectIoDto } from '../dto/connect-io.dto';
 import { DisConnectIo } from '../dto/disConnect-io.dto';
 import { Response } from 'express';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class UioServices {
@@ -91,7 +92,10 @@ export class UioServices {
         await this.uioEntity.save(io)
     }
 
-    async connect(connectIoDto : ConnectIoDto){
+    @Transactional()
+    async connect(connectIoDto : ConnectIoDto ){
+        console.log(connectIoDto.idUser);
+
         let checkUser : UserEntity = await this.userEntity.findOne({
             where : {
                 id : connectIoDto.idUser
@@ -102,39 +106,66 @@ export class UioServices {
         })
         let io : IoEntity ;
         
-
+        
         if(!checkUser)
-        return false
+        throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
+
         io = checkUser.io
+
         if(!io)
-        return false
+        throw new HttpException(SERVE_ERROR , HttpStatus.INTERNAL_SERVER_ERROR)
 
         io.isOnline = connectIoDto.isOnline 
         io.ioId = connectIoDto.ioId
+
+        await this.uioEntity.save(io)
         return true
+
     }   
 
-    async disConnect(disConnectIoDto : DisConnectIo , res : Response){
-        let checkUser : UserEntity = await this.userEntity.findOne({
+    async disConnect(disConnectIoDto : DisConnectIo ){
+        try{
+            let checkUser : UserEntity = await this.userEntity.findOne({
+                where : {
+                    id : disConnectIoDto.idUser
+                } ,
+                relations : {
+                    io : true
+                }
+            })
+            let io : IoEntity  = checkUser.io
+    
+            if(!checkUser)
+            throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)
+            
+            if(!io)
+            throw new HttpException(SERVE_ERROR , HttpStatus.INTERNAL_SERVER_ERROR)
+    
+            io.isOnline = disConnectIoDto.isOnline
+            io.ioId = ''
+            await this.uioEntity.save(io)
+            return true
+
+        }catch(e){
+
+            if(e) console.log(e);
+            
+        }
+    }
+
+    async privateChat(idUser : string){
+        let checkIoId = await this.userEntity.findOne({
             where : {
-                id : disConnectIoDto.idUser
-            } ,
+                id : idUser
+            } , 
             relations : {
                 io : true
-            }
+            } , 
+            select : ['io']
         })
-        let io : IoEntity  = checkUser.io
-
-        if(!checkUser)
-        return res.status(HttpStatus.NOT_FOUND).json({
-            message : USER_NOT_FOUND
-        })
-
-        if(!io)
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            message : SERVE_ERROR
-        })
-
-        io.isOnline = disConnectIoDto.isOnline
+        
+        console.log(checkIoId);
+        
+        return checkIoId.io
     }
 }

@@ -4,7 +4,7 @@ import { Module } from "@nestjs/common";
 import { UioServices } from "src/uio/services/uio.services";
 import { Uio } from "src/uio/uio.module";
 import { GateWay } from "./gateway/socket.gateway";
-import { IoEntity } from 'src/uio/entity/io.entity';
+import { IoEntity } from 'src/uio/entities/io.entity';
 import { UsersModule } from 'src/users/users.module';
 
 

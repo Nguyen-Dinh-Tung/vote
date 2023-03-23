@@ -1,4 +1,4 @@
-import { IoEntity } from './../uio/entity/io.entity';
+import { IoEntity } from '../uio/entities/io.entity';
 import { CompanyEntity } from './../company/entities/company.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module, forwardRef } from '@nestjs/common';
@@ -11,6 +11,7 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserCpModule } from 'src/user-cp/user-cp.module';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
+import { UioServices } from 'src/uio/services/uio.services';
 
 @Module({
   imports : [TypeOrmModule.forFeature([
@@ -19,7 +20,7 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
     RtokenEntity ,
     UserCp ,
     CompanyEntity ,
-    IoEntity
+    IoEntity 
   ],
     ) ,
     MulterModule.register({
@@ -29,8 +30,8 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
     forwardRef(() => CompanyEntity) ,
 ],
   controllers: [UsersController ],
-  providers: [UsersService , JwtStrategy ],
-  exports : [UsersService]
+  providers: [UsersService , JwtStrategy , UioServices ],
+  exports : [UsersService ]
 })
 export class UsersModule {
 }

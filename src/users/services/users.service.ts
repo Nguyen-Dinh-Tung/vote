@@ -1,4 +1,4 @@
-import { IoEntity } from './../../uio/entity/io.entity';
+import { IoEntity } from '../../uio/entities/io.entity';
 import  jwt_decode  from 'jwt-decode';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { ADDRESS_NOT_FOUND, EMAIL_FORMAT, EMAIL_NOT_FOUND, MESSAGE_FORMAT, NAME_NOT_FOUND, USERNAME_NOT_FORMAT, UPDATE_SUCCESS, FIELD_NOT_HOLLOW, EMAIL_UNIQUE } from './../contants/message';
@@ -21,6 +21,7 @@ import { amount } from '../contants/amount.in.page';
 import { SEARCH_KEY_NOT_FOUNT, SEARCH_SUCCESS ,GET_LIST_CANDIDATE_SUCCESS, FILTER_SUCCESS, FILTER_FAIL} from 'src/candidate/contants/message';
 import { FindList } from 'src/common/interfaces/res.interfaces';
 import { Transactional } from 'typeorm-transactional';
+import { UioServices } from 'src/uio/services/uio.services';
 @Injectable()
 export class UsersService {
 
@@ -28,7 +29,9 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> , 
     @InjectRepository(IoEntity) private readonly ioEntity : Repository<IoEntity> , 
+    private readonly ioService : UioServices
   ){
+
   }
 
   @Transactional()
@@ -96,6 +99,14 @@ export class UsersService {
         createUserDto.historyCreate = userCreated
         createUserDto.password = bcrypt.hashSync(createUserDto.password , 10)
         let user = await this.userEntity.save(createUserDto)
+
+        if(user){
+
+          await this.ioService.createSocketConnect({
+            idUser : user.id
+          } , res)
+
+        }
 
         return res.status(HttpStatus.CREATED).json({
           message : USER_CREATE ,

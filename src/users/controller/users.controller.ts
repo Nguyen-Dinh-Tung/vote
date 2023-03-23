@@ -46,8 +46,9 @@ export class UsersController {
   @Res() res? : Response) {
     try{
       
+      console.log(123);
       return this.usersService.create(createUserDto , userCreated , file , res);
-
+      
     }catch(e){
 
       if(e) console.log(e);

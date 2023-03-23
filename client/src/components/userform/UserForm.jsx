@@ -35,7 +35,7 @@ function UserForm(props) {
     const [user , setUser] = useState() ;
     const [avatar , setAvatar] = useState() ;
     const [notifyFunc] = useNotifyFunc()
-    const urlAddUser = '/api/users'
+    const urlAddUser = '/users'
     const handleChange = (e) =>{
 
         if(e.target.name == "background"){

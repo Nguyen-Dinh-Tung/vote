@@ -1,4 +1,4 @@
-import { IoEntity } from '../../uio/entity/io.entity';
+import { IoEntity } from '../../uio/entities/io.entity';
 import { UserCo } from './../../user-co/entities/user-co.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { InheriTance } from "src/common/class/inheritance";

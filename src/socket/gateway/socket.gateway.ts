@@ -1,10 +1,11 @@
+import { HttpException } from '@nestjs/common';
+import { USER_NOT_FOUND } from './../../users/contants/message';
 import { UioServices } from './../../uio/services/uio.services';
-import { IoEntity } from './../../uio/entity/io.entity';
+import { IoEntity } from '../../uio/entities/io.entity';
 import { Res } from "@nestjs/common/decorators";
 import { WebSocketGateway ,WebSocketServer , SubscribeMessage, MessageBody } from "@nestjs/websockets";
 import { ConnectedSocket } from "@nestjs/websockets/decorators";
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WsResponse } from "@nestjs/websockets/interfaces";
-import { Socket } from "dgram";
 import {Server} from 'socket.io'
 import jwtDecode from "jwt-decode";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -27,17 +28,26 @@ export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGa
     @SubscribeMessage('events')
     onEvents(
         @MessageBody() data : string ,
-         @ConnectedSocket() client : Socket
+         @ConnectedSocket() client : any
          ){
             
     }
 
     @SubscribeMessage('chat')
-    privateChat(@MessageBody() data : string) {
+    async privateChat(
+        @MessageBody() data : any,
+        @ConnectedSocket() client : any
+        ) {
         
+        let ioIdReceive = await this.ioServices.privateChat(data.idUser)
+        
+        client.to(ioIdReceive.ioId).emit('chat' , data.message)
     }
     @SubscribeMessage('chat-room')
-    privateRoom(@MessageBody() data : string) {
+    privateRoom(
+        @MessageBody() data : string ,
+        @ConnectedSocket() client : any
+        ) {
         
     }
 
@@ -45,27 +55,62 @@ export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGa
         client: any ,
          ...args: any[] 
         ) {
+       try{
+
         let token  : any ;
         if(client.handshake.auth.token)
         token = jwtDecode(client.handshake.auth.token) ;
+        
         let idUser : string ;
         if(token)
-        idUser = client.id   
+        idUser = token.idUser   
+        
         let idSocket : string = client.id ;
+
         let infoConnect  = {
             idUser :idUser , 
             ioId : idSocket , 
             isOnline : true
         }
-        let connect =  await this.ioServices.connect(infoConnect)
-        if(connect)
-        this.server.to(client.id).emit('connected' , true)
-        if(!connect)
-        this.server.to(client.id).emit('connected' , false)
-    }
-    public handleDisconnect(client: any) {
-        console.log('disconnect');
+
+        let connect = await this.ioServices.connect(infoConnect)
+
+        return this.server.to(client.id).emit('online', {connect : connect})
+
+    }catch(e){
+
+        if(e) console.log(e);
         
+       }
+
+    }
+    public async handleDisconnect(client: any) {
+        try{
+
+            let token  : any ;
+            if(client.handshake.auth.token)
+            token = jwtDecode(client.handshake.auth.token) ;
+            
+            let idUser : string ;
+            if(token)
+            idUser = token.idUser   
+            
+            let idSocket : string = client.id ;
+    
+            let infoDisconnect  = {
+                idUser :idUser , 
+                ioId : idSocket , 
+                isOnline : false
+            }
+            
+            return await this.ioServices.disConnect(infoDisconnect)
+            
+    
+        }catch(e){
+    
+            if(e) console.log(e);
+            
+        }    
     }
 
     public afterInit(client :any){
