@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ContestModule } from './contest/contest.module';
 import { CompanyModule } from './company/company.module';
 import { CandidateModule } from './candidate/candidate.module';
-import { TypeOrmModule, InjectRepository } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { TicketModule } from './ticket/ticket.module';
 import { FeatureModule } from './feature/feature.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -23,8 +23,8 @@ import { DataSource } from 'typeorm';
 import { NotifyAppModule } from './notify-app/notify-app.module';
 import { AuthShareModule } from './auth-share/auth-share.module';
 import { Socket } from './socket/socket.module';
-import { UserEntity } from './users/entities/user.entity';
-import { CandidateEntity } from './candidate/entities/candidate.entity';
+import { RoomsData } from './rooms-data/rooms-data.module';
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
   imports: [ 
@@ -37,11 +37,15 @@ import { CandidateEntity } from './candidate/entities/candidate.entity';
           username: 'root',
           password: '123123',
           database: "missgrand",
-          autoLoadEntities: true ,
           synchronize : true ,
           logging : true ,
+          autoLoadEntities: true ,
           entities : [
-            join(__dirname, "dist/src/**/*.entity.{ts,js}")
+            join
+            (
+              __dirname, 
+              "dist/src/**/*.entity.{ts,js}"
+            )
           ]
         }
       },
@@ -49,13 +53,13 @@ import { CandidateEntity } from './candidate/entities/candidate.entity';
         if(!options)
         throw new Error('Invalid option passed')
         let datasource = new DataSource(options)
-        return addTransactionalDataSource({
+        return addTransactionalDataSource({ 
           dataSource: datasource
         })
       } 
       },
-
     ),
+    RoomsData ,
     AuthModule,
     ContestModule, 
     CompanyModule, 
@@ -70,6 +74,7 @@ import { CandidateEntity } from './candidate/entities/candidate.entity';
     UserCaModule,
     Socket , 
     Uio,
+    RoomsModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname,'..', '../data/images/'),
       serveRoot: '/data/images/'

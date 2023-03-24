@@ -88,8 +88,10 @@ export class UsersController {
   @ApiOperation({
     summary: 'Lấy thông tin chi tiết tài khoản',
   })
-  findOne(@Param('id' , new ParseUUIDPipe) id: string , @Res() res : Response) {
-
+  findOne(
+    @Param('id' , new ParseUUIDPipe) id: string , 
+    @Res() res : Response
+    ) {
     try{
 
       return this.usersService.findOne(id , res);
@@ -110,8 +112,16 @@ export class UsersController {
     summary: 'Cập nhật thông tin tài khoản !',
   })
   @UseInterceptors(FileInterceptor('file'))
-  async update(@Param('id') id: string,  @UploadedFile(new ImagePipe()) file? : Express.Multer.File, @Body(new ParseBoolenPipe()) updateUserDto?: UpdateUserDto , @UserByToken() userUpdate? : string, @Res() res? : Response ) {
+  async update(
+    @Param('id') id: string,  
+    @UploadedFile(new ImagePipe()) file? : Express.Multer.File, 
+    @Body(new ParseBoolenPipe()) updateUserDto?: UpdateUserDto , 
+    @UserByToken() userUpdate? : string, 
+    @Res() res? : Response 
+    ) {
+
     try{
+
       return await this.usersService.update(id, updateUserDto , userUpdate , res , file);
       
     }catch(e){
@@ -126,7 +136,11 @@ export class UsersController {
   })
   @RolesCheck([Roles.admin])
   @Delete(':id')
-  remove(@Param('id') id: string ,@UserByToken() userUpdate : string , @Res() res : Response) {
+  remove(
+    @Param('id') id: string ,
+    @UserByToken() userUpdate : string , 
+    @Res() res : Response
+    ) {
     try{
 
       return this.usersService.remove(id , userUpdate , res);
@@ -145,7 +159,11 @@ export class UsersController {
   @UseInterceptors(TransformResCreateUser)
   async test(
     @Param('page' , new DefaultValuePipe(0)) page? : Number ,
-    @Query('active', new DefaultValuePipe(true) , ParseBoolPipe)  active? : Boolean ,
+    @Query(
+      'active', 
+      new DefaultValuePipe(true) , 
+      ParseBoolPipe
+      )  active? : Boolean ,
     @UserByToken() UserBytoken? : string
   ) {
     

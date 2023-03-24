@@ -1,17 +1,12 @@
-import { HttpException } from '@nestjs/common';
-import { USER_NOT_FOUND } from './../../users/contants/message';
 import { UioServices } from './../../uio/services/uio.services';
 import { IoEntity } from '../../uio/entities/io.entity';
-import { Res } from "@nestjs/common/decorators";
 import { WebSocketGateway ,WebSocketServer , SubscribeMessage, MessageBody } from "@nestjs/websockets";
 import { ConnectedSocket } from "@nestjs/websockets/decorators";
-import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WsResponse } from "@nestjs/websockets/interfaces";
+import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit} from "@nestjs/websockets/interfaces";
 import {Server} from 'socket.io'
 import jwtDecode from "jwt-decode";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
-import { Response } from 'express';
-import { HttpStatus } from '@nestjs/common/enums';
 @WebSocketGateway({name : 'chats' , cors : true})
 
 export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGatewayInit{
@@ -102,7 +97,7 @@ export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGa
                 ioId : idSocket , 
                 isOnline : false
             }
-            
+
             return await this.ioServices.disConnect(infoDisconnect)
             
     

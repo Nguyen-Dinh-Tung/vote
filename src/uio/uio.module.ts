@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from "@nestjs/common";
 import { UioController } from "./controller/uio.controller";
 import { UioServices } from "./services/uio.services";
+import { ConnectIoEntity } from './entities/connect-io.entity';
 
 @Module({
     imports : [
         TypeOrmModule.forFeature([
             IoEntity ,
-            UserEntity
+            UserEntity ,
+            ConnectIoEntity
         ]),
         UsersModule
     

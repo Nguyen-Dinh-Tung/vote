@@ -1,6 +1,6 @@
 import { IoEntity } from './io.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { RoomEntity } from './rooms.io.entity';
+import { RoomEntity } from '../../rooms/entities/rooms.io.entity';
 
 @Entity('cns')
 export class ConnectIoEntity{
