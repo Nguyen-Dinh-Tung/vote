@@ -23,3 +23,7 @@ export const ADD_NEW_UCO_SUCCESS : string = "Chia sẻ quyền quản lý cuộc
 export const ADD_NEW_UCA_SUCCESS : string = "Chia sẻ quyền quản lý thí sinh thành công !"
 export const ADD_NEW_UCA_FAIL : string = "Chia sẻ quyền quản lý thí sinh không thành công !"
 export const ADD_NEW_ASCO_FAIL : string = "Thêm thí sinh vào cuộc thi thất bại"
+
+export const USER_CREATE_ROOM_NOT_FOUND : string = "Tài khoản của bạn không tồn tại !"
+export const USER_CONNECT_ROOM_NOT_FOUND : string = "Tài khoản kết tối chat không tồn tại !"
+export const ADD_NEW_ROOM_SUCCESS : string = "Thêm room thành công công !"

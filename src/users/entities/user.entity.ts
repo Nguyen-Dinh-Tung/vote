@@ -1,7 +1,7 @@
-import { IoEntity } from '../../uio/entities/io.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { InheriTance } from "src/common/class/inheritance";
 import { Roles, FetureCode } from 'src/common/enum/role.enum';
+import { IoEntity } from 'src/io/entities/io.entity';
 @Entity({
     name : 'user',
 })

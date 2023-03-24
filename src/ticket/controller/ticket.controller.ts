@@ -1,6 +1,5 @@
 import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
 import { Controller, Get, Post, Body, Patch, Param, Delete , Headers, Res } from '@nestjs/common';
-import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Roles } from 'src/common/enum/role.enum';
 import getUserByReq from 'src/common/func/getUserByHeaderReq';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
@@ -10,6 +9,7 @@ import { DataFindByAny } from '../dto/Find-Ticket.dto';
 import { UpdateTicketDto } from '../dto/update-ticket.dto';
 import { TicketService } from '../services/ticket.service';
 import { Response } from 'express';
+import { RolesCheck } from 'src/common/decorator/roles.guard';
 
 @Controller('ticket')
 export class TicketController {

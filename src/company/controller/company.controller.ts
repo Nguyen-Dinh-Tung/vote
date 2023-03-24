@@ -3,7 +3,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
 import { Headers, Query, Res, UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
 import { Response } from 'express';
-import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Roles } from 'src/common/enum/role.enum';
 import getUserByReq from 'src/common/func/getUserByHeaderReq';
 import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
@@ -15,6 +14,7 @@ import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { ParserBooleanIsActive } from 'src/common/pipe/ParserBooleanIsActive.pipe';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
 import { ParseStringnifyPipe } from 'src/common/pipe/ParseStringnify..pipe';
+import { RolesCheck } from 'src/common/decorator/roles.guard';
 
 @Controller('company')
 export class CompanyController {

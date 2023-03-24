@@ -1,9 +1,9 @@
-import { SERVE_ERROR } from './../../common/constant/message';
-import { UpdateUioDto } from './../dto/update-uio.dto';
-import { USER_NOT_FOUND } from './../../users/contants/message';
+import { SERVE_ERROR } from '../../common/constant/message';
+import { UpdateUioDto } from '../dto/update-uio.dto';
+import { USER_NOT_FOUND } from '../../users/contants/message';
 import { HttpStatus, HttpException } from '@nestjs/common';
-import { UioDto } from './../dto/uio.dto';
-import { UserEntity } from './../../users/entities/user.entity';
+import { UioDto } from '../dto/uio.dto';
+import { UserEntity } from '../../users/entities/user.entity';
 import { IoEntity } from '../entities/io.entity';
 import { Injectable } from "@nestjs/common/decorators/core/injectable.decorator";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,7 +14,7 @@ import { Response } from 'express';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
-export class UioServices {
+export class IoServices {
 
     constructor(
         @InjectRepository(IoEntity) private readonly uioEntity : Repository<IoEntity> ,
@@ -63,7 +63,7 @@ export class UioServices {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             message : SERVE_ERROR
         })
-        io.ioId = updateUioDto.ioId
+        io.socketId = updateUioDto.ioId
         await this.uioEntity.save(io)
     }
 
@@ -88,7 +88,7 @@ export class UioServices {
             message : SERVE_ERROR
         })
         
-        io.ioId = ''
+        io.socketId = ''
         await this.uioEntity.save(io)
     }
 
@@ -116,7 +116,7 @@ export class UioServices {
         throw new HttpException(SERVE_ERROR , HttpStatus.INTERNAL_SERVER_ERROR)
 
         io.isOnline = connectIoDto.isOnline 
-        io.ioId = connectIoDto.ioId
+        io.socketId = connectIoDto.ioId
 
         await this.uioEntity.save(io)
         return true
@@ -142,7 +142,7 @@ export class UioServices {
             throw new HttpException(SERVE_ERROR , HttpStatus.INTERNAL_SERVER_ERROR)
     
             io.isOnline = disConnectIoDto.isOnline
-            io.ioId = ''
+            io.socketId = ''
             await this.uioEntity.save(io)
             return true
 
@@ -163,8 +163,6 @@ export class UioServices {
             } , 
             select : ['io']
         })
-        
-        console.log(checkIoId);
         
         return checkIoId.io
     }

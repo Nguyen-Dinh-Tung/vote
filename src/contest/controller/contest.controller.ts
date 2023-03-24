@@ -1,6 +1,5 @@
 import { ParseQuery } from './../../common/pipe/ParseQuery.pipe';
 import { ParseStrPipe } from './../../common/pipe/ParseStr.pipe';
-import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CreateContestDto } from '../dto/create-contest.dto';
 import { UpdateContestDto } from '../dto/update-contest.dto';
@@ -14,6 +13,7 @@ import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { Response } from 'express';
 import { ParserBoolean } from '../pipe/ParserBoolean.pipe';
+import { RolesCheck } from 'src/common/decorator/roles.guard';
 
 
 @Controller('contest')

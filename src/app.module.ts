@@ -1,5 +1,4 @@
 import { InitModule } from './init/init.module';
-import { Uio } from './uio/uio.module';
 import { addTransactionalDataSource } from 'typeorm-transactional/dist/common';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -25,6 +24,7 @@ import { AuthShareModule } from './auth-share/auth-share.module';
 import { Socket } from './socket/socket.module';
 import { RoomsData } from './rooms-data/rooms-data.module';
 import { RoomsModule } from './rooms/rooms.module';
+import { IoModule } from './io/io.module';
 
 @Module({
   imports: [ 
@@ -73,7 +73,7 @@ import { RoomsModule } from './rooms/rooms.module';
     UserCpModule,
     UserCaModule,
     Socket , 
-    Uio,
+    IoModule,
     RoomsModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname,'..', '../data/images/'),
@@ -84,12 +84,8 @@ import { RoomsModule } from './rooms/rooms.module';
     InitModule ,
   ],  
   controllers: [AppController],
-  providers: [AppService  ],
+  providers: [AppService],
   exports : [
-    ContestModule , 
-    CompanyModule , 
-    TicketModule , 
-    CandidateModule
   ]
 })
 export class AppModule {

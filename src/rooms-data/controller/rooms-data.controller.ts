@@ -1,4 +1,6 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Post, Res } from "@nestjs/common";
+import { Response } from "express";
+import { CreateRoomDto } from "../../rooms/dto/create-room.dto";
 import { RoomsDataService } from "../services/rooms-data.service";
 
 @Controller('rooms-data')
@@ -22,4 +24,5 @@ export class RoomsDataController {
             
         }
     }
+   
 }

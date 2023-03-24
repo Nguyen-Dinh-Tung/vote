@@ -7,8 +7,8 @@ import { UpdateUserCpDto } from '../dto/update-user-cp.dto';
 import { UserByToken } from 'src/users/interceptor/TransformAccountHistoryActive.decorator';
 import { Response } from 'express';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
-import { RolesCheck } from 'src/common/decorator/roles.guard';
 import { createReadStream } from 'fs';
+import { RolesCheck } from 'src/common/decorator/roles.guard';
 
 @Controller('user-cp')
 export class UserCpController {

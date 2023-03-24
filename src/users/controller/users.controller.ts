@@ -6,11 +6,9 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { Roles } from './../../common/enum/role.enum';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, SetMetadata, Headers, ParseIntPipe, DefaultValuePipe, Query, ParseBoolPipe, UseInterceptors, Res } from '@nestjs/common';
-import { Role } from 'src/common/decorator/roles.decorator';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UsersService } from '../services/users.service';
-import { RolesCheck } from 'src/common/decorator/roles.guard';
 import {UsePipes} from '@nestjs/common';
 import { JoiValidatePipes } from '../pipe/JoinValidate.pipe';
 import { TransformResCreateUser } from '../interceptor/TransformResCreateUser';
@@ -23,6 +21,7 @@ import { Test } from '../dto/test.array';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { boolean } from 'joi';
+import { RolesCheck } from 'src/common/decorator/roles.guard';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {

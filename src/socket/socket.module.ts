@@ -1,23 +1,23 @@
 import { UserEntity } from './../users/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from "@nestjs/common";
-import { UioServices } from "src/uio/services/uio.services";
-import { Uio } from "src/uio/uio.module";
 import { GateWay } from "./gateway/socket.gateway";
-import { IoEntity } from 'src/uio/entities/io.entity';
 import { UsersModule } from 'src/users/users.module';
+import { IoEntity } from 'src/io/entities/io.entity';
+import { IoServices } from 'src/io/services/io.service';
+import { forwardRef } from '@nestjs/common/utils';
 
 
 @Module({
     controllers : [] ,
-    imports : [Uio ,
+    imports : [
     TypeOrmModule.forFeature([
         IoEntity ,
         UserEntity
     ])  ,
-    UsersModule
+    forwardRef(() => UsersModule)
     ] ,
-    providers : [GateWay , UioServices]
+    providers : [GateWay , IoServices]
 })
 
 export class  Socket {

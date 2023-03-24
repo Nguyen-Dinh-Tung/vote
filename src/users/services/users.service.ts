@@ -1,35 +1,30 @@
-import { IoEntity } from '../../uio/entities/io.entity';
-import  jwt_decode  from 'jwt-decode';
 import { NOT_DATA } from './../../contest/contants/contants';
 import { ADDRESS_NOT_FOUND, EMAIL_FORMAT, EMAIL_NOT_FOUND, MESSAGE_FORMAT, NAME_NOT_FOUND, USERNAME_NOT_FORMAT, UPDATE_SUCCESS, FIELD_NOT_HOLLOW, EMAIL_UNIQUE } from './../contants/message';
 import { Response } from 'express';
 import { UserEntity } from './../entities/user.entity';
-import { Header, Injectable, Headers, HttpStatus, Body, Param, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
+import { Injectable, HttpStatus} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
-import {plainToClass} from 'class-transformer'
 import { Validate } from 'src/common/class/validate.entity';
-import { NotFoundError } from 'rxjs';
 import { MessageUpdate } from 'src/common/constant/message';
 import { GET_USER, PASSWORD_NOT_FOUND, USER_CREATE, USER_DUBLICATE, USER_NOT_EXISTING_SYSTEM, USER_NOT_FOUND, USER_REMOVE } from '../contants/message';
 import * as fs from 'fs'
 import { regexEmail, regexPassword, regexUsername } from 'src/regex/regex';
 import { amount } from '../contants/amount.in.page';
 import { SEARCH_KEY_NOT_FOUNT, SEARCH_SUCCESS ,GET_LIST_CANDIDATE_SUCCESS, FILTER_SUCCESS, FILTER_FAIL} from 'src/candidate/contants/message';
-import { FindList } from 'src/common/interfaces/res.interfaces';
 import { Transactional } from 'typeorm-transactional';
-import { UioServices } from 'src/uio/services/uio.services';
+import { IoEntity } from 'src/io/entities/io.entity';
+import { IoServices } from 'src/io/services/io.service';
 @Injectable()
 export class UsersService {
 
-  
   constructor(
     @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> , 
     @InjectRepository(IoEntity) private readonly ioEntity : Repository<IoEntity> , 
-    private readonly ioService : UioServices
+    private readonly ioService : IoServices
   ){
 
   }

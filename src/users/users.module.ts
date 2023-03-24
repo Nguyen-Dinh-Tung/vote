@@ -1,4 +1,3 @@
-import { IoEntity } from '../uio/entities/io.entity';
 import { CompanyEntity } from './../company/entities/company.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module, forwardRef } from '@nestjs/common';
@@ -11,7 +10,9 @@ import { JwtStrategy } from 'src/auth/strategy/jwt.strategy';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserCpModule } from 'src/user-cp/user-cp.module';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
-import { UioServices } from 'src/uio/services/uio.services';
+import { IoEntity } from 'src/io/entities/io.entity';
+import { IoServices } from 'src/io/services/io.service';
+import { IoModule } from 'src/io/io.module';
 
 @Module({
   imports : [TypeOrmModule.forFeature([
@@ -21,16 +22,16 @@ import { UioServices } from 'src/uio/services/uio.services';
     UserCp ,
     CompanyEntity ,
     IoEntity 
-  ],
-    ) ,
+  ]) ,
     MulterModule.register({
       dest : './files/images'
     }) ,
     forwardRef(() => UserCpModule) ,
     forwardRef(() => CompanyEntity) ,
+    forwardRef(() => IoModule)
 ],
   controllers: [UsersController ],
-  providers: [UsersService , JwtStrategy , UioServices ],
+  providers: [UsersService , JwtStrategy , IoServices ],
   exports : [UsersService ]
 })
 export class UsersModule {

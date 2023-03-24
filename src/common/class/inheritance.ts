@@ -1,6 +1,5 @@
 
 import { Column ,PrimaryGeneratedColumn ,Unique } from "typeorm";
-import * as dayjs from 'dayjs'
 
 export abstract class InheriTance{
     @PrimaryGeneratedColumn('uuid')

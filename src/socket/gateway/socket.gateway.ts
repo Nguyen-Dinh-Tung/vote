@@ -1,5 +1,3 @@
-import { UioServices } from './../../uio/services/uio.services';
-import { IoEntity } from '../../uio/entities/io.entity';
 import { WebSocketGateway ,WebSocketServer , SubscribeMessage, MessageBody } from "@nestjs/websockets";
 import { ConnectedSocket } from "@nestjs/websockets/decorators";
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit} from "@nestjs/websockets/interfaces";
@@ -7,13 +5,15 @@ import {Server} from 'socket.io'
 import jwtDecode from "jwt-decode";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
+import { IoServices } from "src/io/services/io.service";
+import { IoEntity } from "src/io/entities/io.entity";
 @WebSocketGateway({name : 'chats' , cors : true})
 
 export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGatewayInit{
 
     constructor(
         @InjectRepository(IoEntity) private readonly ioEntity : Repository<IoEntity> ,
-        private readonly  ioServices : UioServices
+        private readonly  ioServices : IoServices
     ){
 
     }
@@ -23,8 +23,8 @@ export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGa
     @SubscribeMessage('events')
     onEvents(
         @MessageBody() data : string ,
-         @ConnectedSocket() client : any
-         ){
+        @ConnectedSocket() client : any
+    ){
             
     }
 
@@ -32,24 +32,24 @@ export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGa
     async privateChat(
         @MessageBody() data : any,
         @ConnectedSocket() client : any
-        ) {
+    ) {
         
         let ioIdReceive = await this.ioServices.privateChat(data.idUser)
         
-        client.to(ioIdReceive.ioId).emit('chat' , data.message)
+        client.to(ioIdReceive.socketId).emit('chat' , data.message)
     }
-    @SubscribeMessage('chat-room')
+    @SubscribeMessage('join-room')
     privateRoom(
         @MessageBody() data : string ,
         @ConnectedSocket() client : any
-        ) {
+    ) {
         
     }
 
     public async handleConnection(
         client: any ,
          ...args: any[] 
-        ) {
+    ) {
        try{
 
         let token  : any ;

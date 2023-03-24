@@ -11,7 +11,7 @@ export class IoEntity{
     @Column({
         default : '-1'
     })
-    ioId : string ;
+    socketId : string ;
         
     @Column({
         default : true

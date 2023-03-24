@@ -19,6 +19,7 @@ export class UserCo {
     @ManyToOne(() => UserEntity , (user) => user.id)
     @JoinColumn()
     user : UserEntity;
+    
     @Column({
         type : 'enum',
         default : Roles.ucp_user,

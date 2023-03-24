@@ -1,5 +1,5 @@
 import { UserEntity } from '../../users/entities/user.entity';
-import { RoomEntity } from '../../rooms/entities/rooms.io.entity';
+import { RoomEntity } from '../../rooms/entities/rooms.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 

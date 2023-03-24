@@ -1,8 +1,6 @@
 import './App.css';
-import {Route, Routes, useParams} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import Home from './pages/home/Home';
-import { useNavigate } from "react-router-dom";
-import * as react from 'react'
 import Register from './pages/register/Register';
 import Login from './pages/login/Login';
 import ListContest from './components/listcontest/ListContest';
@@ -14,6 +12,8 @@ import FormCandidate from './components/formcandidate/FormCandidate';
 import FormCompany from './components/formcompany/FormCompany';
 import ListCompany from './components/listcompany/ListCompany';
 import AssmCompany from './components/assm-company/AssmCompany';
+import Chat from './pages/Chat/Chat';
+
 
 function App() {
 
@@ -33,6 +33,7 @@ try{
       </Route>
       <Route path={'/register'} element={<Register/>}/>
       <Route path={'/auth/login'} element={<Login/>}/>
+      <Route path='chat' element={<Chat/>}/>
     </Routes>
   );
 }catch(e){
