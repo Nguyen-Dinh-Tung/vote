@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Res } from "@nestjs/common";
+import { Controller, Get, Post, Res , Param } from "@nestjs/common";
 import { Body } from "@nestjs/common/decorators/http/route-params.decorator";
 import { Response } from "express";
 import { CreateRoomDto } from "../dto/create-room.dto";
@@ -21,6 +21,23 @@ export class RoomsController{
         try{
             return await this.roomsService.createRoom(res , data)
         }catch(e) {
+
+            if(e) console.log(e);
+            
+        }
+    }
+
+    @Get('data/:id')
+    async getRoomData(
+        @Param('id') id : string  ,
+        @Res() res : Response
+    ){
+
+        try{
+            
+            return await this.roomsService.getRoomData(id , res)
+
+        }catch(e){
 
             if(e) console.log(e);
             

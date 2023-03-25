@@ -1,3 +1,4 @@
+import { RoomsDataEntity } from './../../rooms-data/entities/rooms-data.entity';
 import { WebSocketGateway ,WebSocketServer , SubscribeMessage, MessageBody } from "@nestjs/websockets";
 import { ConnectedSocket } from "@nestjs/websockets/decorators";
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit} from "@nestjs/websockets/interfaces";
@@ -7,13 +8,18 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from 'typeorm';
 import { IoServices } from "src/io/services/io.service";
 import { IoEntity } from "src/io/entities/io.entity";
+import { PrivateChatDto } from "../dto/private-chat.dto";
+import { RoomEntity } from 'src/rooms/entities/rooms.entity';
+import { ConnectIoEntity } from 'src/io/entities/connect-io.entity';
 @WebSocketGateway({name : 'chats' , cors : true})
 
 export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGatewayInit{
 
     constructor(
         @InjectRepository(IoEntity) private readonly ioEntity : Repository<IoEntity> ,
-        private readonly  ioServices : IoServices
+        private readonly  ioServices : IoServices ,
+        @InjectRepository(RoomEntity) private readonly roomEntity : Repository<RoomEntity> ,
+        @InjectRepository(ConnectIoEntity) private readonly cnsEntity : Repository<ConnectIoEntity> ,
     ){
 
     }
@@ -37,6 +43,41 @@ export class GateWay implements OnGatewayConnection , OnGatewayDisconnect , OnGa
         let ioIdReceive = await this.ioServices.privateChat(data.idUser)
         
         client.to(ioIdReceive.socketId).emit('chat' , data.message)
+    }
+    @SubscribeMessage('private-chat')
+    async privateChatHandle(
+    @MessageBody() data : any ,
+    @ConnectedSocket()client : any 
+    ){
+        let checkRoom = await this.roomEntity.findOne({
+            where : {
+                id : data.idRoom
+            }
+        })
+        let ccnnects = await this.cnsEntity.find({
+            where : {
+                room : checkRoom
+            } ,
+            relations : {
+                io : true
+            }
+        })
+        console.log(client.id  , 'client.id ');
+        
+        for(let e of ccnnects){
+            if(
+                e.io.isOnline &&
+                e.io.socketId !== client.id 
+                ){
+                    console.log('<<<<<<<<<<<<<< neeeeeeeeee >>>>>>>>>>>>');
+                    
+                    this.server.to(e.io.socketId).emit('private-chat' , {
+                        status : true , 
+                        roomId : checkRoom.id
+                    })
+                }
+            
+        }        
     }
     @SubscribeMessage('join-room')
     privateRoom(

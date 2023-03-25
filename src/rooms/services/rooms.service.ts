@@ -1,9 +1,9 @@
+import { RoomsDataEntity } from './../../rooms-data/entities/rooms-data.entity';
 import { RoomTypes, ChatTypes } from './../../common/enum/io.room';
-import { IoEntity } from './../../io/entities/io.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './../../users/entities/user.entity';
 import { RoomEntity } from './../entities/rooms.entity';
-import { USER_CREATE_ROOM_NOT_FOUND, USER_CONNECT_ROOM_NOT_FOUND, ADD_NEW_ROOM_SUCCESS } from './../../common/constant/message';
+import { USER_CREATE_ROOM_NOT_FOUND, USER_CONNECT_ROOM_NOT_FOUND, ADD_NEW_ROOM_SUCCESS, GET_ROOM_DATA_SUCCESS, ROOM_NOT_FOUND } from './../../common/constant/message';
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateRoomDto } from '../dto/create-room.dto';
@@ -17,6 +17,7 @@ export class RoomsService {
         @InjectRepository(ConnectIoEntity) private readonly connectEntity : Repository<ConnectIoEntity> ,
         @InjectRepository(RoomEntity) private readonly roomEntity : Repository<RoomEntity> ,
         @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity> ,
+        @InjectRepository(RoomsDataEntity) private readonly roomsDataEntity : Repository<RoomsDataEntity> ,
     ){
 
     }
@@ -104,7 +105,34 @@ export class RoomsService {
             message : ADD_NEW_ROOM_SUCCESS , 
             room : newRoom
         })
-    }               
+    }    
+    
+    async getRoomData (id : string , res : Response){
+
+        let checkRoom = await this.roomEntity.findOne({
+            where : {
+                id : id
+            }
+        })
+
+        if(!checkRoom)
+        return res.status(HttpStatus.NOT_FOUND).json({
+            message : ROOM_NOT_FOUND
+        })
+        let roomData  : RoomsDataEntity []= await this.roomsDataEntity.find({
+            where : {
+                room : checkRoom
+            } , 
+            relations : {
+                user : true
+            }
+        })
+
+        return res.status(HttpStatus.OK).json({
+            message : GET_ROOM_DATA_SUCCESS , 
+            data : roomData
+        })
+    }
 
 }
 

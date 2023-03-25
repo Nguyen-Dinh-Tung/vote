@@ -27,3 +27,6 @@ export const ADD_NEW_ASCO_FAIL : string = "Thêm thí sinh vào cuộc thi thấ
 export const USER_CREATE_ROOM_NOT_FOUND : string = "Tài khoản của bạn không tồn tại !"
 export const USER_CONNECT_ROOM_NOT_FOUND : string = "Tài khoản kết tối chat không tồn tại !"
 export const ADD_NEW_ROOM_SUCCESS : string = "Thêm room thành công công !"
+export const GET_ROOM_DATA_SUCCESS : string = "Lấy dữ liệu phòng thành công !"
+export const ROOM_NOT_FOUND : string = "Phòng chát không tồn tại"
+export const CREATE_ROOM_DATA_SUCCESS : string = "Thêm tin nhắn thành công !"

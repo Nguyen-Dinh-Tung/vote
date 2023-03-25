@@ -1,3 +1,5 @@
+import { RoomsDataEntity } from './../rooms-data/entities/rooms-data.entity';
+import { RoomEntity } from './../rooms/entities/rooms.entity';
 import { UserEntity } from './../users/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from "@nestjs/common";
@@ -6,6 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 import { IoEntity } from 'src/io/entities/io.entity';
 import { IoServices } from 'src/io/services/io.service';
 import { forwardRef } from '@nestjs/common/utils';
+import { ConnectIoEntity } from 'src/io/entities/connect-io.entity';
 
 
 @Module({
@@ -13,7 +16,10 @@ import { forwardRef } from '@nestjs/common/utils';
     imports : [
     TypeOrmModule.forFeature([
         IoEntity ,
-        UserEntity
+        UserEntity ,
+        RoomEntity ,
+        RoomsDataEntity ,
+        ConnectIoEntity
     ])  ,
     forwardRef(() => UsersModule)
     ] ,
