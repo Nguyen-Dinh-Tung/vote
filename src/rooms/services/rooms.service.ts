@@ -65,8 +65,6 @@ export class RoomsService {
                 room : true
             }
         })
-        console.log(userInitCns , ' userInitCns');
-        console.log(userConnectCns , ' userConnectCns');
         
         let roomExist : RoomEntity ;
         for(let e of userInitCns){
@@ -80,7 +78,6 @@ export class RoomsService {
             }
         }
 
-        console.log(roomExist , 'roomExist');
         
         if(roomExist)
         return res.status(HttpStatus.OK).json({
