@@ -30,3 +30,7 @@ export const ADD_NEW_ROOM_SUCCESS : string = "Thêm room thành công công !"
 export const GET_ROOM_DATA_SUCCESS : string = "Lấy dữ liệu phòng thành công !"
 export const ROOM_NOT_FOUND : string = "Phòng chát không tồn tại"
 export const CREATE_ROOM_DATA_SUCCESS : string = "Thêm tin nhắn thành công !"
+export const DUBLICATE_ID_USER : string = 'Tài khoản kết nối không được trùng tải khoản của bạn '
+export const CREATE_GROUP_SUCCESS : string = "Tạo mới nhóm chat thành công !"
+export const GET_GROUP_CHAT_SUCCESS : string = "Lấy danh sách nhóm chát thành công !"
+export const GET_ROOM_SUCCESS : string = "Lấy danh sách phòng thành công !"

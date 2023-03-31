@@ -13,10 +13,9 @@ import FormCompany from './components/formcompany/FormCompany';
 import ListCompany from './components/listcompany/ListCompany';
 import AssmCompany from './components/assm-company/AssmCompany';
 import Chat from './pages/Chat/Chat';
-
+import Test from './pages/test/Test';
 
 function App() {
-
 try{
   return (
     <Routes>
@@ -30,10 +29,11 @@ try{
         <Route path='/companies' element={<ListCompany/>}/>
         <Route path='/new-company' element={<FormCompany/>}/>
         <Route path='/assm-company/:id' element={<AssmCompany/>}/>
+        <Route path='/test' element={<Test/>}/>
       </Route>
       <Route path={'/register'} element={<Register/>}/>
       <Route path={'/auth/login'} element={<Login/>}/>
-      <Route path='chat' element={<Chat/>}/>
+      <Route path='/chat' element={<Chat/>}/>
     </Routes>
   );
 }catch(e){

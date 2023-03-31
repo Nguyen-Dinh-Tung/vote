@@ -94,8 +94,6 @@ export class IoServices {
 
     @Transactional()
     async connect(connectIoDto : ConnectIoDto ){
-        console.log(connectIoDto.idUser);
-
         let checkUser : UserEntity = await this.userEntity.findOne({
             where : {
                 id : connectIoDto.idUser
@@ -105,7 +103,6 @@ export class IoServices {
             }
         })
         let io : IoEntity ;
-        
         
         if(!checkUser)
         throw new HttpException(USER_NOT_FOUND , HttpStatus.NOT_FOUND)

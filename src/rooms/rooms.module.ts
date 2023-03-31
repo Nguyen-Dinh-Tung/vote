@@ -1,3 +1,4 @@
+import { IoEntity } from './../io/entities/io.entity';
 import { UserEntity } from './../users/entities/user.entity';
 import { RoomsDataEntity } from './../rooms-data/entities/rooms-data.entity';
 import { RoomEntity } from './entities/rooms.entity';
@@ -13,7 +14,8 @@ import { ConnectIoEntity } from 'src/io/entities/connect-io.entity';
             RoomsDataEntity ,
             ConnectIoEntity ,
             UserEntity , 
-            RoomEntity
+            RoomEntity ,
+            IoEntity
         ]),
     ] ,
     providers : [RoomsService] ,

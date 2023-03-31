@@ -133,7 +133,11 @@ function ListUser(props) {
                             <td>{e && e.role}</td>
                             <td className='align-center'><img className='user-list-avatar' src={e &&host + e.background} alt="" /></td>
                             <td>{e && e.isActive == true ? "Hoạt động" : 'Dừng'}</td>
-                            <td className='align-center cursor-pointer'><SettingsIcon color="secondary" onClick={() => {handleSelectId(e.id) ; setTing()}} sx={{fontSize : '30px'}}/></td>
+                            <td className='align-center cursor-pointer'>
+                                <SettingsIcon color="secondary" 
+                                onClick={() => {handleSelectId(e.id) ;
+                                setTing()}} sx={{fontSize : '30px'}}/>
+                            </td>
                         </tr>
                     })
                     : ''}

@@ -17,6 +17,7 @@ export class ConnectIoEntity{
         type : 'enum'
     })
     type : ChatTypes
+    
     @ManyToOne(() => RoomEntity , (room) => room.id)
     @JoinColumn()
     room : RoomEntity

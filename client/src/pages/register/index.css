@@ -37,8 +37,17 @@
     border: 1px solid #ccc;
     font-size: 16px;
 }
+.search-chat{
+    width: 80%;
+    margin: 10px 0 16px 0;
+    height: 40px;
+    padding-left: 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
 
-.info-register:focus{
+.info-register:focus , .search-chat:focus{
     outline: 1px dotted blue;
     box-shadow: 1px 1px 1px 1px blue;
 }

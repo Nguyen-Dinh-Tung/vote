@@ -19,7 +19,7 @@ function SocketIo(props) {
     const handleChangeInput = (e) =>{
         setInput(e.target.value)
     }
-    const handleSend = () =>{
+    const handleSend = () => {
         let data = {
             idUser : "8cb4286b-0a29-48da-9f54-920246cafc11" , 
             message : input

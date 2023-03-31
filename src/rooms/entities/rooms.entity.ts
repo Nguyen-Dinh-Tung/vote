@@ -37,4 +37,9 @@ export class RoomEntity {
 
     isActive : boolean
 
+    @Column({
+        default : 'single-room'
+    })
+    name : string
+
 }

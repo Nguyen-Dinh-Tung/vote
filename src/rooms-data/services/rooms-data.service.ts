@@ -25,15 +25,13 @@ export class RoomsDataService {
     }
 
 
-    async createNewRoomData(
+    async insertNewMessage(
         data : PrivateChatDto  ,
-        res : Response ,
-        id : string
     ){
 
         let checkRoom = await this.roomEntity.findOne({
             where : {
-                id : id
+                id : data.roomId
             }
         })
         let checkUser = await this.userEntity.findOne({
@@ -41,24 +39,20 @@ export class RoomsDataService {
                 id : data.idUser
             }
         })
+        
         if(!checkRoom)
-        return res.status(HttpStatus.NOT_FOUND).json({
-            message : ROOM_NOT_FOUND
-        })
+        return {type : 'room' , status : false}
 
         if(!checkUser)
-        return res.status(HttpStatus.NOT_FOUND).json({
-            message : USER_NOT_FOUND
-        })
+        return {type : 'user' , status : false}
 
         let newData = await this.roomsDataEntity.save({
             ...data , 
             room : checkRoom ,
             user : checkUser
         })
-        return res.status(HttpStatus.CREATED).json({
-            message : CREATE_ROOM_DATA_SUCCESS , 
-            data : newData
-        })
+        return {status : true , data : newData , type : 'success'}
     }
+
+   
 }

@@ -35,7 +35,7 @@ export class RoomsDataController {
         
         try{
 
-            return await this.roomsDataService.createNewRoomData(data ,res , param.id)
+            // return await this.roomsDataService.createNewRoomData(data ,res , param.id)
 
 
         }catch(e){
