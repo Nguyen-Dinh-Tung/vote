@@ -1,5 +1,5 @@
 import './App.css';
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes } from 'react-router-dom';
 import Home from './pages/home/Home';
 import Register from './pages/register/Register';
 import Login from './pages/login/Login';
@@ -16,36 +16,31 @@ import Chat from './pages/Chat/Chat';
 import Test from './pages/test/Test';
 
 function App() {
-try{
-  return (
-    <Routes>
-      <Route path={''} element={<Home/>}>
-        <Route path='/users' element={<ListUser/>}/>
-        <Route path='/new-users' element={<UserForm/>}/>
-        <Route path='/contests' element={<ListContest/>}/>
-        <Route path='/new-contest' element={<FormContest/>}/>
-        <Route path='/candidates' element={<ListCandidate/>}/>
-        <Route path='/new-candidate' element={<FormCandidate/>}/> 
-        <Route path='/companies' element={<ListCompany/>}/>
-        <Route path='/new-company' element={<FormCompany/>}/>
-        <Route path='/assm-company/:id' element={<AssmCompany/>}/>
-        <Route path='/test' element={<Test/>}/>
-      </Route>
-      <Route path={'/register'} element={<Register/>}/>
-      <Route path={'/auth/login'} element={<Login/>}/>
-      <Route path='/chat' element={<Chat/>}/>
-    </Routes>
-  );
-}catch(e){
-
-  if(e) console.log(e);
-
-}finally{
-
-  console.log("hello newbie");
-
-}
-  
+  try {
+    return (
+      <Routes>
+        <Route path={''} element={<Home />}>
+          <Route path="/users" element={<ListUser />} />
+          <Route path="/new-users" element={<UserForm />} />
+          <Route path="/contests" element={<ListContest />} />
+          <Route path="/new-contest" element={<FormContest />} />
+          <Route path="/candidates" element={<ListCandidate />} />
+          <Route path="/new-candidate" element={<FormCandidate />} />
+          <Route path="/companies" element={<ListCompany />} />
+          <Route path="/new-company" element={<FormCompany />} />
+          <Route path="/assm-company/:id" element={<AssmCompany />} />
+          <Route path="/chat" element={<Test />} />
+        </Route>
+        <Route path={'/register'} element={<Register />} />
+        <Route path={'/auth/login'} element={<Login />} />
+        {/* <Route path="/chat" element={<Chat />} /> */}
+      </Routes>
+    );
+  } catch (e) {
+    if (e) console.log(e);
+  } finally {
+    console.log('hello newbie');
+  }
 }
 
 export default App;

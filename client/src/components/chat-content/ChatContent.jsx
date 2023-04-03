@@ -1,72 +1,204 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { ApiBase, host } from '../../api/api.base';
 import { Avatar } from '@mui/material';
+import './index.css';
 import jwtDecode from 'jwt-decode';
+import { socket } from '../../socket/socket';
+import { useDispatch, useSelector } from 'react-redux';
+import UserShare from '../co-share/UserShare';
+import useNotifyFunc from '../../hooks/notify.func';
+import { ERROR } from '../../contants/notify/type.notify';
+import { TRUE } from '../../contants/notify/status.notify';
+import {
+  GROUP_MEMBER_ERROR,
+  NAME_GROUP_HOLLOW,
+} from '../../contants/notify/message';
+import { setReRenderSideBar } from '../../redux/features/special';
 function ChatContent(props) {
   const idRoomSelect = props.idRoomSelect;
-  const [amount, setAmount] = useState(10);
   const [boxMessage, setBoxMessage] = useState([]);
+  const [newMessage, setNewMessage] = useState();
+  const [reRenderBoxMessage, setReRenderBoxMessage] = useState();
+  const [listIdsUser, setListIdsUser] = useState([]);
+  const [nameGroup, setNameGroup] = useState();
+  const [notify] = useNotifyFunc();
+  const openCreateGroup = useSelector((state) => state.special.isCreateGroup);
+  const dispatch = useDispatch();
   let token = jwtDecode(localStorage.getItem('token'));
   let idUserInit = token.idUser;
-  useEffect(() => {
-    const urlGetRoomData = `/rooms/data/${idRoomSelect}/${amount}`;
-    ApiBase.get(urlGetRoomData)
+  const refBoxMessage = useRef(null);
+  const handleChangeMessage = (e) => {
+    setNewMessage(e.target.value);
+  };
+  const handleSendMessage = () => {
+    if (idRoomSelect && newMessage !== '') {
+      let data = {
+        message: newMessage,
+        file: undefined,
+        idRoom: idRoomSelect,
+        idUser: idUserInit,
+      };
+      socket.emit('private-chat', data);
+      setNewMessage('');
+    }
+  };
+  const scrollBottomBoxMessage = () => {
+    if (!refBoxMessage) return;
+    refBoxMessage.current.scrollTop = refBoxMessage.current.scrollHeight;
+  };
+
+  const handleEnterMessage = (e) => {
+    if (e.key === 'Enter')
+      if (idRoomSelect && newMessage !== '') {
+        let data = {
+          message: newMessage,
+          file: undefined,
+          idRoom: idRoomSelect,
+          idUser: idUserInit,
+        };
+        socket.emit('private-chat', data);
+        setNewMessage('');
+      }
+  };
+
+  const handleGetData = (data) => {
+    setListIdsUser(data);
+  };
+
+  const handleCreateGroupChat = () => {
+    const url = '/rooms/group';
+    if (!nameGroup) {
+      notify(ERROR, NAME_GROUP_HOLLOW, TRUE);
+      return;
+    }
+    if (listIdsUser.length < 1) {
+      notify(ERROR, GROUP_MEMBER_ERROR, TRUE);
+    }
+
+    let data = {
+      idUser: idUserInit,
+      name: nameGroup,
+      idsConnectRoom: listIdsUser,
+    };
+
+    ApiBase.post(url, data)
       .then((res) => {
-        console.log(res);
-        setBoxMessage(res.data.data);
+        dispatch(setReRenderSideBar(Date.now()));
       })
       .catch((e) => {
-        if (e) console.log(e);
+        if (e) {
+          notify(ERROR, e.response.data.message, TRUE);
+        }
       });
-  }, [idRoomSelect]);
+    setListIdsUser([]);
+    setNameGroup('');
+  };
+
+  useEffect(() => {
+    const urlGetRoomData = `/rooms/data/${idRoomSelect}`;
+    if (idRoomSelect)
+      ApiBase.get(urlGetRoomData)
+        .then((res) => {
+          setBoxMessage(res.data.data);
+        })
+        .catch((e) => {
+          if (e) console.log(e);
+        });
+  }, [idRoomSelect, reRenderBoxMessage]);
+
+  useEffect(() => {
+    if (boxMessage && !openCreateGroup) scrollBottomBoxMessage();
+  }, [boxMessage]);
+
+  useEffect(() => {
+    socket.on('reveice-private-chat', (data) => {
+      setReRenderBoxMessage(Date.now());
+    });
+  }, []);
   return (
     <div className="chat-content">
-      <div className="chat-body">
-        <ul>
-          {boxMessage &&
-            boxMessage.map((e) => {
-              return (
-                <li
-                  className="chat-message"
-                  key={e.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent:
-                      e && e.idUser !== idUserInit ? 'left' : 'right',
-                  }}
-                >
-                  {e && e.idUser !== idUserInit ? (
-                    <Avatar alt="Remy Sharp" src={e && host + e.background} />
-                  ) : (
-                    ''
-                  )}
-                  <p style={{}}>{e.message}</p>
-                </li>
-              );
-            })}
-        </ul>
-      </div>
-      <div className="chat-bottom">
-        <input
-          type="text"
-          className="search-chat"
-          placeholder="Gõ vào tao đi "
-        />
-        <AttachFileIcon>
-          <input type="file" />
-        </AttachFileIcon>
-        <SendIcon
-          sx={{
-            cursor: 'pointer',
-            ':hover': {
-              color: '#c89ff0',
-            },
-            fontSize: '30px',
-          }}
-        />
-      </div>
+      {openCreateGroup && openCreateGroup ? (
+        <>
+          <div className="center">
+            <input
+              id="name-group-chat"
+              className="search-chat"
+              type="text"
+              placeholder="Tên nhóm"
+              onChange={(e) => {
+                setNameGroup(e.target.value);
+              }}
+            />
+          </div>
+          <UserShare handleGetData={handleGetData} />
+          <div className="center">
+            <button
+              className="btn-create-group-chat"
+              onClick={handleCreateGroupChat}
+            >
+              Thêm nhóm
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="chat-body">
+            <ul className="box-message" ref={refBoxMessage}>
+              {boxMessage &&
+                boxMessage.map((e) => {
+                  return (
+                    <li
+                      className="chat-message"
+                      key={e.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent:
+                          e && e.idUser !== idUserInit ? 'left' : 'right',
+                        marginRight: e && e.idUser !== idUserInit ? '' : '40px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {e && e.idUser !== idUserInit ? (
+                        <Avatar
+                          alt="Remy Sharp"
+                          src={e && host + e.background}
+                        />
+                      ) : (
+                        ''
+                      )}
+                      <p className="content-message">{e.message}</p>
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
+          <div className="chat-bottom">
+            <input
+              type="text"
+              className="search-chat"
+              placeholder="Gõ vào tao đi "
+              value={newMessage}
+              onChange={handleChangeMessage}
+              onKeyUp={handleEnterMessage}
+            />
+            <AttachFileIcon>
+              <input type="file" />
+            </AttachFileIcon>
+            <SendIcon
+              sx={{
+                cursor: 'pointer',
+                ':hover': {
+                  color: '#c89ff0',
+                },
+                fontSize: '30px',
+              }}
+              onClick={handleSendMessage}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

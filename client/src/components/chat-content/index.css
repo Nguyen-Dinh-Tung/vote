@@ -1,0 +1,29 @@
+.box-message {
+  height: 100%;
+  overflow-y: auto;
+}
+.content-message {
+  margin-left: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: rgb(212, 184, 240);
+  border-radius: 10px;
+}
+.btn-create-group-chat {
+  height: 40px;
+  width: 200px;
+  background-color: rgb(212, 184, 240);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn-create-group-chat:hover {
+  background-color: #ccc;
+}
+
+.center {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
