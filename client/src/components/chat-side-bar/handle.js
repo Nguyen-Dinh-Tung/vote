@@ -3,14 +3,13 @@ import { FALSE, TRUE } from '../../contants/notify/status.notify';
 const { socket } = require('../../socket/socket');
 
 class ChatSideBarHandle {
-  static handleJoinRoom(id, idUserInit) {
+  static clientToRoom(id, idUserInit) {
     let data = {
       roomId: id,
       message: 'Hello',
       idUser: idUserInit,
       file: undefined,
     };
-    console.log(data);
     socket.emit('chat-group', data);
   }
   static showCreateGroup(dispatch, setIsCreateGroup) {

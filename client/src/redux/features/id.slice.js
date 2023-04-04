@@ -1,19 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
-const url = 'contest'
+import { createSlice } from '@reduxjs/toolkit';
+const url = 'contest';
 const idSlice = createSlice({
-  name: "id",
+  name: 'id',
   initialState: {
-    id : undefined
+    id: undefined,
   },
   reducers: {
-    setId : (state , actions) =>{
-      state.id = actions.payload
-    } ,
-
+    setId: (state, actions) => {
+      state.id = actions.payload;
+    },
   },
 });
-export const {
-    setId
-} = idSlice.actions;
+export const { setId } = idSlice.actions;
 export default idSlice.reducer;
-

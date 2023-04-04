@@ -4,6 +4,7 @@ const special = createSlice({
   initialState: {
     isCreateGroup: false,
     reRenderSideBar: '',
+    emitType: 0,
   },
   reducers: {
     setIsCreateGroup: (state, action) => {
@@ -12,7 +13,11 @@ const special = createSlice({
     setReRenderSideBar: (state, action) => {
       state.reRenderSideBar = action.payload;
     },
+    setEmitType: (state, action) => {
+      state.emitType = action.payload;
+    },
   },
 });
-export const { setIsCreateGroup, setReRenderSideBar } = special.actions;
+export const { setIsCreateGroup, setReRenderSideBar, setEmitType } =
+  special.actions;
 export default special.reducer;

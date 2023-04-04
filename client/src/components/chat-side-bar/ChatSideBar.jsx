@@ -5,8 +5,9 @@ import { ApiBase, host } from '../../api/api.base';
 import './index.css';
 import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsCreateGroup } from '../../redux/features/special';
+import { setEmitType, setIsCreateGroup } from '../../redux/features/special';
 import ChatSideBarHandle from './handle';
+import { EMIT_TYPE } from '../../contants/emit.type';
 function ChatSideBar(props) {
   const [privateRooms, setPrivateRooms] = useState();
   const [groupRooms, setGroupRooms] = useState();
@@ -74,7 +75,9 @@ function ChatSideBar(props) {
                       e.idRoom,
                       setIsCreateGroup,
                       setIdRoomSelect,
+                      EMIT_TYPE.private,
                     );
+                    dispatch(setEmitType(EMIT_TYPE.private));
                   }}
                 >
                   <Avatar alt="Remy Sharp" src={e && host + e.background} />
@@ -90,7 +93,13 @@ function ChatSideBar(props) {
                   className="chat-element"
                   key={e.idRoom}
                   onClick={() => {
-                    ChatSideBarHandle.handleJoinRoom(e.id, idUserInit);
+                    ChatSideBarHandle.handleSelectRoomChat(
+                      dispatch,
+                      e.id,
+                      setIsCreateGroup,
+                      setIdRoomSelect,
+                    );
+                    dispatch(setEmitType(EMIT_TYPE.group));
                   }}
                 >
                   <Avatar alt="Remy Sharp" src={'../../../public/group.png'} />

@@ -9,13 +9,8 @@ import { socket } from '../../socket/socket';
 import { useDispatch, useSelector } from 'react-redux';
 import UserShare from '../co-share/UserShare';
 import useNotifyFunc from '../../hooks/notify.func';
-import { ERROR } from '../../contants/notify/type.notify';
-import { TRUE } from '../../contants/notify/status.notify';
-import {
-  GROUP_MEMBER_ERROR,
-  NAME_GROUP_HOLLOW,
-} from '../../contants/notify/message';
 import { setReRenderSideBar } from '../../redux/features/special';
+import ChatContentHandle from './handle';
 function ChatContent(props) {
   const idRoomSelect = props.idRoomSelect;
   const [boxMessage, setBoxMessage] = useState([]);
@@ -29,71 +24,9 @@ function ChatContent(props) {
   let token = jwtDecode(localStorage.getItem('token'));
   let idUserInit = token.idUser;
   const refBoxMessage = useRef(null);
-  const handleChangeMessage = (e) => {
-    setNewMessage(e.target.value);
-  };
-  const handleSendMessage = () => {
-    if (idRoomSelect && newMessage !== '') {
-      let data = {
-        message: newMessage,
-        file: undefined,
-        idRoom: idRoomSelect,
-        idUser: idUserInit,
-      };
-      socket.emit('private-chat', data);
-      setNewMessage('');
-    }
-  };
-  const scrollBottomBoxMessage = () => {
-    if (!refBoxMessage) return;
-    refBoxMessage.current.scrollTop = refBoxMessage.current.scrollHeight;
-  };
-
-  const handleEnterMessage = (e) => {
-    if (e.key === 'Enter')
-      if (idRoomSelect && newMessage !== '') {
-        let data = {
-          message: newMessage,
-          file: undefined,
-          idRoom: idRoomSelect,
-          idUser: idUserInit,
-        };
-        socket.emit('private-chat', data);
-        setNewMessage('');
-      }
-  };
-
+  const emitype = useSelector((state) => state.special.emitType);
   const handleGetData = (data) => {
     setListIdsUser(data);
-  };
-
-  const handleCreateGroupChat = () => {
-    const url = '/rooms/group';
-    if (!nameGroup) {
-      notify(ERROR, NAME_GROUP_HOLLOW, TRUE);
-      return;
-    }
-    if (listIdsUser.length < 1) {
-      notify(ERROR, GROUP_MEMBER_ERROR, TRUE);
-    }
-
-    let data = {
-      idUser: idUserInit,
-      name: nameGroup,
-      idsConnectRoom: listIdsUser,
-    };
-
-    ApiBase.post(url, data)
-      .then((res) => {
-        dispatch(setReRenderSideBar(Date.now()));
-      })
-      .catch((e) => {
-        if (e) {
-          notify(ERROR, e.response.data.message, TRUE);
-        }
-      });
-    setListIdsUser([]);
-    setNameGroup('');
   };
 
   useEffect(() => {
@@ -101,6 +34,7 @@ function ChatContent(props) {
     if (idRoomSelect)
       ApiBase.get(urlGetRoomData)
         .then((res) => {
+          console.log(res);
           setBoxMessage(res.data.data);
         })
         .catch((e) => {
@@ -109,7 +43,8 @@ function ChatContent(props) {
   }, [idRoomSelect, reRenderBoxMessage]);
 
   useEffect(() => {
-    if (boxMessage && !openCreateGroup) scrollBottomBoxMessage();
+    if (boxMessage && !openCreateGroup)
+      ChatContentHandle.scrollBottomBoxMessage();
   }, [boxMessage]);
 
   useEffect(() => {
@@ -140,7 +75,18 @@ function ChatContent(props) {
           <div className="center">
             <button
               className="btn-create-group-chat"
-              onClick={handleCreateGroupChat}
+              onClick={() => {
+                ChatContentHandle.handleCreateGroupChat(
+                  nameGroup,
+                  notify,
+                  listIdsUser,
+                  setListIdsUser,
+                  setNameGroup,
+                  idUserInit,
+                  dispatch,
+                  setReRenderSideBar,
+                );
+              }}
             >
               Thêm nhóm
             </button>
@@ -184,8 +130,19 @@ function ChatContent(props) {
               className="search-chat"
               placeholder="Gõ vào tao đi "
               value={newMessage}
-              onChange={handleChangeMessage}
-              onKeyUp={handleEnterMessage}
+              onChange={(e) => {
+                ChatContentHandle.handleChangeMessage(e, setNewMessage);
+              }}
+              onKeyUp={(e) => {
+                ChatContentHandle.handleEnterMessage(
+                  e,
+                  setNewMessage,
+                  newMessage,
+                  idRoomSelect,
+                  idUserInit,
+                  emitype,
+                );
+              }}
             />
             <AttachFileIcon>
               <input type="file" />
@@ -198,7 +155,15 @@ function ChatContent(props) {
                 },
                 fontSize: '30px',
               }}
-              onClick={handleSendMessage}
+              onClick={(e) => {
+                ChatContentHandle.handleSendMessage(
+                  idRoomSelect,
+                  newMessage,
+                  idUserInit,
+                  setNewMessage,
+                  emitype,
+                );
+              }}
             />
           </div>
         </>
