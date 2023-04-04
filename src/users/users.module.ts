@@ -13,26 +13,30 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 import { IoEntity } from 'src/io/entities/io.entity';
 import { IoServices } from 'src/io/services/io.service';
 import { IoModule } from 'src/io/io.module';
+import { RoomEntity } from 'src/rooms/entities/rooms.entity';
+import { ConnectIoEntity } from 'src/io/entities/connect-io.entity';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([
-    UserEntity , 
-    FeatureEntity , 
-    RtokenEntity ,
-    UserCp ,
-    CompanyEntity ,
-    IoEntity 
-  ]) ,
+  imports: [
+    TypeOrmModule.forFeature([
+      UserEntity,
+      FeatureEntity,
+      RtokenEntity,
+      UserCp,
+      CompanyEntity,
+      IoEntity,
+      RoomEntity,
+      ConnectIoEntity,
+    ]),
     MulterModule.register({
-      dest : './files/images'
-    }) ,
-    forwardRef(() => UserCpModule) ,
-    forwardRef(() => CompanyEntity) ,
-    forwardRef(() => IoModule)
-],
-  controllers: [UsersController ],
-  providers: [UsersService , JwtStrategy , IoServices ],
-  exports : [UsersService ]
+      dest: './files/images',
+    }),
+    forwardRef(() => UserCpModule),
+    forwardRef(() => CompanyEntity),
+    forwardRef(() => IoModule),
+  ],
+  controllers: [UsersController],
+  providers: [UsersService, JwtStrategy, IoServices],
+  exports: [UsersService],
 })
-export class UsersModule {
-}
+export class UsersModule {}

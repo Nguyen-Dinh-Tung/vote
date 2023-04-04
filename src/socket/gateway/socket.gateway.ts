@@ -76,7 +76,6 @@ export class GateWay
     };
 
     let res = await this.roomDataService.insertNewMessage(newMessage);
-    console.log(res, 'res');
     if (res.status === true) {
       this.server
         .to(reveiceId.socketId)
@@ -106,9 +105,11 @@ export class GateWay
         isOnline: true,
       };
 
-      let connect = await this.ioServices.connect(infoConnect);
-
-      return this.server.to(client.id).emit('online', { connect: connect });
+      let group = await this.ioServices.connect(infoConnect);
+      for (let e of group) {
+        client.join(e.id);
+      }
+      return this.server.to(client.id).emit('online', { connect: true });
     } catch (e) {
       if (e) console.log(e);
     }
@@ -135,13 +136,18 @@ export class GateWay
       if (e) console.log(e);
     }
   }
-
   public afterInit(client: any) {}
-
   @SubscribeMessage('join_room')
   public joinRoom(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
     let roomName = data.roomId;
     client.join(roomName);
     client.to(roomName).emit('room-created', { room: roomName });
+  }
+
+  @SubscribeMessage('chat-group')
+  async chatGroup(@MessageBody() data: any, @ConnectedSocket() client: any) {
+    let res = await this.roomDataService.insertNewMessage(data);
+    if (res.status === true)
+      this.server.in(data.idRoom).emit('reveice-group-chat', res);
   }
 }

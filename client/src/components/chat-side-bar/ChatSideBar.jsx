@@ -6,7 +6,7 @@ import './index.css';
 import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsCreateGroup } from '../../redux/features/special';
-import { FALSE, TRUE } from '../../contants/notify/status.notify';
+import ChatSideBarHandle from './handle';
 function ChatSideBar(props) {
   const [privateRooms, setPrivateRooms] = useState();
   const [groupRooms, setGroupRooms] = useState();
@@ -15,18 +15,6 @@ function ChatSideBar(props) {
   const setIdRoomSelect = props.setIdRoomSelect;
   const reRenderSideBar = useSelector((state) => state.special.reRenderSideBar);
   const dispatch = useDispatch();
-
-  const handleSelectRoomChat = (id) => {
-    dispatch(setIsCreateGroup(FALSE));
-    setIdRoomSelect(id);
-  };
-  const handleJoinRoom = (id) => {
-    console.log(id);
-  };
-  const showCreateGroup = () => {
-    dispatch(setIsCreateGroup(TRUE));
-  };
-
   useEffect(() => {
     const urlGetUsers = `/rooms/${idUserInit}`;
     ApiBase.get(urlGetUsers)
@@ -67,7 +55,9 @@ function ChatSideBar(props) {
               fontSize: '40px',
             },
           }}
-          onClick={showCreateGroup}
+          onClick={() => {
+            ChatSideBarHandle.showCreateGroup(dispatch, setIsCreateGroup);
+          }}
         />
       </div>
       <div className="list-user-chat">
@@ -79,7 +69,12 @@ function ChatSideBar(props) {
                   className="chat-element"
                   key={e.idRoom}
                   onClick={() => {
-                    handleSelectRoomChat(e.idRoom);
+                    ChatSideBarHandle.handleSelectRoomChat(
+                      dispatch,
+                      e.idRoom,
+                      setIsCreateGroup,
+                      setIdRoomSelect,
+                    );
                   }}
                 >
                   <Avatar alt="Remy Sharp" src={e && host + e.background} />
@@ -95,7 +90,7 @@ function ChatSideBar(props) {
                   className="chat-element"
                   key={e.idRoom}
                   onClick={() => {
-                    handleJoinRoom(e.id);
+                    ChatSideBarHandle.handleJoinRoom(e.id, idUserInit);
                   }}
                 >
                   <Avatar alt="Remy Sharp" src={'../../../public/group.png'} />

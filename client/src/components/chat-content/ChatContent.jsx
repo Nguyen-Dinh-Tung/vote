@@ -116,6 +116,10 @@ function ChatContent(props) {
     socket.on('reveice-private-chat', (data) => {
       setReRenderBoxMessage(Date.now());
     });
+    socket.on('reveice-group-chat', (data) => {
+      console.log(data);
+      setReRenderBoxMessage(Date.now());
+    });
   }, []);
   return (
     <div className="chat-content">
