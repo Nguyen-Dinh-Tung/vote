@@ -56,3 +56,10 @@ export const GET_UNKNOW_PEOPLE_SUCCESS: string =
   'Lấy danh sách người lạ thành công';
 export const GET_NOTIFY_SUCESS: string = 'Lấy thông báo thành công';
 export const TOKEN_WAS_SENT: string = 'Token đã được gửi vào email của bạn';
+export const TOKEN_NOT_FOUND: string = 'Token không tồn tại trên hệ thống';
+export const TOKEN_EXPIRED: string = 'Token đã hết hạn';
+export const TOKEN_INCORRECT: string = 'Token không chính xác';
+export const newPasswordToMail: string =
+  'Mật khẩu khẩumowis đã được gửi vào email của bạn';
+export const REPASSWORD_ERROR: string = 'Mật khẩu nhập lại không chính xác';
+export const CHANGE_PASSWORD_SUCCESS: string = 'Đổi mật khẩu thành công';

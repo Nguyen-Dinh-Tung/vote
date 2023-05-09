@@ -108,7 +108,10 @@ export class UsersService {
       }
 
       createUserDto.historyCreate = userCreated;
-      createUserDto.password = bcrypt.hashSync(createUserDto.password, 10);
+      createUserDto.password = bcrypt.hashSync(
+        createUserDto.password,
+        Number(process.env.HASHKEY),
+      );
       let user = await this.userEntity.save(createUserDto);
 
       if (user) {

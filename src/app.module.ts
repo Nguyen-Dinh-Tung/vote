@@ -26,6 +26,8 @@ import { RoomsData } from './rooms-data/rooms-data.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { IoModule } from './io/io.module';
 import { FriendsModule } from './friends/friends.module';
+import { TokenModule } from './token/token.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -52,6 +54,9 @@ import { FriendsModule } from './friends/friends.module';
         });
       },
     }),
+    ConfigModule.forRoot({
+      envFilePath: ['.env'],
+    }),
     RoomsData,
     AuthModule,
     ContestModule,
@@ -76,6 +81,7 @@ import { FriendsModule } from './friends/friends.module';
     AuthShareModule,
     InitModule,
     FriendsModule,
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],

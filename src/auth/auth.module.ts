@@ -9,12 +9,13 @@ import { JwtSelect } from 'src/common/secret/secrect.jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { TokenService } from 'src/token/services/token.service';
+import { TokenEntity } from 'src/token/entities/token.entity';
+import { TokenModule } from 'src/token/token.module';
 
 @Module({
-  controllers: [AuthController],
-  providers: [AuthService, LocalStrategy],
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, TokenEntity]),
     forwardRef(() => UsersModule),
     PassportModule,
     JwtModule.register({
@@ -24,7 +25,10 @@ import { UserEntity } from 'src/users/entities/user.entity';
     MulterModule.register({
       dest: './files/images',
     }),
+    TokenModule,
   ],
+  controllers: [AuthController],
+  providers: [AuthService, LocalStrategy, TokenService],
   exports: [JwtModule],
 })
 export class AuthModule {}

@@ -14,11 +14,13 @@ import nodeMailerMain from 'src/common/middleware/node-mailer';
 import makeTokenEmail from '../../common/func/token-email';
 import { ApiOperation } from '@nestjs/swagger';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { TokenService } from 'src/token/services/token.service';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly tokenService: TokenService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
@@ -73,24 +75,9 @@ export class AuthService {
     return token;
   }
   async forgotPassword(data: ForgotPasswordDto, res: Response) {
-    const checkUser = await this.userRepository.findOne({
-      where: {
-        username: data.username,
-      },
-    });
-    if (!checkUser)
-      return res.status(HttpStatus.NOT_FOUND).json({
-        message: USER_NOT_FOUND,
-      });
-    const message: string = `Mã thay đổi mật khẩu của bạn là : ${makeTokenEmail(
-      6,
-    )}`;
-    nodeMailerMain(checkUser.email, message);
-    return res.status(HttpStatus.OK).json({
-      message: TOKEN_WAS_SENT,
-    });
+    return await this.tokenService.createEmailToken(data, res);
   }
   async changPassword(data: ChangePasswordDto, res: Response) {
-    
+    const checkEmailToken = await this.tokenService.checkEmailToken(data, res);
   }
 }
