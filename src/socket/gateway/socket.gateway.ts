@@ -109,6 +109,7 @@ export class GateWay
       for (let e of group) {
         client.join(e.id);
       }
+      this.server.emit('user-connect', true);
       return this.server.to(client.id).emit('online', { connect: true });
     } catch (e) {
       if (e) console.log(e);
@@ -130,7 +131,7 @@ export class GateWay
         ioId: idSocket,
         isOnline: false,
       };
-
+      this.server.emit('user-disconnect', true);
       return await this.ioServices.disConnect(infoDisconnect);
     } catch (e) {
       if (e) console.log(e);

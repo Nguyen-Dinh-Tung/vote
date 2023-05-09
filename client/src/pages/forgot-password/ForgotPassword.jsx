@@ -1,0 +1,121 @@
+import * as React from 'react';
+import './index.css';
+import BaseButton from '../../components/btn/BaseButton';
+import {
+  BTN_CANCEL,
+  BTN_CHANGE_PASSWORD,
+  BTN_GET_TOKEN,
+} from '../../contants/btn';
+import BaseInput from '../../components/base-input/BaseInput';
+import { placeholderForGotPassword } from '../../contants/field.desc';
+import { style_btn_success } from '../../style/base.style';
+import { ApiBase } from '../../api/api.base';
+import useNotifyFunc from '../../hooks/notify.func';
+import { ERROR, SUCCESS } from '../../contants/notify/type.notify';
+import { TRUE } from '../../contants/notify/status.notify';
+import AlertComponents from '../../components/alert/Alert';
+import { useNavigate } from 'react-router';
+import Footer from '../../base/footer/Footer';
+const styleInput = {
+  borderRadius: '6px',
+  border: 'solid 1px #ccc',
+  height: '46px',
+  paddingLeft: '16px',
+};
+const styleOtpInput = {
+  width: '80px',
+};
+export default function ForgotPassword(props) {
+  const [input, setInput] = React.useState();
+  const [notifyFunc] = useNotifyFunc();
+  const [step, setStep] = React.useState(1);
+  const navigate = useNavigate();
+  const handleChange = (event) => {
+    setInput(event.target.value);
+    setStep(1);
+  };
+  const handleSubmit = () => {
+    ApiBase.post('/auth/token-email', { username: input })
+      .then((res) => {
+        if (res.status === 200) {
+          notifyFunc(SUCCESS, res.data.message, TRUE);
+          setStep(2);
+        }
+      })
+      .catch((e) => {
+        if (e) {
+          notifyFunc(ERROR, e.response.data.message, TRUE);
+        }
+      });
+  };
+  const showLogin = () => {
+    navigate('/auth/login');
+  };
+  return (
+    <div className="auth-forgot-password">
+      <div className="container-forgot-password">
+        <p className="title-forgot-password">Lấy lại mật khẩu của bạn</p>
+        <hr />
+        <p className="desc-forgot-password">
+          Vui lòng nhập tên đăng nhập của bạn
+        </p>
+        <BaseInput
+          placeholder={placeholderForGotPassword}
+          customCss={styleInput}
+          handleChange={handleChange}
+        ></BaseInput>
+        <div className="group-btn-forgot-password">
+          {step === 1 ? (
+            <BaseButton
+              handleClick={handleSubmit}
+              content={BTN_GET_TOKEN}
+              customCss={style_btn_success}
+            />
+          ) : (
+            ''
+          )}
+          <BaseButton handleClick={showLogin} content={BTN_CANCEL} />
+        </div>
+
+        <hr />
+      </div>
+      <div className="content-bottom-forgot-password">
+        {step === 2 ? (
+          <div className="container-change-password">
+            <BaseInput
+              placeholder={'Nhập mã Otp'}
+              customCss={{ ...styleInput }}
+              handleChange={handleChange}
+            ></BaseInput>
+            <div className="header-bottom-forgot-password">
+              <p className="desc-forgot-password">Nhập mật khẩu mới</p>
+            </div>
+            <BaseInput
+              placeholder={placeholderForGotPassword}
+              customCss={styleInput}
+              handleChange={handleChange}
+            ></BaseInput>
+            <div className="mt-16">
+              <BaseInput
+                placeholder={placeholderForGotPassword}
+                customCss={styleInput}
+                handleChange={handleChange}
+              ></BaseInput>
+            </div>
+            <div className="element-center mt-16">
+              <BaseButton
+                handleClick={handleSubmit}
+                content={BTN_CHANGE_PASSWORD}
+                customCss={style_btn_success}
+              />
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+      </div>
+      <Footer />
+      <AlertComponents />
+    </div>
+  );
+}

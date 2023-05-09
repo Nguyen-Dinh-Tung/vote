@@ -15,6 +15,7 @@ import { IoServices } from 'src/io/services/io.service';
 import { IoModule } from 'src/io/io.module';
 import { RoomEntity } from 'src/rooms/entities/rooms.entity';
 import { ConnectIoEntity } from 'src/io/entities/connect-io.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { ConnectIoEntity } from 'src/io/entities/connect-io.entity';
     forwardRef(() => IoModule),
   ],
   controllers: [UsersController],
-  providers: [UsersService, JwtStrategy, IoServices],
+  providers: [UsersService, JwtStrategy, IoServices, JwtService],
   exports: [UsersService],
 })
 export class UsersModule {}

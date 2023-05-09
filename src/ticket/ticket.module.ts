@@ -11,21 +11,24 @@ import { ContestModule } from 'src/contest/contest.module';
 import { CandidateModule } from 'src/candidate/candidate.module';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   controllers: [TicketController],
-  providers: [TicketService ] ,
-  imports : [TypeOrmModule.forFeature([
-    TicketEntity,
-    UserCp ,
-    UserEntity ,
-    CompanyEntity ,
-    ContestEntity ,
-    CandidateEntity
-  ]) , 
-  UsersModule , 
-  forwardRef(() => ContestModule) , 
-  forwardRef(() =>CandidateModule)],
-  exports : [ TicketService]
+  providers: [TicketService, JwtService],
+  imports: [
+    TypeOrmModule.forFeature([
+      TicketEntity,
+      UserCp,
+      UserEntity,
+      CompanyEntity,
+      ContestEntity,
+      CandidateEntity,
+    ]),
+    UsersModule,
+    forwardRef(() => ContestModule),
+    forwardRef(() => CandidateModule),
+  ],
+  exports: [TicketService],
 })
 export class TicketModule {}

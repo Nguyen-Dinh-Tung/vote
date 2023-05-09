@@ -1,4 +1,5 @@
-export const ADDCONTEST = 'Thêm cuộc thi'
-export const EDIT_CONTEST = "Chỉnh sửa cuộc thi "
-export const ADD_CANDIDATE = "Thêm thí sinh "
-export const ADD_COMPANY = "Thêm tổ chức"
+export const ADDCONTEST = 'Thêm cuộc thi';
+export const EDIT_CONTEST = 'Chỉnh sửa cuộc thi ';
+export const ADD_CANDIDATE = 'Thêm thí sinh ';
+export const ADD_COMPANY = 'Thêm tổ chức';
+export const placeholderForGotPassword = 'Nhập tên đăng nhập tài khoản của bạn';

@@ -12,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TicketModule } from './ticket/ticket.module';
 import { FeatureModule } from './feature/feature.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import{ join } from 'path';
+import { join } from 'path';
 import { AssignmentContestModule } from './assignment-contest/assignment-contest.module';
 import { AssignmentCompanyModule } from './assignment-company/assignment-company.module';
 import { UserCoModule } from './user-co/user-co.module';
@@ -25,44 +25,37 @@ import { Socket } from './socket/socket.module';
 import { RoomsData } from './rooms-data/rooms-data.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { IoModule } from './io/io.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
-  imports: [ 
+  imports: [
     TypeOrmModule.forRootAsync({
-      useFactory(){
+      useFactory() {
         return {
-          type : 'mysql' ,
+          type: 'mysql',
           host: 'localhost',
           port: 3306,
           username: 'root',
           password: '123123',
-          database: "missgrand",
-          synchronize : true ,
-          logging : true ,
-          autoLoadEntities: true ,
-          entities : [
-            join
-            (
-              __dirname, 
-              "dist/src/**/*.entity.{ts,js}"
-            )
-          ]
-        }
+          database: 'missgrand',
+          synchronize: true,
+          logging: true,
+          autoLoadEntities: true,
+          entities: [join(__dirname, 'dist/src/**/*.entity.{ts,js}')],
+        };
       },
-      async dataSourceFactory(options){
-        if(!options)
-        throw new Error('Invalid option passed')
-        let datasource = new DataSource(options)
-        return addTransactionalDataSource({ 
-          dataSource: datasource
-        })
-      } 
+      async dataSourceFactory(options) {
+        if (!options) throw new Error('Invalid option passed');
+        let datasource = new DataSource(options);
+        return addTransactionalDataSource({
+          dataSource: datasource,
+        });
       },
-    ),
-    RoomsData ,
+    }),
+    RoomsData,
     AuthModule,
-    ContestModule, 
-    CompanyModule, 
+    ContestModule,
+    CompanyModule,
     CandidateModule,
     UsersModule,
     TicketModule,
@@ -72,21 +65,20 @@ import { IoModule } from './io/io.module';
     UserCoModule,
     UserCpModule,
     UserCaModule,
-    Socket , 
+    Socket,
     IoModule,
     RoomsModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..', '../data/images/'),
-      serveRoot: '/data/images/'
+      rootPath: join(__dirname, '..', '../data/images/'),
+      serveRoot: '/data/images/',
     }),
     NotifyAppModule,
     AuthShareModule,
-    InitModule ,
-  ],  
+    InitModule,
+    FriendsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
-  exports : [
-  ]
+  exports: [],
 })
-export class AppModule {
-}
+export class AppModule {}

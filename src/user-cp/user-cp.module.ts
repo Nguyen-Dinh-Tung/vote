@@ -6,21 +6,16 @@ import { UserCpService } from './services/user-cp.service';
 import { UserCpController } from './controller/user-cp.controller';
 import { UserCp } from './entities/user-cp.entity';
 import { UsersModule } from 'src/users/users.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports : [
-    forwardRef(() =>UsersModule) ,
+  imports: [
+    forwardRef(() => UsersModule),
     forwardRef(() => CompanyEntity),
-    TypeOrmModule.forFeature(
-      [
-        UserCp , 
-        CompanyEntity , 
-        UserEntity
-      ])
-    
-    ] ,
+    TypeOrmModule.forFeature([UserCp, CompanyEntity, UserEntity]),
+  ],
   controllers: [UserCpController],
-  providers: [UserCpService] ,
-  exports : [UserCpService]
+  providers: [UserCpService, JwtService],
+  exports: [UserCpService],
 })
 export class UserCpModule {}

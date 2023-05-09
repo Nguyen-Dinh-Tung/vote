@@ -1,0 +1,27 @@
+.list-friend {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.fiend {
+  background-color: #ebeaea;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 1px 1px 1px 1px #ccc;
+  margin: 0 6px;
+}
+.fiend:hover {
+  position: relative;
+  animation: moveTop;
+  animation-duration: 0.5s;
+}
+@keyframes moveTop {
+  0% {
+    top: 0px;
+  }
+  100% {
+    top: 5px;
+  }
+}

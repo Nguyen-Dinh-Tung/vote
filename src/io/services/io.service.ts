@@ -146,7 +146,7 @@ export class IoServices {
       if (!io)
         throw new HttpException(SERVE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 
-      io.isOnline = disConnectIoDto.isOnline;
+      io.isOnline = false;
       io.socketId = '';
       await this.uioEntity.save(io);
       return true;

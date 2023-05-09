@@ -10,25 +10,25 @@ import { CompanyRecomend } from './entities/company-recomend.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports : [
-    TypeOrmModule.forFeature(
-      [
-        CompanyEntity , 
-        CompanyRecomend , 
-        UserEntity , 
-        UserCp
-      ]) , 
-    forwardRef(() =>UsersModule)  ,
-    forwardRef(() => ContestEntity) ,
-    forwardRef(() => UserCpModule) ,
+  imports: [
+    TypeOrmModule.forFeature([
+      CompanyEntity,
+      CompanyRecomend,
+      UserEntity,
+      UserCp,
+    ]),
+    forwardRef(() => UsersModule),
+    forwardRef(() => ContestEntity),
+    forwardRef(() => UserCpModule),
     MulterModule.register({
-      dest : './files/images'
-    }) 
-] ,
+      dest: './files/images',
+    }),
+  ],
   controllers: [CompanyController],
-  providers: [CompanyService],
-  exports : [CompanyService ]
+  providers: [CompanyService, JwtService],
+  exports: [CompanyService],
 })
 export class CompanyModule {}

@@ -1,12 +1,10 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateGroupChatDto {
-
-    @IsNotEmpty()
-    idUser : string ;
-    @IsNotEmpty()
-    name : string ;
-    @IsNotEmpty()
-    idsConnectRoom : string [] ;
-
+  @IsNotEmpty()
+  idUser: string;
+  @IsNotEmpty()
+  name: string;
+  @IsNotEmpty()
+  idsConnectRoom: string[];
 }

@@ -12,10 +12,25 @@ import FormCandidate from './components/formcandidate/FormCandidate';
 import FormCompany from './components/formcompany/FormCompany';
 import ListCompany from './components/listcompany/ListCompany';
 import AssmCompany from './components/assm-company/AssmCompany';
-import Chat from './pages/Chat/Chat';
 import Test from './pages/test/Test';
+import Friend from './pages/friend/Friend';
+import NewFriend from './pages/new-friend/NewFriend';
+import jwtDecode from 'jwt-decode';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setId } from './redux/features/user.slice';
+import ForgotPassword from './pages/forgot-password/ForgotPassword';
 
 function App() {
+  const token = localStorage.getItem('token');
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (token) {
+      const decodeToken = jwtDecode(token);
+      dispatch(setId(decodeToken.idUser));
+    }
+  }, []);
+
   try {
     return (
       <Routes>
@@ -30,10 +45,13 @@ function App() {
           <Route path="/new-company" element={<FormCompany />} />
           <Route path="/assm-company/:id" element={<AssmCompany />} />
           <Route path="/chat" element={<Test />} />
+          <Route path="/new-friend" element={<NewFriend />} />
+          <Route path="/friend" element={<Friend />} />
         </Route>
         <Route path={'/register'} element={<Register />} />
         <Route path={'/auth/login'} element={<Login />} />
-        {/* <Route path="/chat" element={<Chat />} /> */}
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        {/* <Route path="/demo" element={<ForgotPassword />} /> */}
       </Routes>
     );
   } catch (e) {

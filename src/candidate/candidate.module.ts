@@ -16,28 +16,31 @@ import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 import { UserCpModule } from 'src/user-cp/user-cp.module';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { AssignmentContestModule } from 'src/assignment-contest/assignment-contest.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports : [TypeOrmModule.forFeature([
-    CandidateEntity , 
-    TicketEntity , 
-    CandidateRecomendEntity , 
-    ContestEntity, 
-    AssmContestEntity,
-    UserCp ,
-    UserEntity ,
-    CompanyEntity
-  ]) , 
-    forwardRef(() => UsersModule) , 
-    forwardRef(() => CompanyModule) , 
-    forwardRef(() => UserCpModule) , 
-    forwardRef(() => AssignmentContestModule) , 
-    forwardRef(() => UserCaModule) , 
+  imports: [
+    TypeOrmModule.forFeature([
+      CandidateEntity,
+      TicketEntity,
+      CandidateRecomendEntity,
+      ContestEntity,
+      AssmContestEntity,
+      UserCp,
+      UserEntity,
+      CompanyEntity,
+    ]),
+    forwardRef(() => UsersModule),
+    forwardRef(() => CompanyModule),
+    forwardRef(() => UserCpModule),
+    forwardRef(() => AssignmentContestModule),
+    forwardRef(() => UserCaModule),
     MulterModule.register({
-    dest : '/files/images'
-  })] ,
+      dest: '/files/images',
+    }),
+  ],
   controllers: [CandidateController],
-  providers: [CandidateService  ],
-  exports : [CandidateService]
+  providers: [CandidateService, JwtService],
+  exports: [CandidateService],
 })
 export class CandidateModule {}

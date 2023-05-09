@@ -3,11 +3,17 @@ import jwtDecode from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
 import { ApiBase, host } from '../../api/api.base';
 import './index.css';
-import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEmitType, setIsCreateGroup } from '../../redux/features/special';
+import {
+  setEmitType,
+  setIsCreateGroup,
+  setReRenderSideBar,
+} from '../../redux/features/special';
 import ChatSideBarHandle from './handle';
 import { EMIT_TYPE } from '../../contants/emit.type';
+import Brightness1Icon from '@mui/icons-material/Brightness1';
+import { socket } from '../../socket/socket';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 function ChatSideBar(props) {
   const [privateRooms, setPrivateRooms] = useState();
   const [groupRooms, setGroupRooms] = useState();
@@ -27,7 +33,14 @@ function ChatSideBar(props) {
         if (e) console.log(e);
       });
   }, [reRenderSideBar]);
-
+  useEffect(() => {
+    socket.on('user-connect', (data) => {
+      dispatch(setReRenderSideBar(Date.now()));
+    });
+    socket.on('user-disconnect', (data) => {
+      dispatch(setReRenderSideBar(Date.now()));
+    });
+  }, []);
   return (
     <div
       style={{
@@ -47,7 +60,7 @@ function ChatSideBar(props) {
           className="search-chat"
           placeholder="Nhập tên tài khoản"
         />
-        <DataSaverOnIcon
+        <GroupAddIcon
           sx={{
             fontSize: '30px',
             ':hover': {
@@ -80,8 +93,18 @@ function ChatSideBar(props) {
                     dispatch(setEmitType(EMIT_TYPE.private));
                   }}
                 >
-                  <Avatar alt="Remy Sharp" src={e && host + e.background} />
-                  <p className="chat-username">{e && e.username}</p>
+                  <div className="info-chat-element">
+                    <Avatar alt="Remy Sharp" src={e && host + e.background} />
+                    <p className="chat-username">{e && e.username}</p>
+                  </div>
+                  <Brightness1Icon
+                    htmlColor="#13fd00"
+                    sx={{
+                      fontSize: '18px',
+                      marginRight: '10px',
+                      display: e && e.online ? '' : 'none',
+                    }}
+                  />
                 </li>
               );
             })}
@@ -102,8 +125,20 @@ function ChatSideBar(props) {
                     dispatch(setEmitType(EMIT_TYPE.group));
                   }}
                 >
-                  <Avatar alt="Remy Sharp" src={'../../../public/group.png'} />
-                  <p className="chat-username">{e && e.name}</p>
+                  <div className="info-chat-element">
+                    <Avatar
+                      alt="Remy Sharp"
+                      src={'../../../public/group.png'}
+                    />
+                    <p className="chat-username">{e && e.name}</p>
+                  </div>
+                  <Brightness1Icon
+                    htmlColor="#13fd00"
+                    sx={{
+                      fontSize: '18px',
+                      marginRight: '10px',
+                    }}
+                  />
                 </li>
               );
             })}

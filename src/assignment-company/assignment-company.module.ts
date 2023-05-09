@@ -8,19 +8,17 @@ import { AssignmentCompanyController } from './controller/assignment-company.con
 import { ContestModule } from 'src/contest/contest.module';
 import { CompanyModule } from 'src/company/company.module';
 import { UsersModule } from 'src/users/users.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   controllers: [AssignmentCompanyController],
-  providers: [AssignmentCompanyService],
-  imports : [
-    TypeOrmModule.forFeature([
-      AssmCompanyEntity , 
-      ContestEntity ,
-      CompanyEntity
-    ]) , 
-    forwardRef(() =>ContestModule) , 
-    forwardRef(()=>CompanyModule) ,
-    forwardRef(()=>UsersModule)] ,
-  exports : [AssignmentCompanyService]
+  providers: [AssignmentCompanyService, JwtService],
+  imports: [
+    TypeOrmModule.forFeature([AssmCompanyEntity, ContestEntity, CompanyEntity]),
+    forwardRef(() => ContestModule),
+    forwardRef(() => CompanyModule),
+    forwardRef(() => UsersModule),
+  ],
+  exports: [AssignmentCompanyService],
 })
 export class AssignmentCompanyModule {}

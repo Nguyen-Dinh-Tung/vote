@@ -34,7 +34,6 @@ function ChatContent(props) {
     if (idRoomSelect)
       ApiBase.get(urlGetRoomData)
         .then((res) => {
-          console.log(res);
           setBoxMessage(res.data.data);
         })
         .catch((e) => {
@@ -44,7 +43,7 @@ function ChatContent(props) {
 
   useEffect(() => {
     if (boxMessage && !openCreateGroup)
-      ChatContentHandle.scrollBottomBoxMessage();
+      ChatContentHandle.scrollBottomBoxMessage(refBoxMessage);
   }, [boxMessage]);
 
   useEffect(() => {
@@ -52,7 +51,6 @@ function ChatContent(props) {
       setReRenderBoxMessage(Date.now());
     });
     socket.on('reveice-group-chat', (data) => {
-      console.log(data);
       setReRenderBoxMessage(Date.now());
     });
   }, []);

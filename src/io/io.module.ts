@@ -9,6 +9,7 @@ import { ioController } from './controller/io.controller';
 import { forwardRef } from '@nestjs/common/utils';
 import { RoomEntity } from 'src/rooms/entities/rooms.entity';
 import { RoomsModule } from 'src/rooms/rooms.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { RoomsModule } from 'src/rooms/rooms.module';
   ],
   exports: [IoServices],
   controllers: [ioController],
-  providers: [IoServices],
+  providers: [IoServices, JwtService],
 })
 export class IoModule {}

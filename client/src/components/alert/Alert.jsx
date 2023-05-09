@@ -7,7 +7,6 @@ import Alert from '@mui/material/Alert';
 export default function AlertComponents() {
   const dispatch = useDispatch();
   const open = useSelector((state) => state.show.alert);
-
   const handleClose = (event, reason) => {
     dispatch(setAlert({ ...open, status: false }));
   };

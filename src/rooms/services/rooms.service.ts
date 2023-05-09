@@ -173,7 +173,6 @@ export class RoomsService {
       name: data.name,
       type: RoomTypes.multipe,
     });
-
     let listIdsConnect = [...data.idsConnectRoom, checkUser.id];
 
     let listUsersConnect = await this.userEntity.find({
@@ -271,6 +270,7 @@ export class RoomsService {
               'user.username as username',
               'user.id as idUser',
               'user.background as background',
+              'io.isOnline as online',
             ])
             .leftJoin(ConnectIoEntity, 'cns', 'cns.roomId = rooms.id')
             .leftJoin('cns.io', 'io')
