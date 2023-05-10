@@ -8,7 +8,7 @@ import { TicketEntity } from './entities/ticket.entity';
 import { TicketService } from './services/ticket.service';
 import { UsersModule } from 'src/users/users.module';
 import { ContestModule } from 'src/contest/contest.module';
-import { CandidateModule } from 'src/candidate/candidate.module';
+import { CandidateModule } from 'src/common/constant/candidate.module';
 import { UserCp } from 'src/user-cp/entities/user-cp.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';

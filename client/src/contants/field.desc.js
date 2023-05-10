@@ -9,3 +9,7 @@ export const DESC_FIELD_CHANGE_PASSWORD = {
   code: 'code',
   username: 'username',
 };
+export const STATUS = [
+  { desc: 'Hoạt động', value: 'true' },
+  { desc: 'Không hoạt động', value: 'false' },
+];

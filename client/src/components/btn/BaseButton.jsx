@@ -6,7 +6,7 @@ function BaseButton(props) {
   const handleClick = props.handleClick;
   return (
     <button
-      className="base-button"
+      className="base-button "
       style={customCss && customCss}
       onClick={handleClick}
     >

@@ -1,8 +1,8 @@
 import React from 'react';
-import Header from '../header/Header';
 import SideBar from '../side-bar/SideBar';
 import './index.css';
 import Body from '../body/Body';
+import Header from '../header/Header';
 function Base(props) {
   return (
     <div id="box-container">

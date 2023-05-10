@@ -27,6 +27,7 @@ import { CandidateRecomendEntity } from '../entities/candidate-recomend.entity';
 import { AssignmentContestService } from 'src/assignment-contest/services/assignment-contest.service';
 import { UserCaService } from 'src/user-ca/services/user-ca.service';
 import { Roles } from 'src/common/enum/role.enum';
+import { QueryDto } from 'src/common/interfaces/QueryFilter.interface';
 dotenv.config();
 
 @Injectable()
@@ -148,72 +149,30 @@ export class CandidateService {
     };
   }
 
-  async findAll(
-    res: Response,
-    page: number,
-    isActive: boolean,
-    search: string,
-  ) {
-    let offset = page * amount - amount;
-    let total = await this.candidateEntity.count();
+  async findAll(res: Response, query: QueryDto) {
+    let offset = query.page * amount - amount;
+    console.log(query);
 
-    if (search) {
-      let listCandidate = await this.candidateEntity.find({
-        where: [{ name: Like(`%${search}%`) }, { email: Like(`%${search}%`) }],
-        take: amount,
-        skip: offset,
-      });
-
-      let count = await this.candidateEntity.count({
-        where: [{ name: Like(`%${search}%`) }, { email: Like(`%${search}%`) }],
-      });
-      if (listCandidate.length < 1)
-        return res.status(HttpStatus.NOT_FOUND).json({
-          message: SEARCH_KEY_NOT_FOUNT,
-        });
-      return res.status(HttpStatus.OK).json({
-        message: GET_LIST_CANDIDATE_SUCCESS,
-        data: listCandidate,
-        total: count,
-      });
-    }
-
-    if (isActive !== undefined) {
-      let listCandidate = await this.candidateEntity.find({
-        where: {
-          isActive: isActive,
-        },
-        take: amount,
-        skip: offset,
-      });
-      let count = await this.candidateEntity.count({
-        where: {
-          isActive: isActive,
-        },
-      });
-
-      if (listCandidate.length < 1)
-        return res.status(HttpStatus.NOT_FOUND).json({
-          message: FILTER_FAIL,
-        });
-      return res.status(HttpStatus.OK).json({
-        message: GET_LIST_CANDIDATE_SUCCESS,
-        data: listCandidate,
-        total: count,
-      });
-    }
-    if (!search && !isActive) {
-      let listCandidate = await this.candidateEntity.find({
-        skip: offset,
-        take: amount,
-      });
-      let count = await this.candidateEntity.count();
-      return res.status(HttpStatus.OK).json({
-        message: GET_LIST_CANDIDATE_SUCCESS,
-        data: listCandidate,
-        total: count,
-      });
-    }
+    const where = {};
+    if (query.isActive !== undefined) where['isActive'] = query.isActive;
+    if (query.search) where['name'] = Like(`%${query.search}%`);
+    where['email'] = Like(`%${query.search}%`);
+    const listCandidate = await this.candidateEntity.find({
+      ...where,
+      take: amount,
+      skip: offset,
+    });
+    const total = await this.candidateEntity.count(where);
+    const meta = {
+      page: query.page,
+      take: amount,
+      totalPage: Math.ceil(total / amount),
+    };
+    return res.status(HttpStatus.OK).json({
+      message: GET_LIST_CANDIDATE_SUCCESS,
+      meta: meta,
+      data: listCandidate,
+    });
   }
 
   async findOne(id: string, res: Response) {

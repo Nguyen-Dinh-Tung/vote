@@ -1,6 +1,6 @@
 import { AssignmentCompanyModule } from './../assignment-company/assignment-company.module';
 import { CandidateEntity } from './../candidate/entities/candidate.entity';
-import { CandidateModule } from 'src/candidate/candidate.module';
+import { CandidateModule } from 'src/common/constant/candidate.module';
 import { CompanyEntity } from './../company/entities/company.entity';
 import { ContestService } from './services/contest.service';
 import { TypeOrmModule } from '@nestjs/typeorm';

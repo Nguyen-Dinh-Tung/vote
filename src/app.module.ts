@@ -7,7 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ContestModule } from './contest/contest.module';
 import { CompanyModule } from './company/company.module';
-import { CandidateModule } from './candidate/candidate.module';
+import { CandidateModule } from './common/constant/candidate.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TicketModule } from './ticket/ticket.module';
 import { FeatureModule } from './feature/feature.module';

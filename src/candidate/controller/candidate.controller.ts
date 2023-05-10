@@ -34,7 +34,7 @@ import { Inject } from '@nestjs/common/decorators';
 import { forwardRef } from '@nestjs/common/utils';
 import { Response } from 'express';
 import { ParseQuery } from 'src/common/pipe/ParseQuery.pipe';
-import { QueryFilter } from 'src/common/interfaces/QueryFilter.interface';
+import { QueryDto } from 'src/common/interfaces/QueryFilter.interface';
 import { ParseStrPipe } from 'src/common/pipe/ParseStr.pipe';
 import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
 dotenv.config();
@@ -77,22 +77,13 @@ export class CandidateController {
   }
 
   @RolesCheck([...Object.values(Roles)])
-  @Get('/:page?')
+  @Get('')
   async findAll(
     @Res() res: Response,
-    @Param('page', new DefaultValuePipe(1)) params: { page: number },
-    @Query(new ParseQuery()) query: QueryFilter,
+    @Query(new ParseQuery()) query: QueryDto,
   ) {
     try {
-      let page: number = Number(params);
-      if (!page) page = 1;
-
-      return await this.candidateService.findAll(
-        res,
-        page,
-        query.isActive,
-        query.search,
-      );
+      return await this.candidateService.findAll(res, query);
     } catch (e) {
       if (e) console.log(e);
     }
