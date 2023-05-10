@@ -1,0 +1,16 @@
+#header {
+  height: 68px;
+  width: 80%;
+  border-bottom: 1px solid #ccc;
+  margin-left: 20%;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  display: flex;
+  justify-content: end;
+}
+#now-page {
+  font-size: 20px;
+  margin-right: 40%;
+  line-height: 68px;
+}

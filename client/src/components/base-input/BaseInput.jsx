@@ -5,6 +5,7 @@ function BaseInput(props) {
   const customCss = props.customCss;
   const placeholder = props.placeholder;
   const handleChange = props.handleChange;
+  const name = props.name;
   return (
     <input
       className="base-input"
@@ -12,6 +13,7 @@ function BaseInput(props) {
       style={customCss && customCss}
       placeholder={placeholder && placeholder}
       onChange={handleChange}
+      name={name && name}
     />
   );
 }

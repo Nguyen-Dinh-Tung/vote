@@ -5,3 +5,4 @@ export const BTN_LOG_OUT = 'Thoát';
 export const BTN_CANCEL = 'Huỷ bỏ';
 export const BTN_CHANGE_PASSWORD = 'Thay đổi mật khẩu';
 export const BTN_GET_TOKEN = 'Gửi otp';
+export const BTN_ADD_CANDIDATE = 'Thêm thí sinh';

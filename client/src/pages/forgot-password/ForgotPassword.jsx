@@ -7,50 +7,42 @@ import {
   BTN_GET_TOKEN,
 } from '../../contants/btn';
 import BaseInput from '../../components/base-input/BaseInput';
-import { placeholderForGotPassword } from '../../contants/field.desc';
+import {
+  DESC_FIELD_CHANGE_PASSWORD,
+  placeholderForGotPassword,
+} from '../../contants/field.desc';
 import { style_btn_success } from '../../style/base.style';
-import { ApiBase } from '../../api/api.base';
 import useNotifyFunc from '../../hooks/notify.func';
-import { ERROR, SUCCESS } from '../../contants/notify/type.notify';
-import { TRUE } from '../../contants/notify/status.notify';
 import AlertComponents from '../../components/alert/Alert';
 import { useNavigate } from 'react-router';
 import Footer from '../../base/footer/Footer';
+import { Handle } from './handle';
 const styleInput = {
   borderRadius: '6px',
   border: 'solid 1px #ccc',
   height: '46px',
   paddingLeft: '16px',
 };
-const styleOtpInput = {
-  width: '80px',
-};
+
 export default function ForgotPassword(props) {
-  const [input, setInput] = React.useState();
   const [notifyFunc] = useNotifyFunc();
   const [step, setStep] = React.useState(1);
+  const [data, setData] = React.useState({
+    code: '',
+    password: '',
+    rePassword: '',
+    username: '',
+  });
   const navigate = useNavigate();
-  const handleChange = (event) => {
-    setInput(event.target.value);
-    setStep(1);
-  };
-  const handleSubmit = () => {
-    ApiBase.post('/auth/token-email', { username: input })
-      .then((res) => {
-        if (res.status === 200) {
-          notifyFunc(SUCCESS, res.data.message, TRUE);
-          setStep(2);
-        }
-      })
-      .catch((e) => {
-        if (e) {
-          notifyFunc(ERROR, e.response.data.message, TRUE);
-        }
-      });
-  };
-  const showLogin = () => {
-    navigate('/auth/login');
-  };
+  React.useEffect(() => {
+    Handle.data = data;
+  }, [data]);
+  React.useEffect(() => {
+    Handle.setData = setData;
+    Handle.setStep = setStep;
+    Handle.notifyFunc = notifyFunc;
+    Handle.navigate = navigate;
+  }, []);
   return (
     <div className="auth-forgot-password">
       <div className="container-forgot-password">
@@ -62,19 +54,20 @@ export default function ForgotPassword(props) {
         <BaseInput
           placeholder={placeholderForGotPassword}
           customCss={styleInput}
-          handleChange={handleChange}
+          handleChange={Handle.handleChangeInput}
+          name={DESC_FIELD_CHANGE_PASSWORD.username}
         ></BaseInput>
         <div className="group-btn-forgot-password">
           {step === 1 ? (
             <BaseButton
-              handleClick={handleSubmit}
+              handleClick={Handle.handleSubmitGetToken}
               content={BTN_GET_TOKEN}
               customCss={style_btn_success}
             />
           ) : (
             ''
           )}
-          <BaseButton handleClick={showLogin} content={BTN_CANCEL} />
+          <BaseButton handleClick={Handle.showLogin} content={BTN_CANCEL} />
         </div>
 
         <hr />
@@ -85,7 +78,8 @@ export default function ForgotPassword(props) {
             <BaseInput
               placeholder={'Nhập mã Otp'}
               customCss={{ ...styleInput }}
-              handleChange={handleChange}
+              handleChange={Handle.handleChangeInput}
+              name={DESC_FIELD_CHANGE_PASSWORD.code}
             ></BaseInput>
             <div className="header-bottom-forgot-password">
               <p className="desc-forgot-password">Nhập mật khẩu mới</p>
@@ -93,18 +87,22 @@ export default function ForgotPassword(props) {
             <BaseInput
               placeholder={placeholderForGotPassword}
               customCss={styleInput}
-              handleChange={handleChange}
+              handleChange={Handle.handleChangeInput}
+              name={DESC_FIELD_CHANGE_PASSWORD.password}
+              type={DESC_FIELD_CHANGE_PASSWORD.password}
             ></BaseInput>
             <div className="mt-16">
               <BaseInput
                 placeholder={placeholderForGotPassword}
                 customCss={styleInput}
-                handleChange={handleChange}
+                handleChange={Handle.handleChangeInput}
+                name={DESC_FIELD_CHANGE_PASSWORD.rePassword}
+                type={DESC_FIELD_CHANGE_PASSWORD.password}
               ></BaseInput>
             </div>
             <div className="element-center mt-16">
               <BaseButton
-                handleClick={handleSubmit}
+                handleClick={Handle.handleSubmitChangePassword}
                 content={BTN_CHANGE_PASSWORD}
                 customCss={style_btn_success}
               />

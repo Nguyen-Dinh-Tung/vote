@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+#box-container {
+  height: calc(100vh - 68px);
+}
+#content {
+}
+.table {
+}
+.base-button {
+  height: 40px;
+  width: 200px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.base-button:hover {
+  background-color: #e7e6e6;
+}
