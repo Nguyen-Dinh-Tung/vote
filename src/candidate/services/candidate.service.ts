@@ -28,6 +28,7 @@ import { AssignmentContestService } from 'src/assignment-contest/services/assign
 import { UserCaService } from 'src/user-ca/services/user-ca.service';
 import { Roles } from 'src/common/enum/role.enum';
 import { QueryDto } from 'src/common/interfaces/QueryFilter.interface';
+import { Transactional } from 'typeorm-transactional';
 dotenv.config();
 
 @Injectable()
@@ -44,7 +45,7 @@ export class CandidateService {
     private readonly ascoService: AssignmentContestService,
     private readonly ucaSerivce: UserCaService,
   ) {}
-
+  @Transactional()
   async create(
     createCandidateDto: CreateCandidateDto,
     idUser: string,
@@ -104,8 +105,6 @@ export class CandidateService {
     let share = createCandidateDto.share;
     let listAsco: AssmContestEntity[];
     let listFail: any;
-    console.log(share.listIdContest);
-
     if (share.listIdContest) {
       let InfoAsco = {
         idCandidates: [newCandidate.id],
@@ -151,14 +150,15 @@ export class CandidateService {
 
   async findAll(res: Response, query: QueryDto) {
     let offset = query.page * amount - amount;
-    console.log(query);
 
     const where = {};
     if (query.isActive !== undefined) where['isActive'] = query.isActive;
-    if (query.search) where['name'] = Like(`%${query.search}%`);
-    where['email'] = Like(`%${query.search}%`);
+    if (query.search) {
+      where['name'] = Like(`%${query.search}%`);
+      where['email'] = Like(`%${query.search}%`);
+    }
     const listCandidate = await this.candidateEntity.find({
-      ...where,
+      where: where,
       take: amount,
       skip: offset,
     });

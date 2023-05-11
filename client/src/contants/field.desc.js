@@ -13,3 +13,20 @@ export const STATUS = [
   { desc: 'Hoạt động', value: 'true' },
   { desc: 'Không hoạt động', value: 'false' },
 ];
+export const TITLE_HEADER = {
+  CANDIDATE: {
+    VIEW: 'Danh sách thí sinh',
+    CREATE: 'Thêm mới thí sinh',
+    UPDATE: 'Chỉnh sửa thông tin thí sinh',
+  },
+  CONTEST: {
+    VIEW: 'Danh sách cuộc thi',
+    CREATE: 'Thêm mới cuộc thi',
+    UPDATE: 'Chỉnh sửa thông tin cuộc thi',
+  },
+  COMPANY: {
+    VIEW: 'Danh sách tổ chức',
+    CREATE: 'Thêm mới tổ chức',
+    UPDATE: 'Chỉnh sửa thông tin tổ chức',
+  },
+};

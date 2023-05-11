@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import './index.css';
 import { useNavigate } from 'react-router';
 import { Handle } from './handle';
+import { useDispatch } from 'react-redux';
 
 function SideBar(props) {
   const [target, setTarget] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   useEffect(() => {
     Handle.navigate = navigate;
     Handle.setTarget = setTarget;
+    Handle.dispatch = dispatch;
   }, []);
   return (
     <div id="side-bar">

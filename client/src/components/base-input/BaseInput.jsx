@@ -6,6 +6,7 @@ function BaseInput(props) {
   const placeholder = props.placeholder;
   const handleChange = props.handleChange;
   const name = props.name;
+  const ref = props.ref;
   return (
     <input
       className="base-input"
@@ -14,6 +15,7 @@ function BaseInput(props) {
       placeholder={placeholder && placeholder}
       onChange={handleChange}
       name={name && name}
+      ref={ref}
     />
   );
 }

@@ -1,0 +1,16 @@
+#lazyload {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  background: rgba(105, 105, 105, 0.5);
+}
+.center-display {
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%);
+  left: 50%;
+  transform: translateY(-50%);
+}

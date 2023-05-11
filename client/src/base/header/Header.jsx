@@ -3,12 +3,14 @@ import './index.css';
 import { Avatar } from '@mui/material';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { avatarStyle, exitIconStyle, headerStyle } from './style';
+import { useSelector } from 'react-redux';
 function Header(props) {
   const [user, setUser] = useState();
+  const title = useSelector((state) => state.titleSideBar.title);
   useEffect(() => {});
   return (
     <div id="header">
-      <p id="now-page">Danh sách thí sinh</p>
+      <p id="now-page">{title && title}</p>
       <div className="side-bar-feature" style={headerStyle}>
         <Avatar
           alt="Remy Sharp"
