@@ -54,7 +54,11 @@
   color: black;
   box-shadow: 3px 1px 6px;
 }
-
+.side-bar-body-item:active {
+  position: relative;
+  animation-name: clickAnimation;
+  animation-duration: 1s;
+}
 @keyframes sideBarItemAnimation {
   0% {
     left: -100px;
@@ -67,5 +71,15 @@
   100% {
     left: 0px;
     top: 0px;
+  }
+}
+@keyframes clickAnimation {
+  0% {
+    left: 20px;
+    top: 10px;
+  }
+  100% {
+    left: 10px;
+    top: 5px;
   }
 }

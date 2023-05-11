@@ -10,5 +10,8 @@ export const styleIconSetting = {
   },
 };
 export const baseFileButton = {
-  fontSize: '30px',
+  fontSize: '50px',
+  '&:hover': {
+    color: '#9c27b0',
+  },
 };

@@ -8,9 +8,11 @@
   top: 0;
   display: flex;
   justify-content: end;
+  background-color: white;
+  z-index: 1;
 }
 #now-page {
-  font-size: 20px;
+  font-size: 28px;
   line-height: 68px;
   position: absolute;
   left: 50%;

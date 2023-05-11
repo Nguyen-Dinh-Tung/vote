@@ -12,7 +12,6 @@ function BaseFileButton(props) {
           color="primary"
           aria-label="upload picture"
           component="label"
-          xs={customCss && customCss}
         >
           <input
             hidden
@@ -21,7 +20,7 @@ function BaseFileButton(props) {
             name="background"
             onChange={handleChange}
           />
-          <PhotoCamera />
+          <PhotoCamera sx={customCss && customCss} />
         </IconButton>
       </Stack>
     </div>

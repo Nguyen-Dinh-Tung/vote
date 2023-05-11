@@ -8,20 +8,19 @@ export class Handle {
   static setTarget;
   static dispatch;
   static showCandidate(e) {
-    Handle.lazyload();
+    Handle.checkAndOpenLazyload(ROUTER.CANDIDATE);
     Handle.navigate(ROUTER.CANDIDATE);
     Handle.setTarget('1');
-    Handle.setTitleHeader(TITLE_HEADER.CANDIDATE.VIEW);
   }
   static showCompany() {
-    Handle.lazyload();
+    Handle.checkAndOpenLazyload(ROUTER.COMPANY);
     Handle.navigate(ROUTER.COMPANY);
     Handle.setTarget('3');
     Handle.setTitleHeader(TITLE_HEADER.CONTEST.VIEW);
   }
   static showContest() {
-    Handle.lazyload();
     Handle.navigate(ROUTER.CONTEST);
+    Handle.checkAndOpenLazyload(ROUTER.CONTEST);
     Handle.setTarget('2');
     Handle.setTitleHeader(TITLE_HEADER.COMPANY.VIEW);
   }
@@ -30,5 +29,9 @@ export class Handle {
   }
   static setTitleHeader(data) {
     Handle.dispatch(setTitle(data));
+  }
+  static checkAndOpenLazyload(path) {
+    const url = window.location.pathname;
+    if (url !== path) Handle.lazyload();
   }
 }

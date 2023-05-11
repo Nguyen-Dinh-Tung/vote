@@ -59,11 +59,19 @@ function Candidate(props) {
         });
       })
       .catch((e) => {
-        if (e) notifyFunc(ERROR, e.response.data.message, TRUE);
+        if (e) {
+          notifyFunc(ERROR, e.response.data.message, TRUE);
+          dispatch(setOpen(false));
+        }
       });
   }, [meta]);
   return (
-    <div id="content">
+    <div
+      id="content"
+      onLoad={() => {
+        console.log('fack');
+      }}
+    >
       <div id="controller">
         <BaseButton
           customCss={baseBtnAdd}

@@ -44,6 +44,5 @@ export class Handle {
   }
   static handleShowCreateCandidate() {
     Handle.navigate('/new-candidate');
-    handleSideBar.setTitleHeader(TITLE_HEADER.CANDIDATE.CREATE);
   }
 }
