@@ -9,3 +9,6 @@ export const styleIconSetting = {
     color: 'white',
   },
 };
+export const baseFileButton = {
+  fontSize: '30px',
+};

@@ -7,6 +7,22 @@
 .first-element-w {
   width: 120px;
 }
+.width-40 {
+  flex: 1.5;
+  height: 100%;
+}
+.width-60 {
+  flex: 2;
+  height: 100%;
+}
+/*base flex*/
+.flex {
+  display: flex;
+}
+/* margin */
+.margin-r-10 {
+  margin-right: 10px;
+}
 .text-center {
   text-align: center;
 }
@@ -14,6 +30,8 @@
   height: calc(100vh - 68px);
 }
 #content {
+  height: 100%;
+  width: 100%;
 }
 #controller {
   display: flex;
@@ -111,5 +129,41 @@ th:nth-child(2) {
 #pagination {
   position: absolute;
   bottom: 4%;
-  left: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+/* base form */
+.header-form {
+  font-size: 30px;
+  font-weight: 500;
+  font-family: serif;
+}
+#form {
+  padding: 10px;
+  margin-top: 30px;
+}
+#bg-form {
+}
+.form-control {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin: 14px 0;
+}
+.box-input {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+}
+.base-input-form {
+  height: 40px;
+  font-size: 17px;
+  padding-left: 10px;
+  outline: #33978d;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 1px 1px 1px;
+}
+.lable {
+  margin-bottom: 8px;
 }

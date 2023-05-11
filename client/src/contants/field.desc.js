@@ -30,3 +30,8 @@ export const TITLE_HEADER = {
     UPDATE: 'Chỉnh sửa thông tin tổ chức',
   },
 };
+export const FIELD_CREATE = {
+  NAME: 'name',
+  EMAIL: 'email',
+  ADDRESS: 'address',
+};
