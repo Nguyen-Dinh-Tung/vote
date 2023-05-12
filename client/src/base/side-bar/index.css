@@ -10,14 +10,17 @@
   left: 0;
   bottom: 0;
   border-right: 1px solid #ccc;
+  background-color: rgb(38, 166, 154);
 }
 #header-sidve-bar {
   height: 68px;
   width: 100%;
-  background-color: white;
+  background-color: black;
+  color: white;
   display: flex;
   align-items: center;
   border-bottom: 1px solid #ccc;
+  background-color: rgb(38, 166, 154);
 }
 #version {
   font-size: 22px;
@@ -33,6 +36,9 @@
 }
 #side-bar-body {
   padding: 0 20px;
+  position: relative;
+  animation-name: sideBarItemAnimation;
+  animation-duration: 2s;
 }
 .side-bar-body-item {
   font-weight: 600;
@@ -41,23 +47,23 @@
   font-family: auto;
   font-size: 22px;
   border-radius: 8px;
-  box-shadow: 3px 1px 6px;
+  box-shadow: 3px 2px 3px;
   cursor: pointer;
   padding-left: 18px;
   line-height: 44px;
   position: relative;
-  animation-name: sideBarItemAnimation;
-  animation-duration: 2s;
+  display: flex;
+  align-items: center;
 }
 .side-bar-body-item:hover {
-  background-color: #f4f3f3;
+  background-color: #f4f3f3 !important;
   color: black;
   box-shadow: 3px 1px 6px;
 }
 .side-bar-body-item:active {
   position: relative;
   animation-name: clickAnimation;
-  animation-duration: 1s;
+  animation-duration: 20s;
 }
 @keyframes sideBarItemAnimation {
   0% {
@@ -75,11 +81,12 @@
 }
 @keyframes clickAnimation {
   0% {
-    left: 20px;
-    top: 10px;
+    left: 30px;
+  }
+  50% {
+    left: 15px;
   }
   100% {
-    left: 10px;
-    top: 5px;
+    left: 0px;
   }
 }

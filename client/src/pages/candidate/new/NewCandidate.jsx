@@ -8,18 +8,34 @@ import BaseButton from '../../../components/btn/BaseButton';
 import { Handle } from './handle';
 import { useNavigate } from 'react-router';
 import { Handle as handleBase } from '../../../base/base/handle';
-function NewsCandidate(props) {
-  const [data, setData] = useState();
+import useNotifyFunc from '../../../hooks/notify.func';
+function NewCandidate(props) {
+  const [data, setData] = useState({
+    address: '',
+    background: undefined,
+    descs: '',
+    email: '',
+    height: '',
+    idno: '',
+    m1: '',
+    m2: '',
+    m3: '',
+    name: '',
+    slogan: '',
+    url: '',
+    weight: '',
+  });
+  const [notifyFunc] = useNotifyFunc();
   const navigate = useNavigate();
+  Handle.data = data;
   useEffect(() => {
-    Handle.setData = setData;
+    handleBase.onLoad(TITLE_HEADER.CANDIDATE.CREATE);
     Handle.navigate = navigate;
+    Handle.setData = setData;
+    Handle.notifyFunc = notifyFunc;
   }, []);
-  useEffect(() => {
-    Handle.data = data;
-  }, [data]);
   return (
-    <div id="content" className="flex" onLoad={Handle.onLoad}>
+    <div id="content" className="flex">
       <div
         id="bg-form"
         className="width-40"
@@ -99,7 +115,7 @@ function NewsCandidate(props) {
               </label>
               <input
                 id="height"
-                type="text"
+                type="number"
                 name="height"
                 className="base-input-form"
                 placeholder="Nhập chiều cao"
@@ -112,7 +128,7 @@ function NewsCandidate(props) {
               </label>
               <input
                 id="weight"
-                type="text"
+                type="number"
                 name="weight"
                 className="base-input-form"
                 placeholder="Nhập cân nặng"
@@ -211,4 +227,4 @@ function NewsCandidate(props) {
   );
 }
 
-export default NewsCandidate;
+export default NewCandidate;

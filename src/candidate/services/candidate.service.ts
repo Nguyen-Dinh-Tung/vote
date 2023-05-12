@@ -12,7 +12,6 @@ import { Repository, Like } from 'typeorm';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateDto } from '../dto/update-candidate.dto';
 import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-contest.entity';
-import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { Response } from 'express';
 import {
@@ -25,10 +24,13 @@ import {
 } from '../contants/message';
 import { CandidateRecomendEntity } from '../entities/candidate-recomend.entity';
 import { AssignmentContestService } from 'src/assignment-contest/services/assignment-contest.service';
-import { UserCaService } from 'src/user-ca/services/user-ca.service';
-import { Roles } from 'src/common/enum/role.enum';
 import { QueryDto } from 'src/common/interfaces/QueryFilter.interface';
 import { Transactional } from 'typeorm-transactional';
+import { appErrorResponse } from 'src/common/response/app-response.error';
+import { saveImage } from 'src/common/func/handleImage';
+import { appResSuccess } from 'src/common/response/app-res.success';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { USER_NOT_FOUND } from 'src/users/contants/message';
 dotenv.config();
 
 @Injectable()
@@ -43,109 +45,54 @@ export class CandidateService {
     @InjectRepository(CandidateRecomendEntity)
     private readonly candidateRemEntity: Repository<CandidateRecomendEntity>,
     private readonly ascoService: AssignmentContestService,
-    private readonly ucaSerivce: UserCaService,
+    @InjectRepository(UserEntity)
+    private readonly userEntity: Repository<UserEntity>,
   ) {}
   @Transactional()
   async create(
     createCandidateDto: CreateCandidateDto,
     idUser: string,
+    file: Express.Multer.File,
     res: Response,
-    userCreate: string,
-    file?: Express.Multer.File,
   ) {
-    let checkCandidate = await this.candidateEntity.findOne({
+    const checkCandidate = await this.candidateEntity.findOne({
       where: [
-        { idno: createCandidateDto.idno },
+        { name: createCandidateDto.name },
         { email: createCandidateDto.email },
       ],
     });
     if (checkCandidate)
-      return {
-        message: CANDIDATE_EXIST,
-        status: HttpStatus.CONFLICT,
-        data: undefined,
-        failList: createCandidateDto,
-      };
+      return appErrorResponse(HttpStatus.BAD_REQUEST, CANDIDATE_EXIST, res);
+    const checkUser = await this.userEntity.findOne({
+      where: {
+        id: idUser,
+      },
+    });
+    if (!checkUser)
+      return appErrorResponse(HttpStatus.BAD_REQUEST, USER_NOT_FOUND, res);
 
-    let newData = {
+    const newRecomendCadidate = await this.candidateRemEntity.save({
+      descs: createCandidateDto.descs,
+      slogan: createCandidateDto.slogan,
+    });
+    const data = {
+      email: createCandidateDto.email,
       name: createCandidateDto.name,
       address: createCandidateDto.address,
-      email: createCandidateDto.email,
+      background: saveImage(file),
       weight: createCandidateDto.weight,
-      measure: createCandidateDto.measure,
-      idno: createCandidateDto.idno,
       height: createCandidateDto.height,
-      historyCreate: userCreate,
+      idno: createCandidateDto.idno,
+      measure: createCandidateDto.measure,
+      carem: newRecomendCadidate,
     };
-
-    if (file) {
-      newData['background'] = this.saveImage(file);
-    }
-    let newCandidate = await this.candidateEntity.save(newData);
-
-    if (newCandidate) {
-      let carem = {
-        slogan: createCandidateDto.slogan,
-        descs: createCandidateDto.descs,
-      };
-
-      let newCarem = await this.candidateRemEntity.save(carem);
-
-      if (newCarem) {
-        newCandidate.carem = newCarem;
-        await this.candidateEntity.save(newCandidate);
-      }
-    }
-    let admin = await this.ucaSerivce.addAminUca({
-      idCandidate: newCandidate.id,
-      idUser: idUser,
-      role: Roles.ucp_admin,
-    });
-
-    let share = createCandidateDto.share;
-    let listAsco: AssmContestEntity[];
-    let listFail: any;
-    if (share.listIdContest) {
-      let InfoAsco = {
-        idCandidates: [newCandidate.id],
-        listIdContest: share.listIdContest,
-      };
-
-      let resAsco = await this.ascoService.create({
-        share: InfoAsco,
-      });
-      listAsco = resAsco.data;
-      listFail = resAsco.failList;
-    }
-
-    let listUca: UserCa[];
-    let listFailUca: any;
-    if (share.listIdUsers.length > 0) {
-      let infoUcaNew = {
-        listIdUsers: share.listIdUsers,
-        idCandidates: [newCandidate.id],
-      };
-      let resUca = await this.ucaSerivce.create({
-        share: infoUcaNew,
-      });
-      listUca = resUca.data;
-      listFailUca = resUca.failList;
-    }
-
-    return {
-      data: newCandidate,
-      share: {
-        listAsco: listAsco,
-        listUca: listUca,
-      },
-      failList: {
-        listFail: listFail,
-        listFailUca: listFailUca,
-      },
-      status: HttpStatus.CREATED,
-      message: ADD_CANDIDATE_SUCCESS,
-      admin: admin,
-    };
+    const newCandidate = await this.candidateEntity.save(data);
+    return appResSuccess(
+      newCandidate,
+      ADD_CANDIDATE_SUCCESS,
+      HttpStatus.CREATED,
+      res,
+    );
   }
 
   async findAll(res: Response, query: QueryDto) {
@@ -273,7 +220,7 @@ export class CandidateService {
     });
 
     if (file) {
-      checkCandidate['background'] = this.saveImage(file);
+      // checkCandidate['background'] = this.saveImage(file);
       flagCaUp = true;
     }
 
@@ -311,16 +258,5 @@ export class CandidateService {
   }
   async NotFoundError() {
     return new NotFoundError('Cadidate not found');
-  }
-
-  private saveImage(file: Express.Multer.File) {
-    let filename = file.filename;
-    let path = file.path;
-    let type = file.mimetype.split('/').pop().toLowerCase();
-    let fileSave = `${process.env.STATICIMG + filename}${Date.now()}.${type}`;
-    let buffer = fs.readFileSync(file.path);
-    fs.writeFileSync(`.${fileSave}`, buffer);
-    fs.unlinkSync(path);
-    return fileSave;
   }
 }

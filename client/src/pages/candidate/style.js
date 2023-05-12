@@ -15,3 +15,4 @@ export const baseFileButton = {
     color: '#9c27b0',
   },
 };
+export const styleAmountCustom = {};

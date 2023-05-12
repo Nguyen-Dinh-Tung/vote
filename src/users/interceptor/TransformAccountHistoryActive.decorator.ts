@@ -10,6 +10,6 @@ export const UserByToken = createParamDecorator(
 
     let token: any = jwt_decode(req.headers.authorization);
 
-    return token.username;
+    return token.id;
   },
 );

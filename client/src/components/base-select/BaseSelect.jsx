@@ -3,15 +3,21 @@ import React from 'react';
 function BaseSelect(props) {
   const options = props.options;
   const handleChange = props.handleChange;
+  const customCss = props.customCss;
+  const name = props.name;
   return (
-    <div>
-      <select onChange={handleChange} className="base-select" name="" id="">
-        <option defaultChecked>Trạng thái</option>
+    <div className="base-select" style={customCss}>
+      <p className="select-desc">{name && name ? name : 'Trạng thái'}</p>
+      <div className="drop-down">
         {options &&
-          options.map((e) => {
-            return <option value={e && e.value}>{e && e.desc}</option>;
+          options.map((e, index) => {
+            return (
+              <div className="base-option" value={e && e.value} key={index}>
+                {e && e.desc}
+              </div>
+            );
           })}
-      </select>
+      </div>
     </div>
   );
 }

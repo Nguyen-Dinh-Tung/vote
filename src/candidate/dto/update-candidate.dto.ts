@@ -3,38 +3,35 @@ import { IsOptional } from 'class-validator';
 import { CreateCandidateDto } from './create-candidate.dto';
 
 export class UpdateCandidateDto extends PartialType(CreateCandidateDto) {
+  @IsOptional()
+  idno?: string;
 
-    @IsOptional()
-    idno? : string ;
+  @IsOptional()
+  name?: string;
 
-    @IsOptional()
-    name? : string ;
+  @IsOptional()
+  address?: string;
 
-    @IsOptional()
-    address? : string ;
+  @IsOptional()
+  email?: string;
 
-    @IsOptional()
-    email? : string ;
+  @IsOptional()
+  historyChane?: string;
 
-    @IsOptional()
-    historyChane? : string ; 
+  @IsOptional()
+  weight?: string;
 
-    @IsOptional()
-    weight? : string ; 
+  @IsOptional()
+  height?: string;
 
-    @IsOptional()
+  @IsOptional()
+  measure?: string;
 
-    height? : string ;
+  @IsOptional()
+  background: Express.Multer.File;
 
-    @IsOptional()
-    measure? : string ;
-
-    @IsOptional()
-    background ? : string ;
-
-    @IsOptional()
-    slogan? : string ;
-    @IsOptional()
-    descs? : string ;
-    
+  @IsOptional()
+  slogan?: string;
+  @IsOptional()
+  descs?: string;
 }

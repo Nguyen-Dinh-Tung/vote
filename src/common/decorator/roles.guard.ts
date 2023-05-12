@@ -17,6 +17,7 @@ import { FORBIDDEN } from '../constant/message';
 import { PemissionGuard } from './ucp.guard';
 import { JwtService } from '@nestjs/jwt';
 import { JwtSelect } from '../secret/secrect.jwt';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Injectable()
 export class RolesGuards implements CanActivate {
@@ -69,5 +70,9 @@ export class RolesGuards implements CanActivate {
 }
 
 export function RolesCheck(roles: Roles[]) {
-  return applyDecorators(SetMetadata('roles', roles), UseGuards(RolesGuards));
+  return applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(RolesGuards),
+    ApiBearerAuth(),
+  );
 }

@@ -10,14 +10,21 @@ import BaseButton from '../../components/btn/BaseButton';
 import { BTN_ADD_CANDIDATE } from '../../contants/btn';
 import BaseInput from '../../components/base-input/BaseInput';
 import BaseSelect from '../../components/base-select/BaseSelect';
-import { checkedStyle, inputSearch, styleIconSetting } from './style';
+import {
+  checkedStyle,
+  inputSearch,
+  styleAmountCustom,
+  styleIconSetting,
+} from './style';
 import { baseBtnAdd } from '../../base/base/style';
 import Paginations from '../../components/pagination/Pagination';
 import { Avatar } from '@mui/material';
-import { STATUS } from '../../contants/field.desc';
+import { STATUS, TITLE_HEADER } from '../../contants/field.desc';
 import { useDispatch } from 'react-redux';
 import { setOpen } from '../../redux/features/lazyload.slice';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { Handle as handleBase } from '../../base/base/handle';
+import LockIcon from '@mui/icons-material/Lock';
 function Candidate(props) {
   const [data, setData] = useState();
   const [notifyFunc] = useNotifyFunc();
@@ -65,13 +72,11 @@ function Candidate(props) {
         }
       });
   }, [meta]);
+  useEffect(() => {
+    handleBase.onLoad(TITLE_HEADER.CANDIDATE.VIEW);
+  }, []);
   return (
-    <div
-      id="content"
-      onLoad={() => {
-        console.log('fack');
-      }}
-    >
+    <div id="content">
       <div id="controller">
         <BaseButton
           customCss={baseBtnAdd}
@@ -95,8 +100,9 @@ function Candidate(props) {
               <th className="table-header">Địa chỉ</th>
               <th className="table-header">Email</th>
               <th className="table-header text-center">Ảnh</th>
-              <th className="table-header">check</th>
+              <th className="table-header">Ba vòng</th>
               <th className="table-header text-center">Tùy chỉnh</th>
+              <th className="table-header text-center">Khoá</th>
             </tr>
           </thead>
           <tbody>
@@ -165,6 +171,9 @@ function Candidate(props) {
                         }}
                       />
                     </td>
+                    <td className="td-body text-center">
+                      <LockIcon />
+                    </td>
                   </tr>
                 );
               })}
@@ -176,6 +185,9 @@ function Candidate(props) {
           handleChange={Handle.handlePagination}
           totalPage={data && data['totalPage']}
         />
+      </div>
+      <div className="select-amount">
+        <BaseSelect customCss={styleAmountCustom} name={'Số lượng'} />
       </div>
     </div>
   );

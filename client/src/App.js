@@ -10,7 +10,7 @@ import ForgotPassword from './pages/forgot-password/ForgotPassword';
 import Body from './base/body/Body';
 import Base from './base/base/Base';
 import Candidate from './pages/candidate/Candidate';
-import NewsCandidate from './pages/candidate/news/NewsCandidate';
+import NewCandidate from './pages/candidate/new/NewCandidate';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -44,8 +44,8 @@ function App() {
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />
         <Route path="" element={<Base />}>
           <Route path="/candidate" element={<Candidate />} />
-          <Route path="/new-candidate" element={<NewsCandidate />} />
-          <Route path="/candidate/:id" element={<NewsCandidate />} />
+          <Route path="/new-candidate" element={<NewCandidate />} />
+          <Route path="/candidate/:id" element={<NewCandidate />} />
           <Route path="/company" />
           <Route path="/contest" />
         </Route>

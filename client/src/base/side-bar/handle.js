@@ -7,22 +7,30 @@ export class Handle {
   static navigate;
   static setTarget;
   static dispatch;
+  static showUsers(e) {
+    Handle.checkAndOpenLazyload(ROUTER.CANDIDATE);
+    Handle.navigate(ROUTER.USER);
+    Handle.setTarget('1');
+  }
   static showCandidate(e) {
     Handle.checkAndOpenLazyload(ROUTER.CANDIDATE);
     Handle.navigate(ROUTER.CANDIDATE);
-    Handle.setTarget('1');
-  }
-  static showCompany() {
-    Handle.checkAndOpenLazyload(ROUTER.COMPANY);
-    Handle.navigate(ROUTER.COMPANY);
-    Handle.setTarget('3');
-    Handle.setTitleHeader(TITLE_HEADER.CONTEST.VIEW);
+    Handle.setTarget('2');
   }
   static showContest() {
     Handle.navigate(ROUTER.CONTEST);
     Handle.checkAndOpenLazyload(ROUTER.CONTEST);
-    Handle.setTarget('2');
-    Handle.setTitleHeader(TITLE_HEADER.COMPANY.VIEW);
+    Handle.setTarget('3');
+  }
+  static showCompany() {
+    Handle.checkAndOpenLazyload(ROUTER.COMPANY);
+    Handle.navigate(ROUTER.COMPANY);
+    Handle.setTarget('4');
+  }
+  static showReport() {
+    Handle.checkAndOpenLazyload(ROUTER.COMPANY);
+    Handle.navigate(ROUTER.REPORT);
+    Handle.setTarget('5');
   }
   static lazyload() {
     Handle.dispatch(setOpen(true));

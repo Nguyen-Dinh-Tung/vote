@@ -17,10 +17,10 @@ import { LoginUserDto } from '../dto/login-auth.dto';
 import { Res, UploadedFile } from '@nestjs/common/decorators';
 import { Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
-
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

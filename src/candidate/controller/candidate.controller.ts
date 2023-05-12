@@ -1,5 +1,3 @@
-import { ParseParamPipe } from 'src/users/pipe/ParseParamPipe.pipe';
-import { GET_LIST_CANDIDATE_SUCCESS } from 'src/candidate/contants/message';
 import { ImagePipe } from 'src/users/pipe/Image.pipe';
 import { UserByToken } from './../../users/interceptor/TransformAccountHistoryActive.decorator';
 import { RolesCheck } from 'src/common/decorator/roles.guard';
@@ -13,7 +11,7 @@ import {
   Delete,
   UseInterceptors,
   HttpStatus,
-  DefaultValuePipe,
+  HttpException,
 } from '@nestjs/common';
 import { CreateCandidateDto } from '../dto/create-candidate.dto';
 import { UpdateCandidateDto } from '../dto/update-candidate.dto';
@@ -36,8 +34,11 @@ import { Response } from 'express';
 import { ParseQuery } from 'src/common/pipe/ParseQuery.pipe';
 import { QueryDto } from 'src/common/interfaces/QueryFilter.interface';
 import { ParseStrPipe } from 'src/common/pipe/ParseStr.pipe';
-import { IdUserInterceptor } from 'src/users/interceptor/IdUserInterceptor';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { apiDecorator } from 'src/common/decorator/multer.decorator';
+import { removeFile } from 'src/common/func/handleImage';
 dotenv.config();
+@ApiTags('candidate')
 @Controller('candidate')
 export class CandidateController {
   constructor(
@@ -46,33 +47,29 @@ export class CandidateController {
     private usersService: UsersService,
   ) {}
 
+  @ApiOperation({ summary: 'Create candidate' })
+  @apiDecorator()
   @RolesCheck([Roles.admin, Roles.content])
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('background'))
   async create(
     @Body(new ParseStrPipe()) createCandidateDto: CreateCandidateDto,
     @UserByToken() userBytoken: any,
     @Res() res: Response,
-    @IdUserInterceptor() idUser: string,
-    @UploadedFile(new ImagePipe()) file?: Express.Multer.File,
+    @UploadedFile(new ImagePipe()) file: Express.Multer.File,
   ) {
     try {
-      let resAddCa = await this.candidateService.create(
+      return await this.candidateService.create(
         createCandidateDto,
-        idUser,
-        res,
         userBytoken,
         file,
+        res,
       );
-      return res.status(resAddCa.status).json({
-        message: resAddCa.message,
-        failList: resAddCa.failList,
-        newCandidate: resAddCa?.data,
-        share: resAddCa?.share,
-        admin: resAddCa?.admin,
-      });
     } catch (e) {
-      if (e) console.log(e);
+      if (e) {
+        removeFile(file.path);
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
   }
 

@@ -28,6 +28,7 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '50mb' }));
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('API CONTEST')
     .setDescription('The COONTEST API description')
     .setVersion('1.0')
