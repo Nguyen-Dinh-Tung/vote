@@ -3,43 +3,45 @@ import { AssmContestEntity } from 'src/assignment-contest/entities/assignment-co
 import { ManyToOne } from 'typeorm';
 import { CandidateEntity } from './../../candidate/entities/candidate.entity';
 import { ContestEntity } from './../../contest/entities/contest.entity';
-import { PrimaryGeneratedColumn, Entity, CreateDateColumn, OneToOne } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  Entity,
+  CreateDateColumn,
+  OneToOne,
+} from 'typeorm';
 import { Column } from 'typeorm';
-import * as dayjs from 'dayjs'
-
 
 @Entity({
-    name : 'tc',
+  name: 'tc',
 })
 export class TicketEntity {
-    @PrimaryGeneratedColumn('uuid')
-    id : string ;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => CandidateEntity , (ca) => ca.id)
-    @JoinColumn()
-    candidate : CandidateEntity ;
+  @ManyToOne(() => CandidateEntity, (ca) => ca.id)
+  @JoinColumn()
+  candidate: CandidateEntity;
 
-    @Column({
-        default : true
-    })
-    isActive : boolean ;
-    @Column({
-        type : 'datetime' ,
-        default :() => 'CURRENT_TIMESTAMP'
-    })
-    timeAt : Date ;
-    @Column({
-        type : 'timestamp' ,
-        default :() => 'CURRENT_TIMESTAMP'
-    })
-    timeOut : string ;
-    @Column({
-        default : 'Default'
-    })
-    historyCreate  : string ;
-    @Column({
-        default : 'This is active'
-    })
-    historyChange : string ;
-
+  @Column({
+    default: true,
+  })
+  isActive: boolean;
+  @Column({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  timeAt: Date;
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  timeOut: string;
+  @Column({
+    default: 'Default',
+  })
+  historyCreate: string;
+  @Column({
+    default: 'This is active',
+  })
+  historyChange: string;
 }
