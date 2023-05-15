@@ -11,6 +11,7 @@ import Body from './base/body/Body';
 import Base from './base/base/Base';
 import Candidate from './pages/candidate/Candidate';
 import NewCandidate from './pages/candidate/new/NewCandidate';
+import Demo from './pages/demo/Demo';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -39,6 +40,7 @@ function App() {
           <Route path="/new-friend" element={<NewFriend />} />
           <Route path="/friend" element={<Friend />} />
         </Route> */}
+        <Route path={'/demo'} element={<Demo />} />
         <Route path={'/register'} element={<Register />} />
         <Route path={'/auth/login'} element={<Login />} />
         <Route path="/auth/forgot-password" element={<ForgotPassword />} />

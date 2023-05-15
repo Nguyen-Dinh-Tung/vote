@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.dd {
+  position: relative;
+  background-color: black;
+  color: white;
+  width: 200px;
+  cursor: pointer;
+}
+.dd-title {
+  display: flex;
+  width: 200px;
+  justify-content: space-around;
+  height: 50px;
+}
+
+.dd-content {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  display: none;
+}
+.dd-item {
+  height: 50px;
+  position: relative;
+  animation: ddAnimation;
+  animation-duration: 0.5s;
+  background-color: aqua;
+}
+
+@keyframes ddAnimation {
+  0% {
+    top: -45px;
+    opacity: 0.3;
+  }
+  100% {
+    top: -0px;
+    opacity: 1;
+  }
+}
