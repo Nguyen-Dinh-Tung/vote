@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'test-server',
-      script: 'dist/main.js',
+      script: 'dist/src/main.js',
 
       // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
       args: 'one two',
