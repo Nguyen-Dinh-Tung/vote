@@ -30,7 +30,7 @@ import { JwtService } from '@nestjs/jwt';
       ConnectIoEntity,
     ]),
     MulterModule.register({
-      dest: './files/images',
+      dest: '/files/images',
     }),
     forwardRef(() => UserCpModule),
     forwardRef(() => CompanyEntity),
