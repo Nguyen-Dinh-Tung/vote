@@ -4,7 +4,7 @@ export class PrivateChatDto {
   @IsNotEmpty()
   message: string;
   @IsNotEmpty()
-  idUser: string; 
+  idUser: string;
   @IsOptional()
   file: Express.Multer.File;
   @IsNotEmpty()

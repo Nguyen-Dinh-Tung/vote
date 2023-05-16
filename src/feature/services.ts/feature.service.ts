@@ -9,19 +9,21 @@ import { FeatureEntity } from '../entities/feature.entity';
 
 @Injectable()
 export class FeatureService {
-  constructor(@InjectRepository(FeatureEntity) private readonly featureEntity : Repository<FeatureEntity>){
-
-  }
+  constructor(
+    @InjectRepository(FeatureEntity)
+    private readonly featureEntity: Repository<FeatureEntity>,
+  ) {}
   async create(createFeatureDto: CreateFeatureDto) {
-    let checkFeature = await this.validateFeature({code : createFeatureDto.code})
-    
-    if(!checkFeature){
-      let newFeature = await this.featureEntity.save(createFeatureDto) ;
-      return newFeature
-    }else{
+    const checkFeature = await this.validateFeature({code : createFeatureDto.code})
+    });
+
+    if (!checkFeature) {
+      const newFeature = await this.featureEntity.save(createFeatureDto) ;
+      return newFeature;
+    } else {
       return {
-        message : "Feature existing"
-      }
+        message: 'Feature existing',
+      };
     }
   }
 
@@ -41,8 +43,8 @@ export class FeatureService {
     return `This action removes a #${id} feature`;
   }
 
-  async validateFeature (data : Validate): Promise <any>{
-    let checkFeature = await this.featureEntity.findOneBy(data)
-    return checkFeature
+  async validateFeature(data: Validate): Promise<any> {
+    const checkFeature = await this.featureEntity.findOneBy(data)
+    return checkFeature;
   }
 }

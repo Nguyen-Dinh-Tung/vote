@@ -177,9 +177,9 @@ export class UsersController {
   })
   // @UseInterceptors(TransformResCreateUser)
   async test(
-    @Param('page', new DefaultValuePipe(0)) page?: Number,
+    @Param('page', new DefaultValuePipe(0)) page?: number,
     @Query('active', new DefaultValuePipe(true), ParseBoolPipe)
-    active?: Boolean,
+    active?: boolean,
     @UserByToken() UserBytoken?: string,
   ) {
     try {

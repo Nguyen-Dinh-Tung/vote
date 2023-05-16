@@ -27,13 +27,13 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto, res: Response) {
     try {
-      let checkUser = await this.userService.validateUser({
+      const checkUser = await this.userService.validateUser({
         username: loginUserDto.username,
       });
 
       if (checkUser) {
         if (checkUser.isActive == true) {
-          let compePassword = bcrypt.compareSync(
+          const compePassword = bcrypt.compareSync(
             loginUserDto.password,
             checkUser.password,
           );
@@ -43,7 +43,7 @@ export class AuthService {
               message: MessageLogin.PASSWORD_NOT_FOUND,
             });
 
-          let token = await this.createToken({
+          const token = await this.createToken({
             idUser: checkUser.id,
           });
 
@@ -71,7 +71,7 @@ export class AuthService {
   }
 
   async createToken(data: any): Promise<any> {
-    let token = this.jwtService.signAsync(data, { expiresIn: '7d' });
+    const token = this.jwtService.signAsync(data, { expiresIn: '7d' });
     return token;
   }
   async forgotPassword(data: ForgotPasswordDto, res: Response) {

@@ -1,4 +1,7 @@
-import { USER_NOT_EXISTING_SYSTEM, USER_NOT_FOUND } from './../../users/contants/message';
+import {
+  USER_NOT_EXISTING_SYSTEM,
+  USER_NOT_FOUND,
+} from './../../users/contants/message';
 import { UserEntity } from './../../users/entities/user.entity';
 import { CONTEST_NOT_FOUND } from './../../assignment-company/contants/contant';
 import { HttpStatus, Injectable } from '@nestjs/common';
@@ -14,66 +17,61 @@ import { UserCo } from '../entities/user-co.entity';
 
 @Injectable()
 export class UserCoService {
-
   constructor(
-    @InjectRepository(UserCo) private readonly ucoEntity : Repository<UserCo>,
-    @InjectRepository(ContestEntity) private readonly contestEntity : Repository<ContestEntity>,
-    @InjectRepository(UserEntity) private readonly userEntity : Repository<UserEntity>,
-  ){
+    @InjectRepository(UserCo) private readonly ucoEntity: Repository<UserCo>,
+    @InjectRepository(ContestEntity)
+    private readonly contestEntity: Repository<ContestEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userEntity: Repository<UserEntity>,
+  ) {}
+  async create(createUserCoDto: CreateUserCoDto): Promise<FindList<UserCo>> {
+    const checkContest = await this.contestEntity.findOne({
+      where: {
+        id: createUserCoDto.idContest,
+      },
+    });
 
-  }
-  async create(createUserCoDto: CreateUserCoDto) : Promise<FindList<UserCo>>  {
+    const checkUsers = await this.userEntity.find({
+      where: {
+        id: In(createUserCoDto.idUsers),
+      },
+    });
 
-    let checkContest = await this.contestEntity.findOne({
-      where : {
-        id : createUserCoDto.idContest
-      }
-    })
+    if (!checkContest)
+      return {
+        message: CONTEST_NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
+        data: undefined,
+        total: undefined,
+        failList: undefined,
+      };
 
-    let checkUsers = await this.userEntity.find({
-      where : {
-        id : In(createUserCoDto.idUsers)
-      }
-    })
+    if (!checkUsers || checkUsers.length < 1)
+      return {
+        message: USER_NOT_FOUND,
+        status: HttpStatus.NOT_FOUND,
+        data: undefined,
+        total: undefined,
+        failList: undefined,
+      };
 
-    if(!checkContest)
-    return {
-      message : CONTEST_NOT_FOUND ,
-      status : HttpStatus.NOT_FOUND ,
-      data : undefined , 
-      total : undefined ,
-      failList : undefined
-    }
+    const listUco = [];
+    for (const e of checkUsers) {
+      const infoNewUco = {
+        contest: checkContest,
+        user: e,
+      };
 
-    if(!checkUsers || checkUsers.length < 1)
-    return {
-      message : USER_NOT_FOUND ,
-      status : HttpStatus.NOT_FOUND ,
-      data : undefined , 
-      total : undefined ,
-      failList : undefined
-
-    }
-
-    let listUco = [] ;
-    for(let e of checkUsers){
-
-      let infoNewUco = {
-        contest : checkContest ,
-        user : e 
-      } 
-
-      let newUco = await this.ucoEntity.save(infoNewUco)
-      if(newUco)
-      listUco.push(newUco)
+      const newUco = await this.ucoEntity.save(infoNewUco);
+      if (newUco) listUco.push(newUco);
     }
     return {
-      message : ADD_NEW_UCO_SUCCESS ,
-      status : HttpStatus.NOT_FOUND ,
-      data : listUco , 
-      total : listUco.length ,
-      failList : undefined
-    }
+      message: ADD_NEW_UCO_SUCCESS,
+      status: HttpStatus.NOT_FOUND,
+      data: listUco,
+      total: listUco.length,
+      failList: undefined,
+    };
   }
 
   findAll() {

@@ -1,10 +1,8 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateUserCoDto {
-
-    @IsNotEmpty()
-    idContest : string ;
-    @IsNotEmpty() 
-    idUsers : string [] ;
-
+  @IsNotEmpty()
+  idContest: string;
+  @IsNotEmpty()
+  idUsers: string[];
 }

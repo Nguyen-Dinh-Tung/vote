@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UserCoService } from '../services/user-co.service';
 import { CreateUserCoDto } from '../dto/create-user-co.dto';
 import { UpdateUserCoDto } from '../dto/update-user-co.dto';
@@ -9,14 +17,10 @@ export class UserCoController {
 
   @Post()
   create(@Body() createUserCoDto: CreateUserCoDto) {
-    try{
-
-    return this.userCoService.create(createUserCoDto);
-
-    }catch(e) {
-
-      if(e) console.log(e);
-      
+    try {
+      return this.userCoService.create(createUserCoDto);
+    } catch (e) {
+      if (e) console.log(e);
     }
   }
 

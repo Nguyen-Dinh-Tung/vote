@@ -126,16 +126,16 @@ export class CandidateController {
 
   @Post('upload/image')
   async upload(@UploadedFile() bg?: Express.Multer.File) {
-    let mimeType = bg.mimetype.split('/')[1];
-    let filename = bg.filename;
-    let path = bg.path;
-    let bufferFile = fs.readFileSync(path);
-    let fileSave = `${filename + Date.now()}.${mimeType}`;
-    let newFile = fs.writeFileSync(
+    const mimeType = bg.mimetype.split('/')[1];
+    const filename = bg.filename;
+    const path = bg.path;
+    const bufferFile = fs.readFileSync(path);
+    const fileSave = `${filename + Date.now()}.${mimeType}`;
+    const newFile = fs.writeFileSync(
       process.env.STATICIMG + fileSave,
       bufferFile,
     );
-    let hostImage = process.env.HOST + fileSave;
+    const hostImage = process.env.HOST + fileSave;
     return hostImage;
   }
 
@@ -143,7 +143,7 @@ export class CandidateController {
   @Post('upload/excel')
   async uploadExcelCandidate(@UploadedFile() excelFile?: Express.Multer.File) {
     console.log(excelFile);
-    let path = excelFile.path;
+    const path = excelFile.path;
     fs.readFileSync(path);
   }
 }

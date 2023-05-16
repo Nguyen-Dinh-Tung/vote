@@ -1,51 +1,56 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 @Entity({
-    name : 'corem',
+  name: 'corem',
 })
-export class ContestRecomendEntity{
+export class ContestRecomendEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id : string ;
+  @Column({
+    default: true,
+  })
+  isActive: boolean;
 
-    @Column({
-        default : true
-    })
-    isActive : boolean ;
+  @Column({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  @Column({
+    default: 'default',
+  })
+  slogan: string;
 
-    @Column({
-        type : 'datetime' ,
-        default :() => 'CURRENT_TIMESTAMP'
-    })
+  @Column({
+    default: 'default',
+  })
+  descs: string;
 
-    @Column({
-        default : 'default'
-    })
-    slogan : string ;
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  timeAt: Date;
 
-    @Column({
-        default : 'default'
-    })
-    descs : string ;
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  timeOut: string;
 
-    @Column({
-        type : 'timestamp' ,
-        default :() => 'CURRENT_TIMESTAMP'
-    })
-    timeAt : Date ;
+  @Column({
+    default: 'Default',
+  })
+  historyCreate: string;
 
-    @Column({
-        type : 'timestamp' ,
-        default :() => 'CURRENT_TIMESTAMP'
-    })
-    timeOut : string ;
-    
-    @Column({
-        default : 'Default'
-    })
-    historyCreate  : string ;
-
-    @Column({
-        default : 'This is active'
-    })
-    historyChange : string ;
+  @Column({
+    default: 'This is active',
+  })
+  historyChange: string;
 }

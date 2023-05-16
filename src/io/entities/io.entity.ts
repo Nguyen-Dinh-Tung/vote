@@ -1,26 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('io')
+export class IoEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-export class IoEntity{
+  @Column({
+    default: '-1',
+  })
+  socketId: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id : string ;
+  @Column({
+    default: true,
+  })
+  isActive: boolean;
 
-    @Column({
-        default : '-1'
-    })
-    socketId : string ;
-        
-    @Column({
-        default : true
-    })
-    isActive : boolean
-
-    @Column({
-        default : false
-    })
-    isOnline : boolean ;
-
+  @Column({
+    default: false,
+  })
+  isOnline: boolean;
 }

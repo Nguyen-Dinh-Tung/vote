@@ -32,12 +32,12 @@ export class RoomsDataService {
   ) {}
 
   async insertNewMessage(data: PrivateChatDto) {
-    let checkRoom = await this.roomEntity.findOne({
+    const checkRoom = await this.roomEntity.findOne({
       where: {
         id: data.roomId,
       },
     });
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: data.idUser,
       },
@@ -47,7 +47,7 @@ export class RoomsDataService {
 
     if (!checkUser) return { type: 'user', status: false };
 
-    let newData = await this.roomsDataEntity.save({
+    const newData = await this.roomsDataEntity.save({
       ...data,
       room: checkRoom,
       user: checkUser,

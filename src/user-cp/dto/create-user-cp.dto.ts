@@ -1,13 +1,13 @@
 import { ROLE_UCP } from './../contants/role.enum';
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserCpDto {
-    @IsNotEmpty()
-    idCompany : string [];
+  @IsNotEmpty()
+  idCompany: string[];
 
-    @IsNotEmpty()
-    idUser :  string [] ;
-    
-    @IsOptional()
-    role? : ROLE_UCP ;
+  @IsNotEmpty()
+  idUser: string[];
+
+  @IsOptional()
+  role?: ROLE_UCP;
 }

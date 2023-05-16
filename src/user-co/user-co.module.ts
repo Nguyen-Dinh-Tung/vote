@@ -7,15 +7,9 @@ import { UserCo } from './entities/user-co.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 
 @Module({
-  controllers: [UserCoController ],
-  providers: [UserCoService] ,
-  exports : [UserCoService] ,
-  imports : [
-    TypeOrmModule.forFeature([
-      UserCo ,
-      ContestEntity ,
-      UserEntity
-    ])
-  ]
+  controllers: [UserCoController],
+  providers: [UserCoService],
+  exports: [UserCoService],
+  imports: [TypeOrmModule.forFeature([UserCo, ContestEntity, UserEntity])],
 })
 export class UserCoModule {}

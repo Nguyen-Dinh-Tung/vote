@@ -73,7 +73,7 @@ export class TokenService {
       expired: expired,
       type: TYPE_OTP.EMAIL,
     });
-    const message: string = `Mã thay đổi mật khẩu của bạn là : ${token}`;
+    const message = `Mã thay đổi mật khẩu của bạn là : ${token}`;
     nodeMailerMain(checkUser.email, message);
     return res.status(HttpStatus.OK).json({
       message: TOKEN_WAS_SENT,

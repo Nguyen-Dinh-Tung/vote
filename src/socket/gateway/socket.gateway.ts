@@ -47,7 +47,7 @@ export class GateWay
 
   @SubscribeMessage('chat')
   async privateChat(@MessageBody() data: any, @ConnectedSocket() client: any) {
-    let ioIdReceive = await this.ioServices.privateChat(data.idUser);
+    const ioIdReceive = await this.ioServices.privateChat(data.idUser);
 
     client.to(ioIdReceive.socketId).emit('chat', data.message);
   }
@@ -56,10 +56,10 @@ export class GateWay
     @MessageBody() data: any,
     @ConnectedSocket() client: any,
   ) {
-    let idEmit = client.id;
-    let idRoom = data.idRoom;
+    const idEmit = client.id;
+    const idRoom = data.idRoom;
 
-    let reveiceId = await this.ioEntity
+    const reveiceId = await this.ioEntity
       .createQueryBuilder('io')
       .where('io.socketId <> :idSocket', { idSocket: idEmit })
       .leftJoin(ConnectIoEntity, 'cns', 'cns.ioId = io.id')
@@ -68,14 +68,14 @@ export class GateWay
       .select('io')
       .getOne();
 
-    let newMessage = {
+    const newMessage = {
       message: data.message,
       roomId: idRoom,
       idUser: data.idUser,
       file: data.file,
     };
 
-    let res = await this.roomDataService.insertNewMessage(newMessage);
+    const res = await this.roomDataService.insertNewMessage(newMessage);
     if (res.status === true) {
       this.server
         .to(reveiceId.socketId)
@@ -97,16 +97,16 @@ export class GateWay
       let idUser: string;
       if (token) idUser = token.idUser;
 
-      let idSocket: string = client.id;
+      const idSocket: string = client.id;
 
-      let infoConnect = {
+      const infoConnect = {
         idUser: idUser,
         ioId: idSocket,
         isOnline: true,
       };
 
-      let group = await this.ioServices.connect(infoConnect);
-      for (let e of group) {
+      const group = await this.ioServices.connect(infoConnect);
+      for (const e of group) {
         client.join(e.id);
       }
       this.server.emit('user-connect', true);
@@ -124,9 +124,9 @@ export class GateWay
       let idUser: string;
       if (token) idUser = token.idUser;
 
-      let idSocket: string = client.id;
+      const idSocket: string = client.id;
 
-      let infoDisconnect = {
+      const infoDisconnect = {
         idUser: idUser,
         ioId: idSocket,
         isOnline: false,
@@ -140,14 +140,14 @@ export class GateWay
   public afterInit(client: any) {}
   @SubscribeMessage('join_room')
   public joinRoom(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
-    let roomName = data.roomId;
+    const roomName = data.roomId;
     client.join(roomName);
     client.to(roomName).emit('room-created', { room: roomName });
   }
 
   @SubscribeMessage('chat-group')
   async chatGroup(@MessageBody() data: any, @ConnectedSocket() client: any) {
-    let res = await this.roomDataService.insertNewMessage(data);
+    const res = await this.roomDataService.insertNewMessage(data);
     if (res.status === true)
       this.server.in(data.idRoom).emit('reveice-group-chat', res);
   }

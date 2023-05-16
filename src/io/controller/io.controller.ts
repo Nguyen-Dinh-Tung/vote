@@ -1,7 +1,4 @@
-import { Controller } from "@nestjs/common/decorators/core/controller.decorator";
-
+import { Controller } from '@nestjs/common/decorators/core/controller.decorator';
 
 @Controller('uio')
-export class ioController {
-    
-}
+export class ioController {}

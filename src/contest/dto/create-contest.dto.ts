@@ -1,47 +1,45 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from "class-transformer";
-import { IsNotEmpty, IsOptional, Length } from "class-validator";
+import { Expose } from 'class-transformer';
+import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 import { ContestShareInterface } from 'src/common/interfaces/Contest-share.interface';
 
 export class CreateContestDto {
+  @Expose()
+  @IsNotEmpty()
+  @ApiProperty()
+  @Length(2)
+  name: string;
 
-    @Expose()
-    @IsNotEmpty()
-    @ApiProperty()
-    @Length(2)
-    name : string ;
+  @Expose()
+  @ApiProperty()
+  @IsNotEmpty()
+  address: string;
 
-    @Expose() 
-    @ApiProperty()
-    @IsNotEmpty()
-    address : string ;
+  @Expose()
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string;
 
-    @Expose()
-    @IsNotEmpty()
-    @ApiProperty()
-    email : string ;
+  @Expose()
+  @ApiProperty()
+  @IsOptional()
+  historyCreate: string;
+  @Expose()
+  @ApiProperty()
+  @IsOptional()
+  slogan: string;
 
-    @Expose()
-    @ApiProperty()
-    @IsOptional()
-    historyCreate : string ;
-    @Expose()
-    @ApiProperty()
-    @IsOptional()
-    slogan : string ;
+  @Expose()
+  @ApiProperty()
+  @IsOptional()
+  description: string;
 
-    @Expose()
-    @ApiProperty()
-    @IsOptional()
-    description : string ;
-    
-    @Expose()
-    @IsOptional()
-    @ApiProperty()
-    background : string ;
+  @Expose()
+  @IsOptional()
+  @ApiProperty()
+  background: string;
 
-    @IsOptional()
-    @ApiProperty()
-    share : ContestShareInterface ;
-
+  @IsOptional()
+  @ApiProperty()
+  share: ContestShareInterface;
 }

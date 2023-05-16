@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { AuthShareService } from './auth-share.service';
 import { CreateAuthShareDto } from './dto/create-auth-share.dto';
 import { UpdateAuthShareDto } from './dto/update-auth-share.dto';
@@ -23,7 +31,10 @@ export class AuthShareController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthShareDto: UpdateAuthShareDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateAuthShareDto: UpdateAuthShareDto,
+  ) {
     return this.authShareService.update(+id, updateAuthShareDto);
   }
 

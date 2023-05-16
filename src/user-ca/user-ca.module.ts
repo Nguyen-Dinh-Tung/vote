@@ -8,15 +8,12 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  controllers: [UserCaController ],
-  providers: [UserCaService ] ,
-  imports : [TypeOrmModule.forFeature([
-    UserCa ,
-    UserEntity ,
-    CandidateEntity 
-  ]) , 
-  UsersModule
-] ,
-  exports : [UserCaService]
+  controllers: [UserCaController],
+  providers: [UserCaService],
+  imports: [
+    TypeOrmModule.forFeature([UserCa, UserEntity, CandidateEntity]),
+    UsersModule,
+  ],
+  exports: [UserCaService],
 })
 export class UserCaModule {}

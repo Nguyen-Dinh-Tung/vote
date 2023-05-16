@@ -1,3 +1,1 @@
-export interface RoomsInterface {
-    
-}
+export interface RoomsInterface {}

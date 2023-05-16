@@ -4,6 +4,6 @@ import { AuthShareController } from './auth-share.controller';
 
 @Module({
   controllers: [AuthShareController],
-  providers: [AuthShareService]
+  providers: [AuthShareService],
 })
 export class AuthShareModule {}

@@ -4,10 +4,9 @@
 // import { createParamDecorator, ExecutionContext, HttpException } from '@nestjs/common';
 // import jwtDecode from 'jwt-decode';
 
-
 // export const UcpInterceptor = createParamDecorator(
 //     async(data : unknown , ctx : ExecutionContext) =>{
-//         let req = ctx.switchToHttp().getRequest()   
+//         let req = ctx.switchToHttp().getRequest()
 //         let token : any =  jwtDecode(req.headers.authorization) ;
 //         let idCompany = req.params.id
 //         let idUser : string = (token).idUser

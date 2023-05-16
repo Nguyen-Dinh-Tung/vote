@@ -1,18 +1,17 @@
-import { InheriTance } from "src/common/class/inheritance";
-import { Column, Entity, JoinColumn,  OneToOne } from "typeorm";
+import { InheriTance } from 'src/common/class/inheritance';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { ContestRecomendEntity } from './ContestRecomend.entity';
 
 @Entity({
-    name : 'co',
+  name: 'co',
 })
-export class ContestEntity  extends InheriTance{
+export class ContestEntity extends InheriTance {
+  @Column({
+    default: 0,
+  })
+  totalCadidate: number;
 
-    @Column({
-        default : 0
-    })
-    totalCadidate  : number ;
-
-    @OneToOne(() => ContestRecomendEntity , (rem) => rem.id)
-    @JoinColumn()
-    coRem : ContestRecomendEntity
+  @OneToOne(() => ContestRecomendEntity, (rem) => rem.id)
+  @JoinColumn()
+  coRem: ContestRecomendEntity;
 }

@@ -1,3 +1,3 @@
 export enum JwtSelect {
-    secrect = 'demonestjs'
+  secrect = 'demonestjs',
 }

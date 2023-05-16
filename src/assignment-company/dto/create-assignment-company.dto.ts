@@ -1,8 +1,8 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateAssignmentCompanyDto {
-    @IsNotEmpty()
-    idCompanies : string [];
-    @IsNotEmpty()
-    idContest : string ;
+  @IsNotEmpty()
+  idCompanies: string[];
+  @IsNotEmpty()
+  idContest: string;
 }

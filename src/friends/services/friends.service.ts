@@ -40,14 +40,14 @@ export class FriendsService {
         message: USER_NOT_FOUND,
       });
 
-    let checkFriend = await this.friendsEntity.findOne({
+    const checkFriend = await this.friendsEntity.findOne({
       where: {
         author: checkUser,
         reveice: checkReveice,
       },
     });
 
-    let checkFriendReveice = await this.friendsEntity.findOne({
+    const checkFriendReveice = await this.friendsEntity.findOne({
       where: {
         author: checkReveice,
         reveice: checkUser,
@@ -58,7 +58,7 @@ export class FriendsService {
         message: FRIEND_EXIST,
       });
     if (!checkFriend && !checkFriendReveice) {
-      let newFriends = await this.friendsEntity.save({
+      const newFriends = await this.friendsEntity.save({
         author: checkUser,
         reveice: checkReveice,
       });
@@ -75,9 +75,9 @@ export class FriendsService {
     idUser: string,
     { take = 8, page = 1, search }: ParamGetFriendsDto,
   ) {
-    let skip = take * page - take;
+    const skip = take * page - take;
 
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: idUser,
       },
@@ -88,7 +88,7 @@ export class FriendsService {
         message: USER_NOT_FOUND,
       });
 
-    let checkFriends: FriendsEntity[] = await this.friendsEntity.find({
+    const checkFriends: FriendsEntity[] = await this.friendsEntity.find({
       where: [{ author: checkUser }, { reveice: checkUser }],
       relations: {
         author: true,
@@ -127,12 +127,12 @@ export class FriendsService {
   }
 
   async cancelFriend(res: Response, id: string, idUser: string) {
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: idUser,
       },
     });
-    let checkFriend = await this.userEntity.findOne({
+    const checkFriend = await this.userEntity.findOne({
       where: {
         id: id,
       },
@@ -141,13 +141,13 @@ export class FriendsService {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: USER_NOT_FOUND,
       });
-    let checkAuthor = await this.friendsEntity.findOne({
+    const checkAuthor = await this.friendsEntity.findOne({
       where: {
         author: checkUser,
         reveice: checkFriend,
       },
     });
-    let checkReveice = await this.friendsEntity.findOne({
+    const checkReveice = await this.friendsEntity.findOne({
       where: {
         author: checkFriend,
         reveice: checkUser,
@@ -172,8 +172,8 @@ export class FriendsService {
     });
   }
   async getUnknowPeoples(res: Response, id: string, { page }: any) {
-    let skip = amount * page - amount;
-    let checkUser = await this.userEntity.findOne({
+    const skip = amount * page - amount;
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: id,
       },
@@ -183,20 +183,20 @@ export class FriendsService {
         message: USER_NOT_FOUND,
       });
 
-    let friends = await this.friendsEntity.find({
+    const friends = await this.friendsEntity.find({
       where: [{ author: checkUser }, { reveice: checkUser }],
       relations: {
         author: true,
         reveice: true,
       },
     });
-    let idsFriend = friends.map((e, index) => {
+    const idsFriend = friends.map((e, index) => {
       if (e.author.id !== id) return e.author.id;
       else e.reveice.id !== id;
       return e.reveice.id;
     });
     idsFriend.push(id);
-    let unknowPeople = await this.userEntity.find({
+    const unknowPeople = await this.userEntity.find({
       where: {
         id: Raw((id) => `${id} not in (:...ids)`, { ids: idsFriend }),
       },

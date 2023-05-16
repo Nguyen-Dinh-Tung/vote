@@ -1,4 +1,4 @@
-export class CheckShareDto{
-    idCompany : string ;
-    idUser : string ;
+export class CheckShareDto {
+  idCompany: string;
+  idUser: string;
 }

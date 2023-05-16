@@ -1,1 +1,1 @@
-export const amount : number = 8 ;
+export const amount = 8;

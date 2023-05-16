@@ -27,7 +27,7 @@ export class IoServices {
     private readonly roomEntity: Repository<RoomEntity>,
   ) {}
   async createSocketConnect(uioDto: UioDto, res: Response) {
-    let checkuser = await this.userEntity.findOne({
+    const checkuser = await this.userEntity.findOne({
       where: {
         id: uioDto.idUser,
       },
@@ -38,14 +38,14 @@ export class IoServices {
         message: USER_NOT_FOUND,
       });
 
-    let uio = await this.uioEntity.save({});
+    const uio = await this.uioEntity.save({});
 
     checkuser.io = uio;
     await this.userEntity.save(checkuser);
   }
 
   async updateUio(updateUioDto: UpdateUioDto, res: Response) {
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: updateUioDto.idUser,
       },
@@ -58,7 +58,7 @@ export class IoServices {
         message: USER_NOT_FOUND,
       });
 
-    let io = checkUser.io;
+    const io = checkUser.io;
 
     if (!io)
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -69,7 +69,7 @@ export class IoServices {
   }
 
   async removeIoId(idUser: string, res: Response) {
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: idUser,
       },
@@ -77,7 +77,7 @@ export class IoServices {
         io: true,
       },
     });
-    let io = checkUser.io;
+    const io = checkUser.io;
     if (!checkUser)
       return res.status(HttpStatus.NOT_FOUND).json({
         message: USER_NOT_FOUND,
@@ -94,7 +94,7 @@ export class IoServices {
 
   @Transactional()
   async connect(connectIoDto: ConnectIoDto) {
-    let checkUser: UserEntity = await this.userEntity.findOne({
+    const checkUser: UserEntity = await this.userEntity.findOne({
       where: {
         id: connectIoDto.idUser,
       },
@@ -112,7 +112,7 @@ export class IoServices {
     if (!io)
       throw new HttpException(SERVE_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 
-    let checkGroup = await this.roomEntity
+    const checkGroup = await this.roomEntity
       .createQueryBuilder('rooms')
       .leftJoin(ConnectIoEntity, 'cns', 'cns.roomId = rooms.id')
       .leftJoin('cns.io', 'io')
@@ -130,7 +130,7 @@ export class IoServices {
 
   async disConnect(disConnectIoDto: DisConnectIo) {
     try {
-      let checkUser: UserEntity = await this.userEntity.findOne({
+      const checkUser: UserEntity = await this.userEntity.findOne({
         where: {
           id: disConnectIoDto.idUser,
         },
@@ -138,7 +138,7 @@ export class IoServices {
           io: true,
         },
       });
-      let io: IoEntity = checkUser.io;
+      const io: IoEntity = checkUser.io;
 
       if (!checkUser)
         throw new HttpException(USER_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -156,7 +156,7 @@ export class IoServices {
   }
 
   async privateChat(idUser: string) {
-    let checkIoId = await this.userEntity.findOne({
+    const checkIoId = await this.userEntity.findOne({
       where: {
         id: idUser,
       },

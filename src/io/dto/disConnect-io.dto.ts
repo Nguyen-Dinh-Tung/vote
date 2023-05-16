@@ -1,4 +1,4 @@
 export class DisConnectIo {
-    isOnline : boolean  ;
-    idUser : string ; 
+  isOnline: boolean;
+  idUser: string;
 }

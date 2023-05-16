@@ -26,10 +26,10 @@ export class AssignmentContestService {
   async create(
     createAssignmentContestDto: CreateAssignmentContestDto,
   ): Promise<FindList<AssmContestEntity & any>> {
-    let failCandidate = [];
-    let failContest = [];
+    const failCandidate = [];
+    const failContest = [];
 
-    let share = createAssignmentContestDto.share;
+    const share = createAssignmentContestDto.share;
     let checkCandidates: CandidateEntity[];
     let checkContests: ContestEntity[];
 
@@ -41,9 +41,9 @@ export class AssignmentContestService {
       });
 
       if (checkCandidates.length !== share.idCandidates.length) {
-        for (let e of share.idCandidates) {
+        for (const e of share.idCandidates) {
           let flag = false;
-          for (let element of checkCandidates) {
+          for (const element of checkCandidates) {
             if (e === element.id) {
               flag = true;
             }
@@ -63,9 +63,9 @@ export class AssignmentContestService {
         },
       });
       if (checkContests.length !== share.listIdContest.length) {
-        for (let e of share.listIdContest) {
+        for (const e of share.listIdContest) {
           let flag = false;
-          for (let element of checkContests) {
+          for (const element of checkContests) {
             if (e === element.id) {
               flag = true;
             }
@@ -89,14 +89,14 @@ export class AssignmentContestService {
         },
       };
 
-    let listUco: AssmContestEntity[] = [];
-    for (let e of checkCandidates) {
-      for (let element of checkContests) {
-        let infoAsco = {
+    const listUco: AssmContestEntity[] = [];
+    for (const e of checkCandidates) {
+      for (const element of checkContests) {
+        const infoAsco = {
           contest: element,
           candidate: e,
         };
-        let newAsco = await this.ascoEntity.save(infoAsco);
+        const newAsco = await this.ascoEntity.save(infoAsco);
 
         if (newAsco) listUco.push(newAsco);
       }

@@ -46,12 +46,12 @@ export class RoomsService {
         message: DUBLICATE_ID_USER,
       });
 
-    let checkUserInit: UserEntity = await this.userEntity.findOne({
+    const checkUserInit: UserEntity = await this.userEntity.findOne({
       where: {
         id: data.idUser,
       },
     });
-    let checkUserConnect: UserEntity = await this.userEntity.findOne({
+    const checkUserConnect: UserEntity = await this.userEntity.findOne({
       where: {
         id: data.idConnect,
       },
@@ -67,7 +67,7 @@ export class RoomsService {
         message: USER_CREATE_ROOM_NOT_FOUND,
       });
 
-    let checkRoomUserInit = await this.roomEntity
+    const checkRoomUserInit = await this.roomEntity
       .createQueryBuilder('rooms')
       .leftJoin(ConnectIoEntity, 'cns', 'cns.roomId = rooms.id')
       .leftJoin('cns.io', 'io')
@@ -77,11 +77,11 @@ export class RoomsService {
       .select('rooms.id as id')
       .getRawMany();
 
-    let ids: string[] = [];
+    const ids: string[] = [];
     let checkRoomUserConnect: any[];
 
     if (checkRoomUserInit.length > 0) {
-      for (let e of checkRoomUserInit) {
+      for (const e of checkRoomUserInit) {
         ids.push(e.id);
       }
       checkRoomUserConnect = await this.roomEntity
@@ -101,17 +101,17 @@ export class RoomsService {
         room: checkRoomUserConnect[0],
       });
 
-    let newRoom = await this.roomEntity.save({
+    const newRoom = await this.roomEntity.save({
       type: RoomTypes.single,
     });
 
-    let userInit: ConnectIoEntity = await this.connectEntity.save({
+    const userInit: ConnectIoEntity = await this.connectEntity.save({
       io: checkUserInit.io,
       type: ChatTypes.single,
       room: newRoom,
     });
 
-    let connectUser: ConnectIoEntity = await this.connectEntity.save({
+    const connectUser: ConnectIoEntity = await this.connectEntity.save({
       io: checkUserConnect.io,
       type: ChatTypes.single,
       room: newRoom,
@@ -125,7 +125,7 @@ export class RoomsService {
   }
 
   async getRoomData(id: string, res: Response) {
-    let checkRooms = await this.roomEntity.findOne({
+    const checkRooms = await this.roomEntity.findOne({
       where: {
         id: id,
       },
@@ -135,7 +135,7 @@ export class RoomsService {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: ROOM_NOT_FOUND,
       });
-    let data: MessageInterface[] = await this.roomsDataEntity
+    const data: MessageInterface[] = await this.roomsDataEntity
       .createQueryBuilder('rda')
       .leftJoin('rda.room', 'rooms')
       .leftJoin('rda.user', 'user')
@@ -158,7 +158,7 @@ export class RoomsService {
 
   @Transactional()
   async createGroupChat(res: Response, data: CreateGroupChatDto) {
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: data.idUser,
       },
@@ -169,13 +169,13 @@ export class RoomsService {
         message: USER_NOT_FOUND,
       });
 
-    let newRoom = await this.roomEntity.save({
+    const newRoom = await this.roomEntity.save({
       name: data.name,
       type: RoomTypes.multipe,
     });
-    let listIdsConnect = [...data.idsConnectRoom, checkUser.id];
+    const listIdsConnect = [...data.idsConnectRoom, checkUser.id];
 
-    let listUsersConnect = await this.userEntity.find({
+    const listUsersConnect = await this.userEntity.find({
       where: {
         id: In(listIdsConnect),
       },
@@ -183,10 +183,10 @@ export class RoomsService {
         io: true,
       },
     });
-    let listSuccess: any[] = [];
-    let listFail: any[] = [];
-    for (let e of listUsersConnect) {
-      let newConnect = await this.connectEntity.save({
+    const listSuccess: any[] = [];
+    const listFail: any[] = [];
+    for (const e of listUsersConnect) {
+      const newConnect = await this.connectEntity.save({
         io: e.io,
         room: newRoom,
         type: ChatTypes.multipe,
@@ -204,7 +204,7 @@ export class RoomsService {
   }
 
   async getGroupChats(res: Response, id: string) {
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: id,
       },
@@ -215,7 +215,7 @@ export class RoomsService {
         message: USER_NOT_FOUND,
       });
 
-    let groupChats: RoomEntity[] = await this.roomEntity
+    const groupChats: RoomEntity[] = await this.roomEntity
       .createQueryBuilder('rooms')
       .leftJoin(ConnectIoEntity, 'cns', 'cns.roomId = rooms.id')
       .leftJoin('cns.io', 'io')
@@ -233,7 +233,7 @@ export class RoomsService {
   }
 
   async getRoomChats(param: ParamGetRoom, res: Response) {
-    let checkUser = await this.userEntity.findOne({
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: param.idUser,
       },
@@ -245,9 +245,9 @@ export class RoomsService {
       });
 
     let privateRooms: any = [];
-    let groupRooms: any = [];
+    const groupRooms: any = [];
     if (!param.search) {
-      let checkRooms = await this.roomEntity
+      const checkRooms = await this.roomEntity
         .createQueryBuilder('rooms')
         .leftJoin(ConnectIoEntity, 'cns', 'cns.roomId = rooms.id')
         .leftJoin('cns.io', 'io')
@@ -256,7 +256,7 @@ export class RoomsService {
         .select('rooms')
         .getMany();
 
-      let idsRoom = checkRooms.map((e) => {
+      const idsRoom = checkRooms.map((e) => {
         if (e.type === RoomTypes.multipe) groupRooms.push(e);
         else return e.id;
       });
@@ -281,7 +281,7 @@ export class RoomsService {
         ];
       }
     } else {
-      let checkRooms = await this.roomEntity
+      const checkRooms = await this.roomEntity
         .createQueryBuilder('rooms')
         .leftJoin(ConnectIoEntity, 'cns', 'cns.roomId = rooms.id')
         .leftJoin('cns.io', 'io')
@@ -292,7 +292,7 @@ export class RoomsService {
         .select('rooms')
         .getMany();
 
-      let idsRoom = checkRooms.map((e) => {
+      const idsRoom = checkRooms.map((e) => {
         if (e.type === RoomTypes.multipe) groupRooms.push(e);
         else return e.id;
       });

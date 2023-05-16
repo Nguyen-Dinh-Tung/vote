@@ -1,8 +1,8 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class UpdateUioDto {
-    @IsNotEmpty()
-    idUser : string ;
-    @IsNotEmpty()
-    ioId : string ;
+  @IsNotEmpty()
+  idUser: string;
+  @IsNotEmpty()
+  ioId: string;
 }

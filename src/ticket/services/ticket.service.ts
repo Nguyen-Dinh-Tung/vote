@@ -14,124 +14,99 @@ import { TicketEntity } from '../entities/ticket.entity';
 import { FindList } from 'src/common/interfaces/res.interfaces';
 import { ADD_TICKET_SUCCESS } from 'src/common/constant/message';
 
-
 @Injectable()
 export class TicketService {
-  constructor(@InjectRepository(TicketEntity) private readonly ticketEntity : Repository<TicketEntity> ,
-  @InjectRepository(ContestEntity) private readonly contestEntity : Repository<ContestEntity> ,
-  @InjectRepository(CandidateEntity) private readonly candidateEntity : Repository<CandidateEntity> ,
-  ){
-
-  }
-
+  constructor(
+    @InjectRepository(TicketEntity)
+    private readonly ticketEntity: Repository<TicketEntity>,
+    @InjectRepository(ContestEntity)
+    private readonly contestEntity: Repository<ContestEntity>,
+    @InjectRepository(CandidateEntity)
+    private readonly candidateEntity: Repository<CandidateEntity>,
+  ) {}
 
   async create(
-    createTicketDto: CreateTicketDto ,
-     userCreate : string
-    ) : Promise<FindList<TicketEntity>> {
+    createTicketDto: CreateTicketDto,
+    userCreate: string,
+  ): Promise<FindList<TicketEntity>> {
+    const checkContest = await this.contestEntity.findOne({
+      where: {
+        id: createTicketDto.idcontest,
+      },
+    });
 
-      let checkContest = await this.contestEntity.findOne({
-          where : {
-            id : createTicketDto.idcontest
-          }
-      })
-
-      if(!checkContest)
+    if (!checkContest)
       return {
-        status : HttpStatus.NOT_FOUND ,
-        message : CONTEST_NOT_FOUND ,
-        data : undefined ,
-        total : undefined ,
-        failList : undefined
-      }
+        status: HttpStatus.NOT_FOUND,
+        message: CONTEST_NOT_FOUND,
+        data: undefined,
+        total: undefined,
+        failList: undefined,
+      };
 
-      let listCandidate = await this.candidateEntity.find({
-        where : {
-          id : In(createTicketDto.idcandidates)
-        }
-      })
+    const listCandidate = await this.candidateEntity.find({
+      where: {
+        id: In(createTicketDto.idcandidates),
+      },
+    });
 
-
-      if(!listCandidate || listCandidate.length < 1)
+    if (!listCandidate || listCandidate.length < 1)
       return {
-        status : HttpStatus.NOT_FOUND ,
-        message : CANDIDATE_NOT_EXIST ,
-        data : undefined ,
-        total : undefined ,
-        failList : undefined
+        status: HttpStatus.NOT_FOUND,
+        message: CANDIDATE_NOT_EXIST,
+        data: undefined,
+        total: undefined,
+        failList: undefined,
+      };
+    const listNewTicket = [];
+    for (const e of listCandidate) {
+      const newInfoTicket = {
+        contest: checkContest,
+        candidate: e,
+      };
 
-      }
-      let listNewTicket = []
-      for(let e of listCandidate){
+      const newTicket = await this.ticketEntity.save(newInfoTicket);
 
-        let newInfoTicket = {
-          contest : checkContest , 
-          candidate : e
-        }
+      if (newTicket) listNewTicket.push(newTicket);
+    }
 
-        let newTicket = await this.ticketEntity.save(newInfoTicket)
-
-        if(newTicket)
-        listNewTicket.push(newTicket)
-
-      }
-      
-      return {
-        status : HttpStatus.OK ,
-        message : ADD_TICKET_SUCCESS ,
-        data : listNewTicket ,
-        total : listNewTicket.length ,
-        failList : undefined
-
-      }
-
+    return {
+      status: HttpStatus.OK,
+      message: ADD_TICKET_SUCCESS,
+      data: listNewTicket,
+      total: listNewTicket.length,
+      failList: undefined,
+    };
   }
-
 
   async findAll() {
-
-    try{
-
-      let listTicket = await this.ticketEntity.find() ;
-      return listTicket
-
-    }catch(e){
-
-      if(e) console.log(e);
-
+    try {
+      const listTicket = await this.ticketEntity.find();
+      return listTicket;
+    } catch (e) {
+      if (e) console.log(e);
     }
   }
-
 
   async findOne(id: string) {
+    try {
+      const checkTicket = await this.ticketEntity.findOneBy({
+        id: id,
+      });
 
-    try{
-
-      let checkTicket = await this.ticketEntity.findOneBy({
-        id : id
-      })
-
-      if(checkTicket){
-
-        return checkTicket
-
-      }else{
-
-        return "Ticket not existing"
+      if (checkTicket) {
+        return checkTicket;
+      } else {
+        return 'Ticket not existing';
       }
-
-    }catch(e){
-
-      if(e) console.log(e);
-      
+    } catch (e) {
+      if (e) console.log(e);
     }
   }
-
 
   async update(id: number, updateTicketDto: UpdateTicketDto) {
     return `This action updates a #${id} ticket`;
   }
-
 
   // async remove(id: string , userRemove : string ) {
 
@@ -144,9 +119,8 @@ export class TicketService {
   //     if(!checkTicket) return "Ticket not existing"
   //     if(!checkTicket.isActive) return "Ticket not active"
 
-
   //     else{
-        
+
   //       let contest = await this.contestService.findOne(checkTicket.idcontest)
   //       contest.totalCadidate--
   //       this.contestService.save(contest)
@@ -161,7 +135,7 @@ export class TicketService {
   //   }catch(e){
 
   //     if(e) console.log(e);
-      
+
   //   }
 
   // }
@@ -209,7 +183,7 @@ export class TicketService {
   //   }catch(e){
 
   //     if(e) console.log(e);
-      
+
   //   }
 
   // }

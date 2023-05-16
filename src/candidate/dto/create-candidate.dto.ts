@@ -21,7 +21,7 @@ export class CustomMeasure implements ValidatorConstraintInterface {
     let flag = true;
     if (measure.length !== 3) return false;
 
-    for (let e of measure) {
+    for (const e of measure) {
       if (typeof Number(e) !== 'number') flag = false;
     }
     if (!flag) return false;

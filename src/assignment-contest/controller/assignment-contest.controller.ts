@@ -1,24 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CreateAssignmentContestDto } from '../dto/create-assignment-contest.dto';
 import { UpdateAssignmentContestDto } from '../dto/update-assignment-contest.dto';
 import { AssignmentContestService } from '../services/assignment-contest.service';
 
 @Controller('assignment-contest')
 export class AssignmentContestController {
-  constructor(private readonly assignmentContestService: AssignmentContestService) {}
+  constructor(
+    private readonly assignmentContestService: AssignmentContestService,
+  ) {}
 
   @Post()
   create(@Body() createAssignmentContestDto: CreateAssignmentContestDto) {
-    try{
-      
+    try {
       return this.assignmentContestService.create(createAssignmentContestDto);
-
-    }catch(e){
-
-      if(e) console.log(e);
-      
+    } catch (e) {
+      if (e) console.log(e);
     }
-
   }
 
   @Get()
@@ -32,8 +37,14 @@ export class AssignmentContestController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAssignmentContestDto: UpdateAssignmentContestDto) {
-    return this.assignmentContestService.update(+id, updateAssignmentContestDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateAssignmentContestDto: UpdateAssignmentContestDto,
+  ) {
+    return this.assignmentContestService.update(
+      +id,
+      updateAssignmentContestDto,
+    );
   }
 
   @Delete(':id')

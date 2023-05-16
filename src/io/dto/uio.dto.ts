@@ -1,6 +1,6 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class UioDto {
-    @IsNotEmpty()
-    idUser : string ;
+  @IsNotEmpty()
+  idUser: string;
 }

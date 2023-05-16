@@ -1,4 +1,4 @@
 export class DataFindByAny {
-    idcontest ?  : string ;
-    idcadidate ?  : string ;
+  idcontest?: string;
+  idcadidate?: string;
 }

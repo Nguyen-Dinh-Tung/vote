@@ -58,10 +58,10 @@ export class UsersService {
     file?: Express.Multer.File,
     res?: Response,
   ) {
-    let checkUserEmail = await this.validateUser({
+    const checkUserEmail = await this.validateUser({
       email: createUserDto.email,
     });
-    let checkUserByUsername = await this.validateUser({
+    const checkUserByUsername = await this.validateUser({
       username: createUserDto.username,
     });
 
@@ -71,7 +71,7 @@ export class UsersService {
       });
     } else {
       if (file) {
-        let fileSave = this.saveImage(file);
+        const fileSave = this.saveImage(file);
         createUserDto.background = fileSave;
       }
 
@@ -112,7 +112,7 @@ export class UsersService {
         createUserDto.password,
         Number(process.env.HASHKEY),
       );
-      let user = await this.userEntity.save(createUserDto);
+      const user = await this.userEntity.save(createUserDto);
 
       if (user) {
         await this.ioService.createSocketConnect(
@@ -131,18 +131,18 @@ export class UsersService {
   }
 
   private saveImage(file: Express.Multer.File) {
-    let filename = file.filename;
-    let path = file.path;
-    let type = file.mimetype.split('/').pop().toLowerCase();
-    let fileSave = `${process.env.STATICIMG + filename}${Date.now()}.${type}`;
-    let buffer = fs.readFileSync(file.path);
+    const filename = file.filename;
+    const path = file.path;
+    const type = file.mimetype.split('/').pop().toLowerCase();
+    const fileSave = `${process.env.STATICIMG + filename}${Date.now()}.${type}`;
+    const buffer = fs.readFileSync(file.path);
     fs.writeFileSync(`.${fileSave}`, buffer);
     fs.unlinkSync(path);
     return fileSave;
   }
 
   async findAll(res: Response) {
-    let listUser = await this.userEntity.find();
+    const listUser = await this.userEntity.find();
 
     if (listUser.length < 1) {
       return res.status(HttpStatus.OK).json({
@@ -156,7 +156,7 @@ export class UsersService {
   }
 
   async findOne(id: string, res: Response): Promise<UserEntity | any> {
-    let checkUser = await this.validateUser({ id: id });
+    const checkUser = await this.validateUser({ id: id });
 
     if (!checkUser) {
       return res.status(HttpStatus.BAD_REQUEST).json({
@@ -176,10 +176,10 @@ export class UsersService {
     page?: number,
     res?: Response,
   ): Promise<Response<UserEntity>> {
-    let offset = +page * amount - amount;
+    const offset = +page * amount - amount;
 
     let listUser: any[];
-    let total = await this.userEntity.findAndCount();
+    const total = await this.userEntity.findAndCount();
 
     if (search) {
       listUser = await this.userEntity
@@ -289,7 +289,7 @@ export class UsersService {
 
         if (updateUserDto.email) {
           if (updateUserDto.email != checkUser.email) {
-            let checkEmail = await this.validateUser({
+            const checkEmail = await this.validateUser({
               email: updateUserDto.email,
             });
             if (checkEmail)
@@ -319,13 +319,13 @@ export class UsersService {
             });
           }
 
-          let compePassword = bcrypt.compareSync(
+          const compePassword = bcrypt.compareSync(
             updateUserDto.oldPassword,
             checkUser.password,
           );
 
           if (compePassword) {
-            let newPassword = bcrypt.hashSync(updateUserDto.newPassword, 10);
+            const newPassword = bcrypt.hashSync(updateUserDto.newPassword, 10);
             checkUser = {
               ...checkUser,
               passowrd: newPassword,
@@ -366,7 +366,7 @@ export class UsersService {
   async remove(id: string, userRemove: string, res: Response) {
     try {
       let checkUser = await this.validateUser({ id: id });
-      let newData = { isActive: false, historyChange: userRemove };
+      const newData = { isActive: false, historyChange: userRemove };
 
       if (!checkUser) {
         return res.status(HttpStatus.NOT_FOUND).json({
@@ -388,13 +388,13 @@ export class UsersService {
   }
 
   async createAdminUser(createUserDto: CreateUserDto) {
-    let checkUser = await this.validateUser({ email: 'admin@gmail.com' });
+    const checkUser = await this.validateUser({ email: 'admin@gmail.com' });
 
     if (checkUser) {
-      return;
+      return false;
     } else {
       createUserDto.password = bcrypt.hashSync(createUserDto.password, 10);
-      let user = await this.userEntity.save(createUserDto);
+      const user = await this.userEntity.save(createUserDto);
       let newIo: IoEntity;
       if (user) newIo = await this.ioEntity.save({});
 
@@ -405,7 +405,7 @@ export class UsersService {
   }
 
   async validateUser(data: Validate): Promise<any> {
-    let checkUser = await this.userEntity.findOneBy(data);
+    const checkUser = await this.userEntity.findOneBy(data);
 
     return checkUser;
   }

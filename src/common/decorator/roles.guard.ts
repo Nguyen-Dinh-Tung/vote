@@ -47,10 +47,10 @@ export class RolesGuards implements CanActivate {
       }
     }
 
-    let token: any = jwt_decode(request.headers.authorization);
-    let idUser: string = token.idUser;
+    const token: any = jwt_decode(request.headers.authorization);
+    const idUser: string = token.idUser;
 
-    let userCheck = await this.usersService.validateUser({ id: idUser });
+    const userCheck = await this.usersService.validateUser({ id: idUser });
 
     if (userCheck) {
       if (userCheck.role === 'admin') return true;

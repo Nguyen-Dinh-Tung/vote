@@ -1,6 +1,16 @@
 import { join } from 'path';
 import { Roles } from './../../common/enum/role.enum';
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, StreamableFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+  StreamableFile,
+} from '@nestjs/common';
 import { UserCpService } from '../services/user-cp.service';
 import { CreateUserCpDto } from '../dto/create-user-cp.dto';
 import { UpdateUserCpDto } from '../dto/update-user-cp.dto';
@@ -15,23 +25,23 @@ export class UserCpController {
   constructor(private readonly userCpService: UserCpService) {}
 
   @Post()
-  @RolesCheck([ Roles.admin , Roles.ucp_admin])
+  @RolesCheck([Roles.admin, Roles.ucp_admin])
   async create(
-    @Body() createUserCpDto: CreateUserCpDto , 
-    @UserByToken() user : string , 
-    @Res() res : Response,
-    @IdUserInterceptor() idUser : string
-    ) {
-    try{
-      
-    return await this.userCpService.create(createUserCpDto , user , res ,idUser);
-
-    }catch(e){
-
-      if(e) console.log(e);
-      
+    @Body() createUserCpDto: CreateUserCpDto,
+    @UserByToken() user: string,
+    @Res() res: Response,
+    @IdUserInterceptor() idUser: string,
+  ) {
+    try {
+      return await this.userCpService.create(
+        createUserCpDto,
+        user,
+        res,
+        idUser,
+      );
+    } catch (e) {
+      if (e) console.log(e);
     }
-
   }
 
   @Get()
@@ -54,9 +64,8 @@ export class UserCpController {
     return this.userCpService.remove(+id);
   }
 
-
   @Get('/test')
-  download(){
+  download() {
     const file = createReadStream(join(process.cwd(), 'demo.jpeg'));
     return new StreamableFile(file);
   }

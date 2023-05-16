@@ -96,7 +96,7 @@ export class CandidateService {
   }
 
   async findAll(res: Response, query: QueryDto) {
-    let offset = query.page * amount - amount;
+    const offset = query.page * amount - amount;
 
     const where = {};
     if (query.isActive !== undefined) where['isActive'] = query.isActive;
@@ -123,7 +123,7 @@ export class CandidateService {
   }
 
   async findOne(id: string, res: Response) {
-    let candidate: CandidateEntity = await this.candidateEntity
+    const candidate: CandidateEntity = await this.candidateEntity
       .createQueryBuilder('ca')
       .leftJoin('ca.carem', 'carem')
       .select([
@@ -164,7 +164,7 @@ export class CandidateService {
     file?: Express.Multer.File,
   ) {
     let flagCaUp = false;
-    let checkCandidate = await this.candidateEntity.findOne({
+    const checkCandidate = await this.candidateEntity.findOne({
       where: {
         id: id,
       },
@@ -181,7 +181,7 @@ export class CandidateService {
       });
 
     if (updateCandidateDto.descs || updateCandidateDto.slogan) {
-      let newCarem = {};
+      const newCarem = {};
       if (updateCandidateDto.descs)
         newCarem['descs'] = updateCandidateDto.descs;
       if (updateCandidateDto.slogan)
@@ -237,7 +237,7 @@ export class CandidateService {
 
   async remove(id: string, userChange: string) {
     try {
-      let checkCaDidate = await this.validateCadidate({ id: id });
+      const checkCaDidate = await this.validateCadidate({ id: id });
 
       if (!checkCaDidate) this.NotFoundError();
       else {
@@ -253,7 +253,7 @@ export class CandidateService {
   }
 
   async validateCadidate(data: Validate): Promise<any> {
-    let checkCadidate = await this.candidateEntity.findOneBy(data);
+    const checkCadidate = await this.candidateEntity.findOneBy(data);
     return checkCadidate;
   }
   async NotFoundError() {

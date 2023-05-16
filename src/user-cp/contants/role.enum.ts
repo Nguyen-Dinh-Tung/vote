@@ -1,4 +1,4 @@
 export enum ROLE_UCP {
-    ADMIN = "ADM"  ,
-    USER = "USE"
+  ADMIN = 'ADM',
+  USER = 'USE',
 }

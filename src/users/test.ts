@@ -1,4 +1,4 @@
 export class Test {
-    name : string 
-    email : number 
+  name: string;
+  email: number;
 }

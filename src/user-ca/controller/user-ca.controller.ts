@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ParseStrPipe } from 'src/common/pipe/ParseStr.pipe';
 import { CreateUserCaDto } from '../dto/create-user-ca.dto';
@@ -11,23 +20,19 @@ export class UserCaController {
 
   @Post()
   async create(
-    @Body(new ParseStrPipe()) createUserCaDto: CreateUserCaDto ,
-    @Res() res : Response
-    ) {
-    try{
-
-      let resCreateUca = await this.userCaService.create(createUserCaDto);
+    @Body(new ParseStrPipe()) createUserCaDto: CreateUserCaDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const resCreateUca = await this.userCaService.create(createUserCaDto);
 
       return res.status(resCreateUca.status).json({
-        message : resCreateUca ,
-        data : resCreateUca.data 
-      })
-    }catch(e) {
-
-      if(e) console.log(e);
-      
+        message: resCreateUca,
+        data: resCreateUca.data,
+      });
+    } catch (e) {
+      if (e) console.log(e);
     }
-    
   }
 
   @Get()

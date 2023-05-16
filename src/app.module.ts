@@ -48,7 +48,7 @@ import { ConfigModule } from '@nestjs/config';
       },
       async dataSourceFactory(options) {
         if (!options) throw new Error('Invalid option passed');
-        let datasource = new DataSource(options);
+        const datasource = new DataSource(options);
         return addTransactionalDataSource({
           dataSource: datasource,
         });

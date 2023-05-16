@@ -35,7 +35,7 @@ export class NotifyAppService {
         message: USER_NOT_FOUND,
       });
 
-    let checkReveiceUsers = await this.userEntity.find({
+    const checkReveiceUsers = await this.userEntity.find({
       where: {
         id: In(data.idsReveice),
       },
@@ -51,8 +51,8 @@ export class NotifyAppService {
     { page = 1, limit = 10, search }: ParamDto,
     idUser: string,
   ) {
-    let skip = page * limit - limit;
-    let checkUser = await this.userEntity.findOne({
+    const skip = page * limit - limit;
+    const checkUser = await this.userEntity.findOne({
       where: {
         id: idUser,
       },
@@ -61,7 +61,7 @@ export class NotifyAppService {
       return res.status(HttpStatus.NOT_FOUND).json({
         message: USER_NOT_FOUND,
       });
-    let checkNotifies = await this.detailNotifyEntity.find({
+    const checkNotifies = await this.detailNotifyEntity.find({
       where: {
         reveice: checkUser,
         read: false,

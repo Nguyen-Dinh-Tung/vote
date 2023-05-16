@@ -11,7 +11,7 @@ export const IdUserInterceptor = createParamDecorator(
     const req = ctx.switchToHttp().getRequest();
     if (!req.headers.authorization)
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    let token: any = jwt_decode(req.headers.authorization);
+    const token: any = jwt_decode(req.headers.authorization);
     return token.idUser;
   },
 );

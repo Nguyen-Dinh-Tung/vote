@@ -1,4 +1,4 @@
 export interface ShareCandidateInterface {
-    listIdUsers : string [] ;
-    listIdContest : string [] ;
+  listIdUsers: string[];
+  listIdContest: string[];
 }
