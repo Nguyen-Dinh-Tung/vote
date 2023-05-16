@@ -36,7 +36,7 @@ import { JwtService } from '@nestjs/jwt';
     forwardRef(() => AssignmentContestModule),
     forwardRef(() => UserCaModule),
     MulterModule.register({
-      dest: '/files/images',
+      dest: './data/images',
     }),
   ],
   controllers: [CandidateController],
