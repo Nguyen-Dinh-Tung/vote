@@ -24,7 +24,7 @@ import { JwtService } from '@nestjs/jwt';
     forwardRef(() => ContestEntity),
     forwardRef(() => UserCpModule),
     MulterModule.register({
-      dest: '/data/images',
+      dest: './data/images',
     }),
   ],
   controllers: [CompanyController],

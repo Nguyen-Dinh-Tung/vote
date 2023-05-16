@@ -23,7 +23,7 @@ import { TokenModule } from 'src/token/token.module';
       signOptions: { expiresIn: '30d' },
     }),
     MulterModule.register({
-      dest: './files/images',
+      dest: './data/images',
     }),
     TokenModule,
   ],
